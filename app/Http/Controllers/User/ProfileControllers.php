@@ -60,25 +60,19 @@ class ProfileControllers extends Controller
      */
     public function update(Request $request)
     {
-        // Validasi data
         $validatedData = $request->validate([
             'nama' => 'required|max:25',
             'username' => 'required|max:25',
-            'jabatan' => 'required|integer',
+            'jabatan' => 'required|max:25',
             'id_lokasi' => 'required|integer',
             'id_akses' => 'required|integer',
-            'password' => 'required',
-            'new_password' => 'nullable|min:8',
+            'password' => 'nullable|min:3',
+            'new_password' => 'nullable|min:3',
             'create_by' => 'required|integer',
+            'last_user' => 'required|integer'
         ]);
 
-        dd($validatedData);
-
         $user = User::find(auth()->id());
-
-        if (!Hash::check($validatedData['password'], $user->password)) {
-            return back()->withErrors(['password' => 'Password lama tidak sesuai.'])->withInput();
-        }
 
         $updateData = [
             'nama' => $validatedData['nama'],
@@ -87,17 +81,24 @@ class ProfileControllers extends Controller
             'id_lokasi' => $validatedData['id_lokasi'],
             'id_akses' => $validatedData['id_akses'],
             'create_by' => $validatedData['create_by'],
+            'last_user' => $validatedData['last_user']
         ];
 
+        if (!empty($validatedData['password']) || !empty($validatedData['new_password'])) {
+            if (empty($validatedData['password']) || !Hash::check($validatedData['password'], $user->password)) {
+                return back()->withErrors(['password' => 'Password lama tidak sesuai atau kosong.'])->withInput();
+            }
 
-        if (!empty($validatedData['new_password'])) {
-            $updateData['password'] = bcrypt($validatedData['new_password']);
+            if (!empty($validatedData['new_password'])) {
+                $updateData['password'] = bcrypt($validatedData['new_password']);
+            }
         }
 
         $user->update($updateData);
 
-        return redirect('/dashboard')->with('success', 'Profil berhasil diperbarui');
+        return redirect('/profile')->with('success', 'Profil berhasil diperbarui');
     }
+
 
     /**
      * Remove the specified resource from storage.

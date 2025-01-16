@@ -36,13 +36,13 @@
                         <div>
                             <small style="color: red"> * Kosongkan jika tidak ingin merubah password</small>
                         </div>
-                        <input type="password" name="password" value="{{ auth()->user()->password}}" class="form-control" id="password">
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan password lama">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="lokasi">Lokasi</label>
-                        <select id="lokasi" name="id_lokasi" class="form-control">
+                        <select id="id_lokasi" name="id_lokasi" class="form-control">
                             @foreach ($lokasi as $l )
                                 <option value="{{ $l->id }}">{{ $l->nama }}</option>
                             @endforeach
@@ -50,17 +50,23 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="password">Ketik Password</label>
-                        <input type="password" name="confirmpassword" class="form-control" id="confirmpassword">
+                        <input type="password" name="new_password" class="form-control" id="new_password" placeholder="Masukkan password baru">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group  col-md-6">
                         <label for="nama">Akses</label>
-                        <input type="text" class="form-control" name="id_akses" value="{{ auth()->user()->id_akses }}" id="nama">
+                        <input type="text" class="form-control" name="id_akses" value="{{ auth()->user()->id_akses }}" id="id_akses">
                     </div>
                     <div class="form-group  col-md-6">
                         <label for="nama">Created By</label>
                         <input type="text" class="form-control" name="create_by" value="{{ auth()->user()->create_by }}" id="create_by">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group  col-md-6">
+                        <label for="last_user">Last User</label>
+                        <input type="text" class="form-control" name="last_user" value="{{ auth()->user()->last_user }}" id="last_user">
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-10">
