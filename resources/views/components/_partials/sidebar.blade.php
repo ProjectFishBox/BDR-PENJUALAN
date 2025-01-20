@@ -1,13 +1,20 @@
 <div class="side-nav">
     <div class="side-nav-inner">
         <ul class="side-nav-menu scrollable">
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown mt-3">
                 <a href="/dashboard">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-dashboard"></i>
+                    </span>
                     <span class="title">Dashboard</span>
                 </a>
             </li>
+
             <li class="nav-item dropdown">
                 <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-folder-open"></i>
+                    </span>
                     <span class="title">Master</span>
                     <span class="arrow">
                         <i class="arrow-icon"></i>

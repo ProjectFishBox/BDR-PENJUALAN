@@ -13,17 +13,17 @@
         <ul class="nav-left">
             <li class="desktop-toggle">
                 <a href="javascript:void(0);">
-                    <img src="{{ asset('images/icons/outdent-solid.svg')}}" alt="" class="icon-nav">
+                    <i class="anticon anticon-bell notification-badge"></i>
                 </a>
             </li>
-            <li class="mobile-toggle" hidden>
+            <li class="mobile-toggle">
                 <a href="javascript:void(0);">
                     <i class="anticon"></i>
                 </a>
             </li>
-            <li hidden>
+            <li>
                 <a href="javascript:void(0);" data-toggle="modal" data-target="#search-drawer">
-                    <i class="anticon anticon-search"></i>
+                    <h5 style="margin-bottom: unset">{{ $title }}</h5>
                 </a>
             </li>
         </ul>
@@ -32,7 +32,7 @@
             <li class="dropdown dropdown-animated scale-left">
                 <div class="pointer" data-toggle="dropdown">
                     <div class="avatar avatar-image  m-h-10 m-r-15">
-                        <img src="{{ asset('images/avatars/thumb-1.jpg') }}" alt="Profile Image">
+                        <img src="{{ asset('assets/images/avatars/thumb-1.jpg') }}" alt="Profile Image">
                     </div>
                 </div>
                 <div class="p-b-15 p-t-20 dropdown-menu pop-profile">

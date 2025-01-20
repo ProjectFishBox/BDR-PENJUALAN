@@ -7,32 +7,16 @@
     <title>BDR - PENJUALAN</title>
 
     <link rel="shortcut icon" href="assets/images/logo/favicon.png">
-    <link href="{{ asset('css/app.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('vendors/select2/select2.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/svendors/select2/select2.css') }}" rel="stylesheet">
 
-    <style>
-        .select2-container{
-            display: inline
-        }
-        .select2-container-active.select2-container{
-            border: none
-        }
-    </style>
 </head>
 
 <body>
     @yield('content')
-    <script src="{{ asset('js/vendors.min.js') }}"></script>
-    <script src="{{ asset('js/app.min.js') }}"></script>
-    <script src="{{ asset('vendors/select2/select2.min.js')}}"></script>
-    <script>
-        $(document).ready(function() {
-            $('#lokasi').select2();
-        });
-        $(document).ready(function() {
-            $('#akses').select2();
-        });
-    </script>
+    <script src="{{ asset('assets/js/vendors.min.js') }}"></script>
+    <script src="{{ asset('assets/js/app.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/select2/select2.min.js')}}"></script>
 </body>
 
 </html>
