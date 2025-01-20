@@ -2,18 +2,10 @@
 
 @section('content')
     <div class="page-header">
-        <h2 class="header-title">Profile</h2>
-        <div class="header-sub-title">
-            <nav class="breadcrumb breadcrumb-dash">
-                <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
-                <a class="breadcrumb-item" href="#">Pages</a>
-                <span class="breadcrumb-item active">Profile</span>
-            </nav>
-        </div>
+        <h2 class="header-title">{{ $title }}</h2>
     </div>
     <div class="card">
         <div class="card-body">
-            <h3>Ubah Profile</h3>
             <form action="{{ route('user-update') }}" method="POST">
                 @csrf
                 <div class="form-row">
@@ -43,8 +35,10 @@
                     <div class="form-group col-md-6">
                         <label for="lokasi">Lokasi</label>
                         <select id="id_lokasi" name="id_lokasi" class="form-control" required>
-                            @foreach ($lokasi as $l )
-                                <option value="{{ $l->id }}">{{ $l->nama }}</option>
+                            @foreach ($lokasi as $l)
+                                <option value="{{ $l->id }}" {{ $l->id == auth()->user()->id_lokasi ? 'selected' : '' }}>
+                                    {{ $l->nama }}
+                                </option>
                             @endforeach
                         </select>
                     </div>

@@ -13,6 +13,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
     @yield('content')
     <script src="{{ asset('assets/js/vendors.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.min.js') }}"></script>

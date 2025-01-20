@@ -1,12 +1,12 @@
 <div class="header">
     <div class="logo logo-dark" style="display: flex; justify-content: center; align-items: center; text-align: center">
         <a href="/dashboard">
-            <h3>Logo</h3>
+            <img src="{{asset('assets/images/logo/logo.jpeg')}}" alt="" style="width: 40%">
         </a>
     </div>
     <div class="logo logo-white">
         <a href="/dashboard">
-            <h3>Logo</h3>
+            <img src="{{asset('assets/images/logo/logo.jpeg')}}" alt="">
         </a>
     </div>
     <div class="nav-wrap">
@@ -44,14 +44,18 @@
                             <img src="{{ asset('images/icons/angle-right-solid.svg')}}" alt="" class="icon-size">
                         </div>
                     </a>
-                    <a href="javascript:void(0);" class="dropdown-item d-block p-h-15 p-v-10">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="m-l-10">Logout</span>
+                    <form action="{{route('logout')}}" method="POST">
+                        @csrf
+                        <button class="dropdown-item d-block p-h-15 p-v-10">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <i class="anticon opacity-04 font-size-16 anticon-logout"></i>
+                                    <span class="m-l-10">Logout</span>
+                                </div>
+                                <i class="anticon font-size-10 anticon-right"></i>
                             </div>
-                            <img src="{{ asset('images/icons/angle-right-solid.svg')}}" alt="" class="icon-size">
-                        </div>
-                    </a>
+                        </button>
+                    </form>
                 </div>
             </li>
         </ul>

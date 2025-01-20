@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    @include('sweetalert::alert')
     <div class="app">
         <div class="layout">
             <!-- Header START -->
