@@ -11,5 +11,17 @@ class Lokasi extends Model
 
     protected $table = 'lokasi';
 
+    protected $fillable = [
+        'nama',
+        'create_by',
+        'last_user'
+    ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'id_lokasi');
+    }
+
+
 
 }
