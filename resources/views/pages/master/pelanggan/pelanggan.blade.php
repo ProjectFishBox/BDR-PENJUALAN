@@ -10,11 +10,19 @@
                     <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                 </a>
 
-                <!-- Input Search -->
                 <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
                     <input type="text" name="search" placeholder="Cari Pelanggan" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <button type="submit" class="btn btn-secondary ml-2">Cari</button>
+                    <select name="lokasi" class="form-control ml-2" style="width: 200px;">
+                        <option value="">Semua Lokasi</option>
+                        @foreach ($lokasiList as $lokasi)
+                            <option value="{{ $lokasi->id }}" {{ request()->get('lokasi') == $lokasi->id ? 'selected' : '' }}>
+                                {{ $lokasi->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-secondary ml-2">Filter</button>
                 </form>
+                
 
             </div>
             <div class="m-t-25">

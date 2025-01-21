@@ -19,15 +19,21 @@ class PelangganControllers extends Controller
         $title = "List Pelanggan";
 
         $search = $request->get('search');
+        $lokasiId = $request->get('lokasi');
+
+        $lokasiList = Lokasi::all();
 
         $data = Pelanggan::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%$search%");
+        })
+        ->when($lokasiId, function ($query, $lokasiId) {
+            return $query->where('id_lokasi', $lokasiId);
         })
         ->with('lokasi')
         ->get();
 
 
-        return view('pages.master.pelanggan.pelanggan', compact('title', 'data'));
+        return view('pages.master.pelanggan.pelanggan', compact('title', 'data', 'lokasiList'));
     }
 
     /**
