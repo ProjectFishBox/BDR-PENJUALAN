@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\Master\AksesControllers;
+use App\Http\Controllers\Master\BarangControllers;
 use App\Http\Controllers\User\ProfileControllers;
 use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
@@ -87,6 +88,18 @@ Route::controller(AksesControllers::class)->group(function () {
 
 
 });
+
+Route::controller(BarangControllers::class)->group(function () {
+
+    Route::get('/barang', 'index')->name('barang');
+    Route::get('/tambah-barang', 'create')->name('tambah-barang');
+    Route::post('/tambah-barang', 'store')->name('store-barang');
+    Route::get('/barang-edit/{id}', 'show')->name('barang-edit');
+    Route::post('barang/{id}/update', 'update')->name('update-barang');
+    Route::get('/delete-barang/{id}' , 'destroy')->name('delete-barang');
+
+});
+
 
 
 

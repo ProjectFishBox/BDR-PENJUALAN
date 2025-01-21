@@ -3,39 +3,36 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Models\Barang;
 use Illuminate\Http\Request;
-use App\Models\Lokasi;
 use RealRashid\SweetAlert\Facades\Alert;
 
-class LokasiControllers extends Controller
+class BarangControllers extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $title = 'Lokasi';
+        $title = 'Barang';
 
         $search = $request->get('search');
 
-        $data = Lokasi::when($search, function ($query, $search) {
+        $data = Barang::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%$search%");
         })->get();
 
-        return view('pages.master.lokasi.lokasi', compact('title', 'data'));
+        return view('pages.master.barang.barang', compact('title', 'data'));
     }
-
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $title = 'Tambah Lokasi';
+        $title = 'Tambah Barang';
 
-        $formRoute = 'store-lokasi';
-
-        return view('pages.master.lokasi.add_lokasi', compact('title', 'formRoute'));
+        return view('pages.master.barang.tambah_barang', compact('title'));
     }
 
     /**
@@ -44,16 +41,19 @@ class LokasiControllers extends Controller
     public function store(Request $request)
     {
         $validateData = $request->validate([
+            'kode_barang' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
+            'merek' => 'required|string|max:255',
+            'harga' => 'required|numeric',
         ]);
 
         $validateData['create_by'] = auth()->id();
         $validateData['last_user'] = auth()->id();
 
-        Lokasi::create($validateData);
+        Barang::create($validateData);
 
-        Alert::success('Berhasil Menambahkan data lokasi.');
-        return redirect('/lokasi');
+        Alert::success('Berhasil Menambahkan data barang.');
+        return redirect('/barang');
     }
 
     /**
@@ -61,12 +61,11 @@ class LokasiControllers extends Controller
      */
     public function show(string $id)
     {
+        $title = 'Edit Barang';
 
-        $title = 'Edit Lokasi';
+        $barang = Barang::findOrFail($id);
 
-        $lokasi = Lokasi::findOrFail($id);
-
-        return view('pages.master.lokasi.edit_lokasi', compact('lokasi', 'title'));
+        return view('pages.master.barang.edit_barang', compact('barang', 'title'));
     }
 
     /**
@@ -74,29 +73,34 @@ class LokasiControllers extends Controller
      */
     public function edit(string $id)
     {
-        //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
-        $request->validate([
+        $validateData = $request->validate([
+            'kode_barang' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
+            'merek' => 'required|string|max:255',
+            'harga' => 'required|numeric',
         ]);
 
-        $lokasi = Lokasi::findOrFail($id);
+        $barang = Barang::findOrFail($id);
 
-        $lokasi->update([
-            'nama' => $request->nama,
+        $barang->update([
+            'kode_barang' => $validateData['kode_barang'],
+            'nama' => $validateData['nama'],
+            'merek' => $validateData['merek'],
+            'harga' => $validateData['harga'],
             'last_user' => auth()->id(),
         ]);
 
-        Alert::success('Berhasil Merubah data lokasi.');
+        Alert::success('Berhasil Merubah data Barang.');
 
-        return redirect('/lokasi');
-
+        return redirect('/barang');
     }
 
     /**
@@ -104,13 +108,12 @@ class LokasiControllers extends Controller
      */
     public function destroy(string $id)
     {
-
         try {
-            $lokasi = Lokasi::findOrFail($id);
+            $barang = Barang::findOrFail($id);
 
-            $lokasi->delete();
+            $barang->delete();
 
-            Alert::success('Data Lokasi berhasil dihapus.');
+            Alert::success('Data Barang berhasil dihapus.');
 
             return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
 
@@ -120,6 +123,5 @@ class LokasiControllers extends Controller
                 'message' => 'Gagal menghapus data.',
             ], 500);
         }
-
     }
 }
