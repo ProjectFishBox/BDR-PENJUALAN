@@ -52,7 +52,6 @@ class PenggunaControllers extends Controller
             'nama' => 'required|max:25',
             'username' => 'required|max:25',
             'password' => 'required|min:3',
-            'jabatan' => 'required',
             'id_lokasi' => 'required|integer',
             'id_akses' => 'required|integer'
         ]);
@@ -99,7 +98,6 @@ class PenggunaControllers extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|max:25',
             'username' => 'required|max:25',
-            'jabatan' => 'required|max:25',
             'id_lokasi' => 'required|integer',
             'id_akses' => 'required|integer',
             'password' => 'nullable|min:3'

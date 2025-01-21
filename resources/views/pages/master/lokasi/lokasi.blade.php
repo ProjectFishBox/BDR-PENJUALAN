@@ -22,9 +22,9 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width: 5%;">No</th>
-                                <th scope="col" style="text-align: center; width: 60%;">Nama Lokasi</th>
-                                <th scope="col" style="text-align: center; width: 35%;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">No</th>
+                                <th scope="col" style="text-align: center; width: 80%;">Nama Lokasi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,13 +41,9 @@
                                                     <i class="anticon anticon-edit"></i>
                                                 </button>
                                             </a>
-                                            <form action="{{ route('delete-lokasi', $lokasi->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-icon btn-danger">
-                                                    <i class="anticon anticon-delete"></i>
-                                                </button>
-                                            </form>
+                                            <button class="btn-lokasi-delete btn btn-icon btn-danger" data-id="{{ $lokasi->id }}"">
+                                                <i class="anticon anticon-delete"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -60,3 +56,59 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    function reloadTable() {
+            $.ajax({
+                url: "{{ url()->current() }}",
+                type: "GET",
+                success: function(data) {
+                    let tableContent = $(data).find('table tbody').html();
+                    $('table tbody').html(tableContent);
+                },
+                error: function(xhr) {
+                    console.error('Failed to reload table:', xhr);
+                }
+            });
+    }
+
+
+    $(document).on('click', '.btn-lokasi-delete', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        console.log('data id delete', id);
+        let url = "/delete-lokasi/" + id;
+        Swal.fire({
+            title: 'Apakah kamu ingin menghapus data ini?',
+            text: "data tidak dapat dikembalikan lagi!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Iya, hapus data ini!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url,
+                    type: "GET",
+                    dataType: "HTML",
+                    success: function(data) {
+                        reloadTable();
+                        Swal.fire({
+                            title: 'Terhapus!',
+                            text: 'Data Lokasi Telah berhasil dihapus.',
+                            icon: 'success',
+                            timer: 2000
+
+                        })
+                    }
+                })
+            }
+        })
+    })
+</script>
+
+@endpush

@@ -7,7 +7,7 @@
             <form action="{{ route($formRoute)}}" method="POST">
                 @csrf
                 <div class="form-group mt-5">
-                    <label for="namalokasi">Nama Lokasi</label>
+                    <label for="namalokasi">Nama Lokasi <span style="color: red">*</span></label>
                     <input type="text" class="form-control" name="nama" id="namalokasi" placeholder="Nama Lokasi" value="{{ old('nama', $lokasi->nama ?? '') }}" required>
                 </div>
                 <div class="form-group">

@@ -56,11 +56,11 @@ class PelangganControllers extends Controller
         $validateData = $request->validate([
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'kode_pos' => 'required|string|max:20',
             'telepon' => 'required',
-            'fax' => 'required',
             'id_kota' => 'required|integer',
             'id_lokasi' => 'required|integer',
+            'fax' => 'string|max:255',
+            'kode_pos' => 'string|max:255'
         ]);
 
         $validateData['create_by'] = auth()->id();
@@ -101,9 +101,7 @@ class PelangganControllers extends Controller
         $validateData = $request->validate([
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'kode_pos' => 'required|string|max:20',
             'telepon' => 'required',
-            'fax' => 'required',
             'id_kota' => 'required|integer',
             'id_lokasi' => 'required|integer',
         ]);

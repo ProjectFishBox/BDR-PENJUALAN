@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
+use App\Http\Controllers\Master\AksesControllers;
 use App\Http\Controllers\User\ProfileControllers;
 use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
@@ -48,7 +49,7 @@ Route::controller(LokasiControllers::class)->group(function () {
     Route::post('/tambah-lokasi','store')->name('store-lokasi');
     Route::get('/lokasi-edit/{id}', 'show')->name('lokasi-edit');
     Route::post('lokasi/{id}/update', 'update')->name('update-lokasi');
-    Route::delete('lokasi/{id}/delete', 'destroy')->name('delete-lokasi');
+    Route::get('/delete-lokasi/{id}' , 'destroy')->name('delete-lokasi');
 
 });
 
@@ -59,7 +60,8 @@ Route::controller(PenggunaControllers::class)->group(function () {
     Route::post('/tambah-pengguna', 'store')->name('store-pengguna');
     Route::get('/pengguna-edit/{id}', 'show')->name('pengguna-edit');
     Route::post('pengguna/{id}/update', 'update')->name('update-pengguna');
-    Route::delete('pengguna/{id}/delete', 'destroy')->name('delete-pengguna');
+    Route::get('/delete-pengguna/{id}' , 'destroy')->name('delete-pengguna');
+
 
 });
 
@@ -72,6 +74,11 @@ Route::controller(PelangganControllers::class)->group(function () {
     Route::post('pelanggan/{id}/update', 'update')->name('update-pelanggan');
     Route::delete('pelanggan/{id}/delete', 'destroy')->name('delete-pelanggan');
 
+});
+
+Route::controller(AksesControllers::class)->group(function () {
+
+    Route::get('/akses', 'index')->name('akses');
 });
 
 

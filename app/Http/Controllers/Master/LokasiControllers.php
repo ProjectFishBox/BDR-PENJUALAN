@@ -104,13 +104,22 @@ class LokasiControllers extends Controller
      */
     public function destroy(string $id)
     {
+
+    try {
         $lokasi = Lokasi::findOrFail($id);
 
         $lokasi->delete();
 
         Alert::success('Data Lokasi berhasil dihapus.');
 
-        return redirect('/lokasi');
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
+
+    } catch (\Throwable $th) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal menghapus data.',
+        ], 500);
+    }
 
     }
 }

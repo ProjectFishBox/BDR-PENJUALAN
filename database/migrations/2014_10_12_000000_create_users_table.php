@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama', 25);
             $table->string('username', 25);
             $table->string('password', 100);
-            $table->string('jabatan', 35);
+            $table->string('jabatan', 35)->nullable();
             $table->unsignedBigInteger('id_lokasi');
             $table->unsignedBigInteger('id_akses');
             $table->enum('delete', ['0', '1'])->default('0');

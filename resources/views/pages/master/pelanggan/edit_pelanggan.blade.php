@@ -9,18 +9,18 @@
                 <form>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="nama">Nama</label>
-                            <input type="text" name="nama" class="form-control" id="nama" placeholder="Nama" value="{{ $pelanggan->nama }}">
+                            <label for="nama">Nama  <span style="color: red">*</span></label>
+                            <input type="text" name="nama" class="form-control" id="nama" placeholder="Nama" value="{{ $pelanggan->nama }}" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="telepon">Telepon</label>
-                            <input type="text" class="form-control" id="telepon" name="telepon" placeholder="telepon" value="{{ $pelanggan->telepon }}">
+                            <label for="telepon">Telepon  <span style="color: red">*</span></label>
+                            <input type="text" class="form-control" id="telepon" name="telepon" placeholder="telepon" value="{{ $pelanggan->telepon }}" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="alamat">Alamat</label>
-                            <input type="text" name="alamat" class="form-control" id="alamat" placeholder="alamat" value="{{ $pelanggan->alamat }}">
+                            <label for="alamat">Alamat  <span style="color: red">*</span></label>
+                            <input type="text" name="alamat" class="form-control" id="alamat" placeholder="alamat" value="{{ $pelanggan->alamat }}" required>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="Fax">Fax</label>
@@ -29,8 +29,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="id_kota">Kota</label>
-                            <select id="id_kota" name="id_kota" class="form-control">
+                            <label for="id_kota">Kota  <span style="color: red">*</span></label>
+                            <select id="id_kota" name="id_kota" class="form-control" required>
                                 <option value="1">Kota Makassar</option>
                             </select>
                         </div>

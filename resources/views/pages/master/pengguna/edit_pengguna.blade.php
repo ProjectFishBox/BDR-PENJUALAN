@@ -9,12 +9,12 @@
                 <form>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="nama">Nama</label>
-                            <input type="text" name="nama" class="form-control" id="nama" placeholder="Nama" value="{{$pengguna->nama}}">
+                            <label for="nama">Nama <span style="color: red">*</span></label>
+                            <input type="text" name="nama" class="form-control" id="nama" placeholder="Nama" value="{{$pengguna->nama}}" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{$pengguna->username}}">
+                            <label for="username">Username <span style="color: red">*</span></label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{$pengguna->username}}" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -29,8 +29,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="id_lokasi">Lokasi</label>
-                            <select id="id_lokasi" name="id_lokasi" class="form-control">
+                            <label for="id_lokasi">Lokasi <span style="color: red">*</span></label>
+                            <select id="id_lokasi" name="id_lokasi" class="form-control" required>
                                 @foreach ($lokasi as $l)
                                     <option value="{{ $l->id }}" {{ $l->id == auth()->user()->id_lokasi ? 'selected' : '' }}>
                                         {{ $l->nama }}
@@ -41,8 +41,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="id_akses">Akses</label>
-                            <select id="id_akses" name="id_akses" class="form-control">
+                            <label for="id_akses">Akses <span style="color: red">*</span></label>
+                            <select id="id_akses" name="id_akses" class="form-control" required>
                                 <option value="1">Admin</option>
                                 <option value="2">Super Admin</option>
 

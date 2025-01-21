@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('nama', 30);
             $table->string('alamat', 100);
             $table->unsignedBigInteger('id_kota');
-            $table->string('kode_pos', 10);
+            $table->string('kode_pos', 10)->nullable();
             $table->string('telepon', 15);
-            $table->string('fax', 15);
+            $table->string('fax', 15)->nullable();
             $table->integer('delete')->default(0);
             $table->integer('create_by');
             $table->integer('last_user');

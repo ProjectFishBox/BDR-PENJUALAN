@@ -13,6 +13,8 @@
     <!-- Core css -->
     <link href="{{ asset('assets/css/app.min.css')}}" rel="stylesheet">
 
+    @stack('css')
+
 </head>
 
 <body>
@@ -52,6 +54,8 @@
 
     <script src="{{ asset('assets/js/vendors.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.min.js') }}"></script>
+
+    @stack('js')
 
 </body>
 
