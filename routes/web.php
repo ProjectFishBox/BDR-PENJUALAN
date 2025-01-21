@@ -79,6 +79,13 @@ Route::controller(PelangganControllers::class)->group(function () {
 Route::controller(AksesControllers::class)->group(function () {
 
     Route::get('/akses', 'index')->name('akses');
+    Route::get('/tambah-akses', 'create')->name('tambah-akses');
+    Route::post('/tambah-akses', 'store')->name('store-akses');
+    Route::get('/akses-edit/{id}', 'show')->name('akses-edit');
+    Route::post('akses/{id}/update', 'update')->name('update-akses');
+    Route::get('/delete-akses/{id}' , 'destroy')->name('delete-akses');
+
+
 });
 
 
