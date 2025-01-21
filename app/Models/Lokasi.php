@@ -22,6 +22,9 @@ class Lokasi extends Model
         return $this->hasMany(User::class, 'id_lokasi');
     }
 
-
+    public function pelanggan()
+    {
+        return $this->hasMany(Pelanggan::class, 'id_lokasi');
+    }
 
 }

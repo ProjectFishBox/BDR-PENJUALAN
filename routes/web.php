@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\User\ProfileControllers;
 use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
+use App\Http\Controllers\Master\PelangganControllers;
 
 
 /*
@@ -61,6 +62,18 @@ Route::controller(PenggunaControllers::class)->group(function () {
     Route::delete('pengguna/{id}/delete', 'destroy')->name('delete-pengguna');
 
 });
+
+Route::controller(PelangganControllers::class)->group(function () {
+
+    Route::get('/pelanggan', 'index')->name('pelanggan');
+    Route::get('/tambah-pelanggan', 'create')->name('tambah-pelanggan');
+    Route::post('/tambah-pelanggan', 'store')->name('store-pelanggan');
+    Route::get('/pelanggan-edit/{id}', 'show')->name('pelanggan-edit');
+    Route::post('pelanggan/{id}/update', 'update')->name('update-pelanggan');
+    Route::delete('pelanggan/{id}/delete', 'destroy')->name('delete-pelanggan');
+
+});
+
 
 
 
