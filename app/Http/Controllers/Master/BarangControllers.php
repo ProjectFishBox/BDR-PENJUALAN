@@ -138,7 +138,9 @@ class BarangControllers extends Controller
 
         $action = "barang.import-file";
 
-        return view('components.modal.modal_import_data', compact('title', 'action'));
+        $type = 'barang';
+
+        return view('components.modal.modal_import_data', compact('title', 'action', 'type'));
     }
 
     public function downloadTamplate()
@@ -159,6 +161,7 @@ class BarangControllers extends Controller
         if (!$request->ajax()) {
             return redirect('/dashboard');
         }
+
 
         try {
             $userId = auth()->id();

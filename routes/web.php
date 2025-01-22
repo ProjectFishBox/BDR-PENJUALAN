@@ -9,7 +9,7 @@ use App\Http\Controllers\User\ProfileControllers;
 use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
 use App\Http\Controllers\Master\PelangganControllers;
-
+use App\Http\Controllers\Master\SetHargaControllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +63,6 @@ Route::controller(PenggunaControllers::class)->group(function () {
     Route::post('pengguna/{id}/update', 'update')->name('update-pengguna');
     Route::get('/delete-pengguna/{id}' , 'destroy')->name('delete-pengguna');
 
-
 });
 
 Route::controller(PelangganControllers::class)->group(function () {
@@ -86,7 +85,6 @@ Route::controller(AksesControllers::class)->group(function () {
     Route::post('akses/{id}/update', 'update')->name('update-akses');
     Route::get('/delete-akses/{id}' , 'destroy')->name('delete-akses');
 
-
 });
 
 Route::controller(BarangControllers::class)->group(function () {
@@ -98,9 +96,22 @@ Route::controller(BarangControllers::class)->group(function () {
     Route::post('barang/{id}/update', 'update')->name('update-barang');
     Route::get('/delete-barang/{id}' , 'destroy')->name('delete-barang');
     Route::get('/modal-import-barang' , 'modalImport')->name('barang.import');
-    Route::get('/download-tamplate', 'downloadTamplate')->name('barang.download-tamplate');
-    Route::post('/import-barang', 'importBarang')->name('barang.import-barang');
+    Route::get('/download-tamplate-barang', 'downloadTamplate')->name('barang.download-tamplate-barang');
+    Route::post('/import-barang', 'importBarang')->name('barang.import-file');
 
+});
+
+Route::controller(SetHargaControllers::class)->group(function () {
+
+    Route::get('/setharga', 'index')->name('setharga');
+    Route::get('/tambah-setharga', 'create')->name('tambah-setharga');
+    Route::post('/tambah-setharga', 'store')->name('store-setharga');
+    Route::get('/setharga-edit/{id}', 'show')->name('setharga-edit');
+    Route::post('setharga/{id}/update', 'update')->name('update-setharga');
+    Route::get('/delete-setharga/{id}' , 'destroy')->name('delete-setharga');
+    Route::get('/modal-import-setharga' , 'modalImport')->name('setharga.import');
+    Route::get('/download-tamplate-setharga', 'downloadTamplate')->name('setharga.download-tamplate-setharga');
+    Route::post('/import-setharga', 'importSetHarga')->name('import-setharga');
 
 });
 

@@ -3,11 +3,10 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h4>{{ $title}}</h4>
+            <h4>{{ $title }}</h4>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <!-- Tombol Tambah -->
                 <div>
-                    <a href="/tambah-barang">
+                    <a href="/tambah-setharga">
                         <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                     </a>
                     <button class="btn btn-default btn-success btn-tone  btn-import" id="btn-import" type="button" role="button">
@@ -17,11 +16,17 @@
                 </div>
 
 
-
-                <!-- Input Search -->
                 <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari Barang" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <button type="submit" class="btn btn-secondary ml-2">Cari</button>
+                    <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
+                    <select name="lokasi" class="form-control ml-2" style="width: 200px;">
+                        <option value="">Semua Lokasi</option>
+                        @foreach ($lokasiList as $lokasi)
+                            <option value="{{ $lokasi->id }}" {{ request()->get('lokasi') == $lokasi->id ? 'selected' : '' }}>
+                                {{ $lokasi->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-secondary ml-2">Filter</button>
                 </form>
 
             </div>
@@ -30,38 +35,55 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width: 5%;">No</th>
-                                <th scope="col" style="text-align: center; width: 50%;">Kode</th>
-                                <th scope="col" style="text-align: center; width: 20%;">Nama</th>
+                                <th scope="col" style="text-align: center; width: 10%;">No</th>
+                                <th scope="col" style="text-align: center; width: 80%;">Kode</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Nama</th>
                                 <th scope="col" style="text-align: center; width: 10%;">Merek</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Harga</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Untung</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Harga Jual</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Status</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Lokasi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $index => $barang)
+                            @foreach ($data as $index => $setharga)
                                 <tr>
                                     <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
                                     <td style="text-align: center;">
-                                        {{ $barang->kode_barang }}
+                                        {{ $setharga->kode_barang }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->nama }}
+                                        {{ $setharga->nama_barang }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->merek }}
+                                        {{ $setharga->merek }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->harga }}
+                                        {{ $setharga->untung }}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        {{ $setharga->harga_jual }}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div class="form-group d-flex align-items-center" style="margin: unset">
+                                            <div class="switch m-r-10">
+                                                <input type="checkbox" id="switch-1" {{ $setharga->status === 'Aktif' ? 'checked' : '' }}>
+                                                <label for="switch-1"></label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        {{ $setharga->lokasi->nama }}
                                     </td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('barang-edit', $barang->id) }}">
+                                            <a href="{{ route('setharga-edit', $setharga->id) }}">
                                                 <button class="btn btn-icon btn-primary">
                                                     <i class="anticon anticon-edit"></i>
                                                 </button>
                                             </a>
-                                            <button class="btn-barang-delete btn btn-icon btn-danger" data-id="{{ $barang->id }}"">
+                                            <button class="btn-setharga-delete btn btn-icon btn-danger" data-id="{{ $setharga->id }}"">
                                                 <i class="anticon anticon-delete"></i>
                                             </button>
                                         </div>
@@ -79,7 +101,6 @@
     <div class="modal fade bd-example-modal-import" style="display: none;" id="importmodal" tabindex="-1" role="dialog"
         aria-labelledby="importModalLabel" aria-hidden="true">
     </div>
-
 @endsection
 
 @push('js')
@@ -101,11 +122,10 @@
     }
 
 
-    $(document).on('click', '.btn-barang-delete', function(e) {
+    $(document).on('click', '.btn-setharga-delete', function(e) {
         e.preventDefault();
         let id = $(this).data('id');
-        console.log('data id delete', id);
-        let url = "/delete-barang/" + id;
+        let url = "/delete-setharga/" + id;
         Swal.fire({
             title: 'Apakah kamu ingin menghapus data ini?',
             text: "data tidak dapat dikembalikan lagi!",
@@ -124,7 +144,7 @@
                         reloadTable();
                         Swal.fire({
                             title: 'Terhapus!',
-                            text: 'Data Lokasi Telah berhasil dihapus.',
+                            text: 'Data Set Harga Telah berhasil dihapus.',
                             icon: 'success',
                             timer: 2000
 
@@ -139,7 +159,7 @@
 <script>
     $(document).on('click', '.btn-import', function(e) {
         e.preventDefault();
-        let url = "/modal-import-barang";
+        let url = "/modal-import-setharga";
         $(this).prop('disabled', true)
         $.ajax({
             url,
@@ -164,7 +184,7 @@
     $(document).on('submit', '#form-imporbarang', function(e){
         e.preventDefault();
         let data = new FormData(this);
-        const url = '/import-barang';
+        const url = '/import-setharga';
         $('#savefile').html("Uploading");
         $('#savefile').prop("disabled",true);
         console.log("berhasil ditekan");
@@ -238,7 +258,7 @@
                 $('#savefile').prop("disabled", false);
                 $('#savefile').html('Save');
             }
-        });
+        })
     })
 </script>
 
