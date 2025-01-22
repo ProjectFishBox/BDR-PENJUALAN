@@ -97,6 +97,10 @@ Route::controller(BarangControllers::class)->group(function () {
     Route::get('/barang-edit/{id}', 'show')->name('barang-edit');
     Route::post('barang/{id}/update', 'update')->name('update-barang');
     Route::get('/delete-barang/{id}' , 'destroy')->name('delete-barang');
+    Route::get('/modal-import-barang' , 'modalImport')->name('barang.import');
+    Route::get('/download-tamplate', 'downloadTamplate')->name('barang.download-tamplate');
+    Route::post('/import-barang', 'importBarang')->name('barang.import-barang');
+
 
 });
 

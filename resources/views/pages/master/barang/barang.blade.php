@@ -6,9 +6,17 @@
             <h4>{{ $title}}</h4>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <!-- Tombol Tambah -->
-                <a href="/tambah-barang">
-                    <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
-                </a>
+                <div>
+                    <a href="/tambah-barang">
+                        <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
+                    </a>
+                    <button class="btn btn-default btn-success btn-tone  btn-import" id="btn-import" type="button" role="button">
+                        <i class="far fa-file-excel mr-1"></i>
+                        <span>Import</span>
+                    </button>
+                </div>
+
+
 
                 <!-- Input Search -->
                 <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
@@ -67,6 +75,11 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade bd-example-modal-import" style="display: none;" id="importmodal" tabindex="-1" role="dialog"
+        aria-labelledby="importModalLabel" aria-hidden="true">
+    </div>
+
 @endsection
 
 @push('js')
@@ -118,6 +131,94 @@
                         })
                     }
                 })
+            }
+        })
+    })
+</script>
+
+<script>
+    $(document).on('click', '.btn-import', function(e) {
+        e.preventDefault();
+        let url = "/modal-import-barang";
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                $('#importmodal').html(data);
+                $('#importmodal').modal('show');
+                $('.btn-import').prop("disabled", false);
+                $('.btn-import').html('<i class="far fa-file-excel mr-1"></i><span>Import</span>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-import').prop('disabled', false);
+                $('.btn-import').html('<i class="far fa-file-excel mr-1"></i><span>Import</span>');
+            }
+        })
+    })
+</script>
+
+<script>
+    $(document).on('submit', '#form-imporbarang', function(e){
+        e.preventDefault();
+        let data = new FormData(this);
+        const url = '/import-barang';
+        $('#savefile').html("Uploading");
+        $('#savefile').prop("disabled",true);
+        console.log("berhasil ditekan");
+        $.ajax({
+            url,
+            data,
+            type: "POST",
+            dataType: "JSON",
+            cache:false,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                Swal.fire({
+                    title: 'Loading...',
+                    html: 'Please wait while we are uploading your file.',
+                    icon: "info",
+                    buttons: false,
+                    dangerMode: true,
+                    showConfirmButton: false
+                });
+            },
+            success: function(data)
+            {
+                if(data.code == 200)
+                {
+                    Swal.fire({
+                        title: 'Success',
+                        text: data.success,
+                        icon: "success",
+                        timer: 2000
+                    });
+                    $('#savefile').prop("disabled",false);
+                    $('#savefile').html('Save');
+                    $('#importmodal').modal('hide');
+                    reloadTable();
+                }else if(data.code == 400)
+                {
+                    Swal.fire({
+                        title: 'Failed',
+                        icon: "error",
+                        text: data.error,
+                        showConfirmButton: true,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#DD6B55",
+                    });
+                    $('#savefile').prop("disabled",false);
+                    $('#savefile').html('Save');
+                }
+            },
+            error: function(error)
+            {
+                console.error(error);
+                $('#savefile').prop("disabled",false);
+                $('#savefile').html('Save');
             }
         })
     })

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\BarangImport;
+
 
 class BarangControllers extends Controller
 {
@@ -124,4 +127,54 @@ class BarangControllers extends Controller
             ], 500);
         }
     }
+
+    public function modalImport(Request $request)
+    {
+        if (!$request->ajax()) {
+            redirect('/dashboard');
+        }
+
+        $title = "Import Barang";
+
+        $action = "barang.import-file";
+
+        return view('components.modal.modal_import_data', compact('title', 'action'));
+    }
+
+    public function downloadTamplate()
+    {
+        $filePath = public_path('import_tamplate/tamplate_barang.csv');
+        $fileName = 'template_barang_.csv';
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $fileName);
+    }
+
+
+    public function importBarang(Request $request)
+    {
+        if (!$request->ajax()) {
+            return redirect('/dashboard');
+        }
+
+        try {
+            $userId = auth()->id();
+
+            $file = $request->file('customFile');
+            $fileName = "BarangImport-" . date('YmdHis') . '-' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('files', $fileName);
+
+            Excel::import(new BarangImport($userId), $filePath);
+
+            return response()->json(['code' => 200, 'success' => 'Data berhasil diimpor!']);
+        } catch (\Exception $e) {
+            return response()->json(['code' => 400, 'error' => $e->getMessage()]);
+        }
+    }
+
+
+
 }
