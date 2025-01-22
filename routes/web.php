@@ -10,6 +10,7 @@ use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
 use App\Http\Controllers\Master\PelangganControllers;
 use App\Http\Controllers\Master\SetHargaControllers;
+use App\Http\Controllers\Transaksi\PembelianControllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +113,12 @@ Route::controller(SetHargaControllers::class)->group(function () {
     Route::get('/modal-import-setharga' , 'modalImport')->name('setharga.import');
     Route::get('/download-tamplate-setharga', 'downloadTamplate')->name('setharga.download-tamplate-setharga');
     Route::post('/import-setharga', 'importSetHarga')->name('import-setharga');
+
+});
+
+Route::controller(PembelianControllers::class)->group(function () {
+
+    Route::get('/pembelian', 'index')->name('pembelian');
 
 });
 

@@ -32,4 +32,9 @@ class Lokasi extends Model
         return $this->hasMany(SetHarga::class, 'id_lokasi');
     }
 
+    public function pembelian()
+    {
+        return $this->hasMany(Pembelian::class, 'id_lokasi');
+    }
+
 }
