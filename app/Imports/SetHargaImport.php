@@ -11,6 +11,8 @@ class SetHargaImport implements ToCollection
 {
     public function collection(Collection $rows)
     {
+        $errors = [];
+
         foreach ($rows as $index => $row) {
             // Skip header row
             if ($index === 0) {
@@ -18,6 +20,11 @@ class SetHargaImport implements ToCollection
             }
 
             $barang = Barang::where('nama', $row[0])->first();
+
+            if (!$barang) {
+                $errors[] = "Barang dengan nama {$row[0]} tidak ditemukan.";
+                break;
+            }
 
             if ($barang) {
                 SetHarga::create([
@@ -32,6 +39,13 @@ class SetHargaImport implements ToCollection
                     'status'     => 'Aktif',
                     'create_by'  => auth()->id(),
                     'last_user'  => auth()->id(),
+                ]);
+            }
+
+            if (!empty($errors)) {
+                return response()->json([
+                    'code' => 400,
+                    'error' => implode('<br>', $errors), // Gabungkan semua error dalam satu string
                 ]);
             }
         }
