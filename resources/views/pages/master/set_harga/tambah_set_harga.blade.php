@@ -74,8 +74,6 @@
             const kodeBarang = selectedOption.getAttribute('data-kode');
             const  merek= selectedOption.getAttribute('data-merek');
 
-
-            // Isi input harga dan kode_barang
             hargaInput.value = harga ? harga : '';
             kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
             merekInput.value = merek  ? merek  : '';
@@ -83,4 +81,25 @@
         });
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const hargaInput = document.getElementById('harga');
+        const untungInput = document.getElementById('untung');
+        const hargaJualInput = document.getElementById('harga_jual');
+
+        function hitungHargaJual() {
+
+            const harga = parseFloat(hargaInput.value) || 0;
+            const untung = parseFloat(untungInput.value) || 0;
+
+            const hargaJual = harga + untung;
+            hargaJualInput.value = hargaJual;
+        }
+
+        hargaInput.addEventListener('input', hitungHargaJual);
+        untungInput.addEventListener('input', hitungHargaJual);
+    });
+</script>
+
 @endpush
