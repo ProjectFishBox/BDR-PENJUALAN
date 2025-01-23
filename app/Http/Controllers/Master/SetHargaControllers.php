@@ -137,6 +137,11 @@ class SetHargaControllers extends Controller
 
         $getNamaBarang = Barang::findOrFail($request->nama_barang);
 
+        $harga = str_replace('.', '', $request->harga);
+        $untung = str_replace('.', '', $request->untung);
+        $harga_jual = str_replace('.', '', $request->harga_jual);
+
+
         $validatedData['nama_barang'] = $getNamaBarang->nama;
 
         $status = 'Tidak Aktif';
@@ -154,9 +159,9 @@ class SetHargaControllers extends Controller
             'nama_barang' => $getNamaBarang->nama,
             'kode_barang' => $request->kode_barang,
             'merek' => $request->merek,
-            'harga' => $request->harga,
-            'untung' => $request->untung,
-            'harga_jual' => $request->harga_jual,
+            'harga' => $harga,
+            'untung' => $untung,
+            'harga_jual' => $harga_jual,
             'status' => $status,
             'create_by' => auth()->id(),
             'last_user' => auth()->id(),

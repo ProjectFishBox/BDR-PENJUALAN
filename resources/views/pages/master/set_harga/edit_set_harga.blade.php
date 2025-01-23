@@ -12,19 +12,19 @@
                         <select id="nama_barang" class="form-control" name="nama_barang" required>
                             <option value="">Pilih Barang</option>
                             @foreach ($barang as $b)
-                                <option value="{{ $b->id}}" {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>{{ $b->nama}}</option>
+                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>{{ $b->nama}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="harga">Harga <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="harga" placeholder="Harga" name="harga" value="{{ $setharga->harga}}" required>
+                        <input type="text" class="form-control" id="harga" readonly placeholder="Harga" name="harga" value="{{ $setharga->harga}}" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="kode_barang">Kode Barang</label>
-                        <input type="text" class="form-control" id="kode_barang" name="kode_barang" value="{{ $setharga->kode_barang}}">
+                        <input type="text" class="form-control" id="kode_barang" readonly name="kode_barang" value="{{ $setharga->kode_barang}}">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="untung">Untung <span style="color: red">*</span></label>
@@ -34,7 +34,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="merek">Merek <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="merek" name="merek" value="{{ $setharga->merek}}">
+                        <input type="text" class="form-control" id="merek" readonly name="merek" value="{{ $setharga->merek}}">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="harga_jual">Harga Jual <span style="color: red">*</span></label>
@@ -58,3 +58,82 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const namaBarangSelect = document.getElementById('nama_barang');
+        const hargaInput = document.getElementById('harga');
+        const kodeBarangInput = document.getElementById('kode_barang');
+        const merekInput = document.getElementById('merek');
+
+
+        namaBarangSelect.addEventListener('change', function () {
+            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+            const harga = selectedOption.getAttribute('data-harga');
+            const kodeBarang = selectedOption.getAttribute('data-kode');
+            const  merek= selectedOption.getAttribute('data-merek');
+
+            hargaInput.value = harga ? harga : '';
+            kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
+            merekInput.value = merek  ? merek  : '';
+
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const hargaInput = document.getElementById('harga');
+        const untungInput = document.getElementById('untung');
+        const hargaJualInput = document.getElementById('harga_jual');
+
+        function hitungHargaJual() {
+
+            const harga = parseFloat(hargaInput.value) || 0;
+            const untung = parseFloat(untungInput.value) || 0;
+
+            const hargaJual = harga + untung;
+            hargaJualInput.value = hargaJual;
+        }
+
+        hargaInput.addEventListener('input', hitungHargaJual);
+        untungInput.addEventListener('input', hitungHargaJual);
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const untungInput = document.getElementById('untung');
+        const hargaInput = document.getElementById('harga');
+        const hargaJualInput = document.getElementById('harga_jual');
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+        }
+
+        function removeThousandSeparator(value) {
+            return value.replace(/\./g, '');
+        }
+        [hargaInput, untungInput].forEach(input => {
+            input.addEventListener('input', function () {
+                const rawValue = removeThousandSeparator(input.value);
+                const formattedValue = formatNumber(rawValue);
+                input.value = formattedValue;
+            });
+        });
+
+
+        function hitungHargaJual() {
+            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
+            const untung = parseFloat(removeThousandSeparator(untungInput.value)) || 0;
+            const hargaJual = harga + untung;
+            hargaJualInput.value = formatNumber(hargaJual);
+        }
+
+        hargaInput.addEventListener('input', hitungHargaJual);
+        untungInput.addEventListener('input', hitungHargaJual);
+    });
+</script>
+
+@endpush
