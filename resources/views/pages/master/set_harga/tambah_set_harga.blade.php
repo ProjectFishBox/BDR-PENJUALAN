@@ -102,4 +102,40 @@
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const untungInput = document.getElementById('untung');
+        const hargaInput = document.getElementById('harga');
+        const hargaJualInput = document.getElementById('harga_jual');
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+        }
+
+        function removeThousandSeparator(value) {
+            return value.replace(/\./g, '');
+        }
+        [hargaInput, untungInput].forEach(input => {
+            input.addEventListener('input', function () {
+                const rawValue = removeThousandSeparator(input.value);
+                const formattedValue = formatNumber(rawValue);
+                input.value = formattedValue;
+            });
+        });
+
+
+        function hitungHargaJual() {
+            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
+            const untung = parseFloat(removeThousandSeparator(untungInput.value)) || 0;
+            const hargaJual = harga + untung;
+            hargaJualInput.value = formatNumber(hargaJual);
+        }
+
+        hargaInput.addEventListener('input', hitungHargaJual);
+        untungInput.addEventListener('input', hitungHargaJual);
+    });
+</script>
+
+
+
 @endpush

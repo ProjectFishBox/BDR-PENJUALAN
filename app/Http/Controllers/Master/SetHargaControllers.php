@@ -61,23 +61,22 @@ class SetHargaControllers extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
-
         $request->validate([
             'nama_barang' => 'required|max:50',
-            'harga' => 'required|max:50',
+            'harga' => 'required',
             'kode_barang' => 'nullable',
             'untung' => 'required',
             'merek' => 'required|max:50',
-            'harga_jual' => 'required|max:50'
+            'harga_jual' => 'required'
         ]);
 
         $getNamaBarang = Barang::findOrFail($request->nama_barang);
 
-        $status = 'Tidak Aktif';
-        if($request->status === 'on'){
-            $status = 'Aktif';
-        }
+        $harga = str_replace('.', '', $request->harga);
+        $untung = str_replace('.', '', $request->untung);
+        $harga_jual = str_replace('.', '', $request->harga_jual);
+        $status = $request->status === 'on' ? 'Aktif' : 'Tidak Aktif';
+
 
         SetHarga::create([
             'id_lokasi' => auth()->user()->id_lokasi,
@@ -85,9 +84,9 @@ class SetHargaControllers extends Controller
             'nama_barang' => $getNamaBarang->nama,
             'kode_barang' => $request->kode_barang,
             'merek' => $request->merek,
-            'harga' => $request->harga,
-            'untung' => $request->untung,
-            'harga_jual' => $request->harga_jual,
+            'harga' => (int) $harga,
+            'untung' => (int) $untung,
+            'harga_jual' => (int) $harga_jual,
             'status' => $status,
             'create_by' => auth()->id(),
             'last_user' => auth()->id(),
@@ -96,6 +95,7 @@ class SetHargaControllers extends Controller
         Alert::success('Berhasil Menambahkan data Set Harga.');
         return redirect('/setharga');
     }
+
 
     /**
      * Display the specified resource.
