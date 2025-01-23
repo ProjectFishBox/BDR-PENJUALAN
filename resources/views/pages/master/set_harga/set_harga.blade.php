@@ -235,29 +235,16 @@
                 }
             },
             error: function(error) {
-                let errorMessage = 'An error occurred. Please try again.';
-                if (error.responseJSON) {
-                    // Handle detailed error message
-                    errorMessage = error.responseJSON.message;
-                    if (error.responseJSON.errors) {
-                        const errorDetails = Object.values(error.responseJSON.errors)
-                            .flat()
-                            .join(', ');
-                        errorMessage += `: ${errorDetails}`;
-                    }
-                }
-                Swal.fire({
-                    title: 'Failed',
-                    icon: "error",
-                    text: errorMessage,
-                    showConfirmButton: true,
-                    confirmButtonText: "Ok",
-                    confirmButtonColor: "#DD6B55",
-                });
-                console.error(error);
-                $('#savefile').prop("disabled", false);
-                $('#savefile').html('Save');
-            }
+            console.log(error);
+            Swal.fire({
+                title: 'Failed',
+                icon: "error",
+                text: 'Terjadi kesalahan pada server.',
+                showConfirmButton: true,
+                confirmButtonText: "Ok",
+                confirmButtonColor: "#DD6B55",
+            });
+        }
         })
     })
 </script>

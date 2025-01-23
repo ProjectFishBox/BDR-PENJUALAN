@@ -12,6 +12,8 @@ use App\Models\Lokasi;
 
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\ValidationException;
+
 
 class SetHargaControllers extends Controller
 {
@@ -205,7 +207,7 @@ class SetHargaControllers extends Controller
 
     public function downloadTamplate()
     {
-        $filePath = public_path('import_tamplate/tamplate_setharga.csv');
+        $filePath = public_path('import_tamplate/template_setharga.csv');
         $fileName = 'template_setharga_.csv';
 
         if (!file_exists($filePath)) {
@@ -217,17 +219,22 @@ class SetHargaControllers extends Controller
 
     public function importSetHarga(Request $request)
     {
-
         try {
             Excel::import(new SetHargaImport, $request->file('customFile'));
 
-            Alert::success('Berhasil', 'Data berhasil diimport.');
+            return response()->json(['code' => 200, 'success' => 'Data berhasil diimport!']);
 
-            return response()->json(['code' => 200, 'success' => 'Data berhasil diimpor!']);
         } catch (\Exception $e) {
-            Alert::error('Gagal', 'Terjadi kesalahan saat mengimport data: ' . $e->getMessage());
-        }
 
-        return redirect()->back();
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                $errors = $e->errors()['import_errors'] ?? ['Terjadi kesalahan yang tidak diketahui.'];
+                return response()->json(['code' => 400, 'error' => $errors]);
+            }
+
+            return response()->json(['code' => 400, 'error' => 'Terjadi kesalahan saat memproses file.']);
+        }
     }
+
+
+
 }

@@ -15,7 +15,7 @@
                     </div>
                     @switch($type)
                         @case('setharga')
-                            <a href="{{route('setharga.download-tamplate-setharga')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>
+                            <a href="{{route('download-tamplate-setharga')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>
                             @break
                         @case('barang')
                             <a href="{{route('barang.download-tamplate-barang')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>

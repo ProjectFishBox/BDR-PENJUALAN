@@ -111,7 +111,7 @@ Route::controller(SetHargaControllers::class)->group(function () {
     Route::post('setharga/{id}/update', 'update')->name('update-setharga');
     Route::get('/delete-setharga/{id}' , 'destroy')->name('delete-setharga');
     Route::get('/modal-import-setharga' , 'modalImport')->name('setharga.import');
-    Route::get('/download-tamplate-setharga', 'downloadTamplate')->name('setharga.download-tamplate-setharga');
+    Route::get('/download-tamplate-setharga', 'downloadTamplate')->name('download-tamplate-setharga');
     Route::post('/import-setharga', 'importSetHarga')->name('import-setharga');
 
 });
