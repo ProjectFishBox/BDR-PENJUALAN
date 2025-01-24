@@ -34,7 +34,9 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="merek">Merek <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="merek" readonly name="merek" value="{{ $setharga->merek}}">
+                        <select id="merek" class="form-control" name="merek" required>
+                            <option value="">Pilih Barang</option>
+                        </select>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="harga_jual">Harga Jual <span style="color: red">*</span></label>
@@ -50,7 +52,7 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <a href="/pengguna" class="btn btn-danger mr-3">Batal</a>
+                        <a href="/setharga" class="btn btn-danger mr-3">Batal</a>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
@@ -60,53 +62,19 @@
 @endsection
 
 @push('js')
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const namaBarangSelect = document.getElementById('nama_barang');
         const hargaInput = document.getElementById('harga');
         const kodeBarangInput = document.getElementById('kode_barang');
         const merekInput = document.getElementById('merek');
-
-
-        namaBarangSelect.addEventListener('change', function () {
-            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            const harga = selectedOption.getAttribute('data-harga');
-            const kodeBarang = selectedOption.getAttribute('data-kode');
-            const  merek= selectedOption.getAttribute('data-merek');
-
-            hargaInput.value = harga ? harga : '';
-            kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
-            merekInput.value = merek  ? merek  : '';
-
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const hargaInput = document.getElementById('harga');
         const untungInput = document.getElementById('untung');
         const hargaJualInput = document.getElementById('harga_jual');
+        const merekSelect = document.getElementById('merek');
 
-        function hitungHargaJual() {
-
-            const harga = parseFloat(hargaInput.value) || 0;
-            const untung = parseFloat(untungInput.value) || 0;
-
-            const hargaJual = harga + untung;
-            hargaJualInput.value = hargaJual;
-        }
-
-        hargaInput.addEventListener('input', hitungHargaJual);
-        untungInput.addEventListener('input', hitungHargaJual);
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const untungInput = document.getElementById('untung');
-        const hargaInput = document.getElementById('harga');
-        const hargaJualInput = document.getElementById('harga_jual');
+        const semuaOption = [...namaBarangSelect.options];
+        const selectedMerek = '{{ $setharga->merek }}';
 
         function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
@@ -115,14 +83,6 @@
         function removeThousandSeparator(value) {
             return value.replace(/\./g, '');
         }
-        [hargaInput, untungInput].forEach(input => {
-            input.addEventListener('input', function () {
-                const rawValue = removeThousandSeparator(input.value);
-                const formattedValue = formatNumber(rawValue);
-                input.value = formattedValue;
-            });
-        });
-
 
         function hitungHargaJual() {
             const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
@@ -131,9 +91,69 @@
             hargaJualInput.value = formatNumber(hargaJual);
         }
 
-        hargaInput.addEventListener('input', hitungHargaJual);
-        untungInput.addEventListener('input', hitungHargaJual);
+        function formatInputsOnLoad() {
+            if (hargaInput.value) {
+                hargaInput.value = formatNumber(removeThousandSeparator(hargaInput.value));
+            }
+            if (untungInput.value) {
+                untungInput.value = formatNumber(removeThousandSeparator(untungInput.value));
+            }
+            if (hargaJualInput.value) {
+                hargaJualInput.value = formatNumber(removeThousandSeparator(hargaJualInput.value));
+            }
+        }
+
+        function isiMerek(kodeBarang, merekTerpilih = null) {
+            merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+            semuaOption.forEach(option => {
+                if (option.getAttribute('data-kode') === kodeBarang) {
+                    const merek = option.getAttribute('data-merek');
+                    const merekOption = document.createElement('option');
+                    merekOption.value = merek;
+                    merekOption.textContent = merek;
+
+                    if (merek === merekTerpilih) {
+                        merekOption.selected = true;
+                    }
+
+                    merekSelect.appendChild(merekOption);
+                }
+            });
+        }
+
+        namaBarangSelect.addEventListener('change', function () {
+            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+            const harga = selectedOption.getAttribute('data-harga');
+            const kodeBarang = selectedOption.getAttribute('data-kode');
+            const merek = selectedOption.getAttribute('data-merek');
+
+            hargaInput.value = harga ? formatNumber(harga) : '';
+            kodeBarangInput.value = kodeBarang ? kodeBarang : '';
+            merekInput.value = merek ? merek : '';
+
+            untungInput.value = '0';
+            hargaJualInput.value = '0';
+            isiMerek(kodeBarang);
+        });
+
+        [hargaInput, untungInput].forEach(input => {
+            input.addEventListener('input', function () {
+                const rawValue = removeThousandSeparator(input.value);
+                const formattedValue = formatNumber(rawValue);
+                input.value = formattedValue;
+                hitungHargaJual();
+            });
+        });
+
+        formatInputsOnLoad();
+        const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+        if (selectedOption) {
+            const kodeBarang = selectedOption.getAttribute('data-kode');
+            isiMerek(kodeBarang, selectedMerek);
+        }
     });
 </script>
+
+
 
 @endpush
