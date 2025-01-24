@@ -7,12 +7,12 @@
         <div class="modal-body">
             <div class="d-flex justify-content-start mb-3">
                 <div class="mr-5">
-                    <h5 style="font-weight: lighter">Tanggal : {{ $pembelian->tanggal}}</h5>
-                    <h5 style="font-weight: lighter">No Nota: {{ $pembelian->no_nota}}</h5>
+                    <h5 style="font-weight: lighter">Tanggal   : {{ $pembelian->tanggal}}</h5>
+                    <h5 style="font-weight: lighter">No Nota   : {{ $pembelian->no_nota}}</h5>
                 </div>
                 <div>
                     <h5 style="font-weight: lighter">Kontainer : {{ $pembelian->kontainer}}</h5>
-                    <h5 style="font-weight: lighter">Lokasi: {{$pembelian->id_lokasi}}</h5>
+                    <h5 style="font-weight: lighter">Lokasi    : {{$lokasi->nama}}</h5>
                 </div>
             </div>
 

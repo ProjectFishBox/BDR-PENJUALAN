@@ -123,6 +123,10 @@ Route::controller(PembelianControllers::class)->group(function () {
     Route::post('/tambah-pembelian', 'store')->name('store-pembelian');
     Route::get('/pembelian-edit/{id}', 'show')->name('pembelian-edit');
     Route::get('/modal-detail-pembelian' , 'modalDetail')->name('pembelian.detail');
+    Route::get('/modal-import-pembelian' , 'modalImport')->name('pembelian.import');
+    Route::post('/validasi-detail-pembelian', 'validationDetail')->name('validasi-detail-pembelian');
+
+
 });
 
 

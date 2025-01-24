@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transaksi;
 use App\Http\Controllers\Controller;
 use App\Models\Pembelian;
 use App\Models\Barang;
+use App\Models\Lokasi;
 use App\Models\PembelianDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -141,15 +142,91 @@ class PembelianControllers extends Controller
             redirect('/dashboard');
         }
 
+        $title = "Detail Pembelian";
+
         $id = $request->input('id');
 
+
         $pembelian = Pembelian::findOrFail($id);
-        $detailPembelian = PembelianDetail::where('id_pembelian', $id)->first()->get();
+        $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
 
         $totalPembelian = $detailPembelian->sum('subtotal');
 
-        $title = "Detail Pembelian";
+        $lokasi = Lokasi::findOrFail($pembelian->id_lokasi);
 
-        return view('components.modal.modal_detail_data_pembelian', compact('title', 'pembelian', 'detailPembelian', 'totalPembelian'));
+
+        return view('components.modal.modal_detail_data_pembelian', compact('title', 'pembelian', 'detailPembelian', 'totalPembelian', 'lokasi'));
     }
+
+    public function modalImport(Request $request)
+    {
+        if (!$request->ajax()) {
+            return redirect('/dashboard');
+        }
+
+        $title = "Import Pembelian Detail";
+
+        $action = "import-detailpembelian";
+
+        $type = 'detailPembelian';
+
+        return view('components.modal.modal_import_data', compact('title', 'action', 'type'));
+    }
+
+
+    public function validationDetail(Request $request)
+    {
+
+        $items = $request->input('items');
+
+        if (empty($items)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tidak ada data yang dikirim.'
+            ], 400);
+        }
+
+        $validatedData = [];
+        $missingItems = [];
+
+        foreach ($items as $item) {
+
+            if (empty($item['kode_barang'])) {
+                continue;
+            }
+
+            $barang = Barang::where('kode_barang', $item['kode_barang'])->where('merek', $item['merek'])->first();
+
+            if ($barang) {
+
+                $validatedData[] = [
+                    'id_barang' => $barang->id,
+                    'kode_barang' => $barang->kode_barang,
+                    'nama_barang' => $barang->nama,
+                    'merek' => $barang->merek,
+                    'harga' => $barang->harga,
+                    'jumlah' => $item['jumlah'],
+                    'subtotal' => $barang->harga * $item['jumlah'],
+                ];
+            } else {
+                $missingItems[] = $item['kode_barang'];
+            }
+        }
+
+        if (!empty($missingItems)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data barang berikut tidak ditemukan: ' . implode(', ', $missingItems),
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $validatedData,
+        ]);
+    }
+
+
+
+
 }
