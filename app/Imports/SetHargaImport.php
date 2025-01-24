@@ -44,13 +44,17 @@ class SetHargaImport implements ToCollection
     private function processRow(array $row, int $lineNumber, array &$errors): void
     {
         $namaBarang = $row[0] ?? null;
+        $merek = $row[1] ?? null;
 
         if (empty($namaBarang) || !is_string($namaBarang)) {
             $errors[] = "Nama barang tidak valid pada baris ke {$lineNumber}.";
             return;
         }
 
-        $barang = Barang::where('nama', $namaBarang)->first();
+        // $barang = Barang::where('kode_barang', $namaBarang)->first();
+        $barang = Barang::where('kode_barang', $namaBarang)
+                ->where('merek', $merek)
+                ->first();
 
         if ($barang) {
             $this->createSetHarga($row, $barang);
@@ -61,14 +65,19 @@ class SetHargaImport implements ToCollection
 
     private function createSetHarga(array $row, Barang $barang): void
     {
+
+        $harga = $barang->harga;
+        $hargaJual = $row[2] ?? 0;
+        $untung = max(0, $hargaJual - $harga);
+
         SetHarga::create([
             'id_lokasi'  => auth()->user()->id_lokasi,
             'id_barang'  => $barang->id,
-            'nama_barang'=> $row[0],
-            'kode_barang'=> $barang->kode_barang ?? null,
-            'merek'      => $barang->merek,
+            'nama_barang'=> $barang->nama,
+            'kode_barang'=> $row[0] ?? null,
+            'merek'      => $row[1] ?? 'merek salah',
             'harga'      => $barang->harga,
-            'untung'     => $row[1] ?? 0,
+            'untung'     => $untung,
             'harga_jual' => $row[2] ?? 0,
             'status'     => $row[3],
             'create_by'  => auth()->id(),
