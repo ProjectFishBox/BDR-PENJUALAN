@@ -119,7 +119,10 @@ Route::controller(SetHargaControllers::class)->group(function () {
 Route::controller(PembelianControllers::class)->group(function () {
 
     Route::get('/pembelian', 'index')->name('pembelian');
-
+    Route::get('/tambah-pembelian', 'create')->name('tambah-pembelian');
+    Route::post('/tambah-pembelian', 'store')->name('store-pembelian');
+    Route::get('/pembelian-edit/{id}', 'show')->name('pembelian-edit');
+    Route::get('/modal-detail-pembelian' , 'modalDetail')->name('pembelian.detail');
 });
 
 

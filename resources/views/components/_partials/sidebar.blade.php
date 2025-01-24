@@ -43,26 +43,41 @@
             </li>
             <li class="nav-item dropdown">
                 <a href="/pembelian">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-dollar"></i>
+                    </span>
                     <span class="title">Pembelian</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="/pengeluaran">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-shopping-cart"></i>
+                    </span>
                     <span class="title">Pengeluaran</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="/penjualan">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-shop"></i>
+                    </span>
                     <span class="title">Penjualan</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a href="/gabungkan">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-branches"></i>
+                    </span>
                     <span class="title">Gabungkan</span>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a class="dropdown-toggle" href="javascript:void(0);">
+                    <span class="icon-holder">
+                        <i class="anticon anticon-read"></i>
+                    </span>
                     <span class="title">Laporan</span>
                     <span class="arrow">
                         <i class="arrow-icon"></i>

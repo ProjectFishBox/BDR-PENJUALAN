@@ -11,6 +11,16 @@ class Pembelian extends Model
 
     protected $table = 'pembelian';
 
+    protected $fillable = [
+        'tanggal',
+        'no_nota',
+        'kontainer',
+        'bayar',
+        'id_lokasi',
+        'create_by',
+        'last_user'
+    ];
+
 
     public function lokasi()
     {

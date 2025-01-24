@@ -4,7 +4,12 @@ namespace App\Http\Controllers\Transaksi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pembelian;
+use App\Models\Barang;
+use App\Models\PembelianDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PembelianControllers extends Controller
 {
@@ -28,7 +33,7 @@ class PembelianControllers extends Controller
         ->with('lokasi')
         ->get();
 
-        return view('pages.pembelian.pembelian', compact('title','pembelian', 'data'));
+        return view('pages.transaksi.pembelian.pembelian', compact('title','pembelian', 'data'));
     }
 
     /**
@@ -36,7 +41,11 @@ class PembelianControllers extends Controller
      */
     public function create()
     {
-        //
+        $title = 'Tambah Pembelian';
+
+        $barang = Barang::all();
+
+        return view('pages.transaksi.pembelian.tambah_pembelian', compact('title', 'barang'));
     }
 
     /**
@@ -44,7 +53,46 @@ class PembelianControllers extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validatedData = $request->validate([
+            'tanggal' => 'required|max:25',
+            'no_nota' => 'required|max:25',
+            'kontainer' => 'required|min:3',
+            'bayar' => 'nullable',
+        ]);
+
+        $validatedData['tanggal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+
+        $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
+        $validatedData['create_by'] = auth()->id();
+        $validatedData['last_user'] = auth()->id();
+
+        $pembelian = Pembelian::create($validatedData);
+
+        $tableData = $request->input('table_data');
+
+
+
+        foreach ($tableData as $data) {
+            DB::table('pembelian_detail')->insert([
+                'id_pembelian' => $pembelian->id,
+                'id_barang' => $data['id_barang'],
+                'nama_barang' => $data['nama_barang'],
+                'merek' => $data['merek'],
+                'harga' => $data['harga'],
+                'jumlah' => $data['jumlah'],
+                'subtotal' => $data['subtotal'],
+                'create_by' => auth()->id(),
+                'last_user' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        Alert::success('Berhasil Menambahkan data Pembelian.');
+
+        return redirect('/pembelian');
+
     }
 
     /**
@@ -52,7 +100,15 @@ class PembelianControllers extends Controller
      */
     public function show(string $id)
     {
-        //
+        $title = 'Edit Pembelian';
+
+        $barang = Barang::all();
+
+        $pembelian = Pembelian::findOrFail($id);
+
+        $detailPembelian = PembelianDetail::where('id_pembelian', $pembelian->id)->get();
+
+        return view('pages.transaksi.pembelian.edit_pembelian', compact('title', 'barang', 'pembelian', 'detailPembelian'));
     }
 
     /**
@@ -77,5 +133,23 @@ class PembelianControllers extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function modalDetail(Request $request)
+    {
+        if (!$request->ajax()) {
+            redirect('/dashboard');
+        }
+
+        $id = $request->input('id');
+
+        $pembelian = Pembelian::findOrFail($id);
+        $detailPembelian = PembelianDetail::where('id_pembelian', $id)->first()->get();
+
+        $totalPembelian = $detailPembelian->sum('subtotal');
+
+        $title = "Detail Pembelian";
+
+        return view('components.modal.modal_detail_data_pembelian', compact('title', 'pembelian', 'detailPembelian', 'totalPembelian'));
     }
 }

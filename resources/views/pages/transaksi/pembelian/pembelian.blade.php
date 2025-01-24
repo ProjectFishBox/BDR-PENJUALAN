@@ -7,7 +7,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <!-- Tombol Tambah -->
                 <div>
-                    <a href="/tambah-pembeian">
+                    <a href="/tambah-pembelian">
                         <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                     </a>
                 </div>
@@ -37,35 +37,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $index => $barang)
+                            @foreach ($data as $index => $pembelian)
                                 <tr>
                                     <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
                                     <td style="text-align: center;">
-                                        {{ $barang->tanggal }}
+                                        {{ $pembelian->tanggal }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->no_nota }}
+                                        {{ $pembelian->no_nota }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->kontainer }}
+                                        {{ $pembelian->kontainer }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->total }}
+                                        {{ $pembelian->bayar }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->lokasi->nama }}
+                                        {{ $pembelian->lokasi->nama }}
                                     </td>
                                     <td style="text-align: center;">
-                                        <button class="btn btn-primary">Detail</button>
+                                        <button class="btn btn-primary btn-detail" id="btn-detail" data-id={{ $pembelian->id }}>Detail</button>
                                     </td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('barang-edit', $barang->id) }}">
+                                            <a href="{{ route('pembelian-edit', $pembelian->id) }}">
                                                 <button class="btn btn-icon btn-primary">
                                                     <i class="anticon anticon-edit"></i>
                                                 </button>
                                             </a>
-                                            <button class="btn-barang-delete btn btn-icon btn-danger" data-id="{{ $barang->id }}"">
+                                            <button class="btn-pembelian-delete btn btn-icon btn-danger" data-id="{{ $pembelian->id }}"">
                                                 <i class="anticon anticon-delete"></i>
                                             </button>
                                         </div>
@@ -78,6 +78,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade bd-example-modal" style="display: none;" id="detailpembelianmodal" tabindex="-1" role="dialog"
+        aria-labelledby="importModalLabel" aria-hidden="true">
     </div>
 
 @endsection
@@ -241,5 +245,34 @@
         });
     })
 </script> --}}
+
+<script>
+    $(document).on('click', '.btn-detail', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        console.log('data id',id)
+        let url = "/modal-detail-pembelian";
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                $('#detailpembelianmodal').html(data);
+                $('#detailpembelianmodal').modal('show');
+                $('.btn-detail').prop("disabled", false);
+                $('.btn-detail').html('<span>Detail</span>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-detail').prop('disabled', false);
+                $('.btn-detail').html('</i><span>Detail</span>');
+            }
+        })
+    })
+</script>
 
 @endpush
