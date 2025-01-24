@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <a href="/lokasi" class="btn btn-danger mr-3">Batal</a>
+                        <a href="/barang" class="btn btn-danger mr-3">Batal</a>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
@@ -32,3 +32,27 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const hargaInput = document.getElementById('harga');
+
+        function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+        }
+
+        function removeThousandSeparator(value) {
+            return value.replace(/\./g, '');
+        }
+        [hargaInput].forEach(input => {
+            input.addEventListener('input', function () {
+                const rawValue = removeThousandSeparator(input.value);
+                const formattedValue = formatNumber(rawValue);
+                input.value = formattedValue;
+            });
+        });
+    });
+</script>
+
+@endpush

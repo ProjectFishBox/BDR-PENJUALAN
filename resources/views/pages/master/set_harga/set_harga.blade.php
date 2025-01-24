@@ -60,10 +60,10 @@
                                         {{ $setharga->merek }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $setharga->untung }}
+                                        {{ number_format($setharga->untung, 0, ',', '.') }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $setharga->harga_jual }}
+                                        {{ number_format($setharga->harga_jual, 0, ',', '.') }}
                                     </td>
                                     <td style="text-align: center;">
                                         <div class="form-group d-flex align-items-center" style="margin: unset">

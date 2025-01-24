@@ -52,7 +52,7 @@
                                         {{ $barang->merek }}
                                     </td>
                                     <td style="text-align: center;">
-                                        {{ $barang->harga }}
+                                        {{ number_format($barang->harga, 0, ',', '.') }}
                                     </td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
@@ -124,7 +124,7 @@
                         reloadTable();
                         Swal.fire({
                             title: 'Terhapus!',
-                            text: 'Data Lokasi Telah berhasil dihapus.',
+                            text: 'Data Barang Telah berhasil dihapus.',
                             icon: 'success',
                             timer: 2000
 

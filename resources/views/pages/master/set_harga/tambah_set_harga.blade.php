@@ -18,7 +18,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="harga">Harga <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="harga" readonly placeholder="Harga" name="harga" required>
+                        <input type="text" class="form-control" id="harga"  placeholder="Harga" name="harga" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -34,7 +34,9 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="merek">Merek <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="merek" name="merek" readonly >
+                        <select id="merek" class="form-control" name="merek" required>
+                            <option value="">Pilih Barang</option>
+                        </select>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="harga_jual">Harga Jual <span style="color: red">*</span></label>
@@ -67,6 +69,9 @@
         const kodeBarangInput = document.getElementById('kode_barang');
         const merekInput = document.getElementById('merek');
 
+        function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+        }
 
         namaBarangSelect.addEventListener('change', function () {
             const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
@@ -74,9 +79,11 @@
             const kodeBarang = selectedOption.getAttribute('data-kode');
             const  merek= selectedOption.getAttribute('data-merek');
 
-            hargaInput.value = harga ? harga : '';
+            hargaInput.value = harga ? formatNumber(harga) : '';
             kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
             merekInput.value = merek  ? merek  : '';
+
+            merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
 
         });
     });
@@ -134,6 +141,32 @@
         hargaInput.addEventListener('input', hitungHargaJual);
         untungInput.addEventListener('input', hitungHargaJual);
     });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const namaBarangSelect = document.getElementById('nama_barang');
+    const merekSelect = document.getElementById('merek');
+    const semuaOption = [...namaBarangSelect.options];
+
+    namaBarangSelect.addEventListener('change', function () {
+        const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+        const kodeBarang = selectedOption.getAttribute('data-kode');
+
+        merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+
+        semuaOption.forEach(option => {
+            if (option.getAttribute('data-kode') === kodeBarang) {
+                const merek = option.getAttribute('data-merek');
+                const merekOption = document.createElement('option');
+                merekOption.value = merek;
+                merekOption.textContent = merek;
+                merekSelect.appendChild(merekOption);
+            }
+        });
+    });
+});
+
 </script>
 
 @endpush

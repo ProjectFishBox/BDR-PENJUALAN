@@ -57,7 +57,7 @@ class PembelianControllers extends Controller
         $validatedData = $request->validate([
             'tanggal' => 'required|max:25',
             'no_nota' => 'required|max:25',
-            'kontainer' => 'required|min:3',
+            'kontainer' => 'required',
             'bayar' => 'nullable',
         ]);
 

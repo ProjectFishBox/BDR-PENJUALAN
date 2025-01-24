@@ -50,6 +50,9 @@ class BarangControllers extends Controller
             'harga' => 'required|numeric',
         ]);
 
+        $harga = str_replace('.', '', $request->harga);
+        $validateData['harga'] = $harga;
+
         $validateData['create_by'] = auth()->id();
         $validateData['last_user'] = auth()->id();
 
@@ -85,10 +88,10 @@ class BarangControllers extends Controller
     public function update(Request $request, string $id)
     {
         $validateData = $request->validate([
-            'kode_barang' => 'required|string|max:255',
-            'nama' => 'required|string|max:255',
-            'merek' => 'required|string|max:255',
-            'harga' => 'required|numeric',
+            'kode_barang' => 'required',
+            'nama' => 'required',
+            'merek' => 'required',
+            'harga' => 'required',
         ]);
 
         $barang = Barang::findOrFail($id);
@@ -97,7 +100,7 @@ class BarangControllers extends Controller
             'kode_barang' => $validateData['kode_barang'],
             'nama' => $validateData['nama'],
             'merek' => $validateData['merek'],
-            'harga' => $validateData['harga'],
+            'harga' => str_replace('.', '', $validateData['harga']),
             'last_user' => auth()->id(),
         ]);
 
