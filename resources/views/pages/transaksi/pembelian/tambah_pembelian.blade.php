@@ -235,7 +235,7 @@
 </script>
 
 
-{{-- <script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         const namaBarangSelect = document.getElementById('nama_barang');
         const hargaInput = document.getElementById('harga');
@@ -559,10 +559,10 @@
 
         return total;
     }
-</script> --}}
+</script>
 
 
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const namaBarangSelect = document.getElementById('nama_barang');
         const hargaInput = document.getElementById('harga');
@@ -887,7 +887,7 @@
 
             return total;
         }
-</script>
+</script> --}}
 
 
 @endpush

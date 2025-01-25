@@ -30,7 +30,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($pengeluaran as $index => $p)
+                            @foreach ($data as $index => $p)
                                 <tr>
                                     <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
                                     <td style="text-align: center;">

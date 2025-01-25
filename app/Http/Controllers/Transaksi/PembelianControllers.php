@@ -73,13 +73,6 @@ class PembelianControllers extends Controller
         $pembelian = Pembelian::create($validatedData);
 
         $tableData = $request->input('table_data');
-
-
-
-
-
-
-
         foreach ($tableData as $data) {
             DB::table('pembelian_detail')->insert([
                 'id_pembelian' => $pembelian->id,
@@ -112,7 +105,6 @@ class PembelianControllers extends Controller
         $pembelian = Pembelian::findOrFail($id);
 
         $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
-
 
         $bayar = $pembelian->bayar;
 
@@ -220,7 +212,9 @@ class PembelianControllers extends Controller
 
         $pembelian = Pembelian::findOrFail($id);
 
-        $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
+        // $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
+
+        $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
 
         $totalPembelian = $detailPembelian->sum('subtotal');
 

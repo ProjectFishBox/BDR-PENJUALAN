@@ -19,19 +19,17 @@ class PengeluaranControler extends Controller
         $title = 'List Pengeuaran';
 
         $pengeluaran = Pengeluaran::all();
-        // $search = trim($request->get('search'));
+        $search = trim($request->get('search'));
 
+        $data = Pengeluaran::when($search, function ($query, $search) {
+            return $query->where(function ($q) use ($search) {
+                $q->where('uraian', 'like', "%$search%")
+                ->orWhere('tanggal', 'like', "%$search%");
+            });
+        })
+        ->get();
 
-        // $data = Pembelian::when($search, function ($query, $search) {
-        //     return $query->where(function ($q) use ($search) {
-        //         $q->where('no_nota', 'like', "%$search%")
-        //         ->orWhere('kontainer', 'like', "%$search%");
-        //     });
-        // })
-        // ->with('lokasi')
-        // ->get();
-
-        return view('pages.transaksi.pengeluaran.pengeluaran', compact('title', 'pengeluaran'));
+        return view('pages.transaksi.pengeluaran.pengeluaran', compact('title', 'pengeluaran', 'data'));
     }
 
     /**
