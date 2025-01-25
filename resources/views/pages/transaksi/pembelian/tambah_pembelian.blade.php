@@ -585,11 +585,12 @@
             merekInput.value = merek ? merek : '';
         });
 
-        let rowCount = 0;
+        let formRowCount = 0;
 
         addButton.addEventListener('click', function (e) {
             e.preventDefault();
 
+            // Ambil data dari form
             const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
             const kodeBarang = kodeBarangInput.value;
             const merek = merekInput.value;
@@ -600,14 +601,6 @@
 
             if (!namaBarang || !kodeBarang || !merek || !harga || !jumlah || !subTotal || !idBarang) {
                 console.error("Debugging data kosong:");
-                if (!namaBarang) console.error("Nama Barang kosong.");
-                if (!kodeBarang) console.error("Kode Barang kosong.");
-                if (!merek) console.error("Merek kosong.");
-                if (!harga) console.error("Harga kosong.");
-                if (!jumlah) console.error("Jumlah kosong.");
-                if (!subTotal) console.error("Sub Total kosong.");
-                if (!idBarang) console.error("ID Barang kosong.");
-
                 alert('Mohon lengkapi semua data sebelum menambahkan!');
                 return;
             }
@@ -621,7 +614,7 @@
                 merek: merek,
                 harga: harga,
                 jumlah: jumlah,
-                subtotal: calculatedSubTotal.toFixed(0) // Tanpa desimal
+                subtotal: calculatedSubTotal.toFixed(0)
             };
 
             const newRow = `
@@ -638,17 +631,17 @@
                             <i class="anticon anticon-close"></i>
                         </button>
                     </td>
-                    <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${idBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${namaBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][merek]" value="${merek}">
-                    <input type="hidden" name="table_data[${rowCount}][harga]" value="${harga}">
-                    <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${jumlah}">
-                    <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${itemData.subtotal}">
+                    <input type="hidden" name="table_data[${formRowCount}][id_barang]" value="${idBarang}">
+                    <input type="hidden" name="table_data[${formRowCount}][kode_barang]" value="${kodeBarang}">
+                    <input type="hidden" name="table_data[${formRowCount}][nama_barang]" value="${namaBarang}">
+                    <input type="hidden" name="table_data[${formRowCount}][merek]" value="${merek}">
+                    <input type="hidden" name="table_data[${formRowCount}][harga]" value="${harga}">
+                    <input type="hidden" name="table_data[${formRowCount}][jumlah]" value="${jumlah}">
+                    <input type="hidden" name="table_data[${formRowCount}][subtotal]" value="${itemData.subtotal}">
                 </tr>
             `;
 
-            rowCount++;
+            formRowCount++; // Increment formRowCount untuk form
 
             const totalPembelianRow = tableBody.querySelector('tr:last-child');
             totalPembelianRow.insertAdjacentHTML('beforebegin', newRow);
@@ -742,7 +735,7 @@
         }
     });
 
-    let rowCount = 0;
+    let rowCountImport = 0;
 
     function searchInDatabase(data, callback) {
         $.ajax({
@@ -768,16 +761,56 @@
         });
     }
 
+    // function importToTable(data) {
+    //     const tableBody = document.querySelector('table tbody');
+
+    //     data.forEach(item => {
+    //         const formattedHarga = item.harga.toString();
+    //         const formattedSubtotal = item.subtotal.toString();
+
+    //         const newRow = `
+    //             <tr>
+    //                 <td></td>
+    //                 <td>${item.kode_barang}</td>
+    //                 <td>${item.nama_barang}</td>
+    //                 <td>${item.merek}</td>
+    //                 <td>${formattedHarga}</td>
+    //                 <td>${item.jumlah}</td>
+    //                 <td class="subtotal">${formattedSubtotal}</td>
+    //                 <td>
+    //                     <button class="btn btn-icon btn-danger btn-rounded remove-row">
+    //                         <i class="anticon anticon-close"></i>
+    //                     </button>
+    //                 </td>
+    //                 <input type="hidden" name="table_data[${importRowCount}][id_barang]" value="${item.id_barang}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][kode_barang]" value="${item.kode_barang}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][nama_barang]" value="${item.nama_barang}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][merek]" value="${item.merek}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][harga]" value="${item.harga}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][jumlah]" value="${item.jumlah}">
+    //                 <input type="hidden" name="table_data[${importRowCount}][subtotal]" value="${item.subtotal}">
+    //             </tr>
+    //         `;
+
+    //         importRowCount++; // Increment importRowCount untuk import
+
+    //         const totalPembelianRow = tableBody.querySelector('tr:last-child');
+    //         totalPembelianRow.insertAdjacentHTML('beforebegin', newRow);
+
+    //         setRemoveRowEvent();
+    //         updateTotalPembelian();
+    //     });
+    // }
+
     function importToTable(data) {
         const tableBody = document.querySelector('table tbody');
-
-        data.forEach(item => {
+        data.forEach((item, index) => {
             const formattedHarga = item.harga.toString();
             const formattedSubtotal = item.subtotal.toString();
 
             const newRow = `
                 <tr>
-                    <td></td>
+                    <td>${index + 1}</td> <!-- Menambahkan nomor urut -->
                     <td>${item.kode_barang}</td>
                     <td>${item.nama_barang}</td>
                     <td>${item.merek}</td>
@@ -789,24 +822,25 @@
                             <i class="anticon anticon-close"></i>
                         </button>
                     </td>
-                    <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${item.id_barang}">
-                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${item.kode_barang}">
-                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${item.nama_barang}">
-                    <input type="hidden" name="table_data[${rowCount}][merek]" value="${item.merek}">
-                    <input type="hidden" name="table_data[${rowCount}][harga]" value="${item.harga}">
-                    <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${item.jumlah}">
-                    <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${item.subtotal}">
+                    <input type="hidden" name="table_data[${rowCountImport}][id_barang]" value="${item.id_barang}">
+                    <input type="hidden" name="table_data[${rowCountImport}][kode_barang]" value="${item.kode_barang}">
+                    <input type="hidden" name="table_data[${rowCountImport}][nama_barang]" value="${item.nama_barang}">
+                    <input type="hidden" name="table_data[${rowCountImport}][merek]" value="${item.merek}">
+                    <input type="hidden" name="table_data[${rowCountImport}][harga]" value="${item.harga}">
+                    <input type="hidden" name="table_data[${rowCountImport}][jumlah]" value="${item.jumlah}">
+                    <input type="hidden" name="table_data[${rowCountImport}][subtotal]" value="${item.subtotal}">
                 </tr>
             `;
 
-            rowCount++;
-            const totalPembelianRow = tableBody.querySelector('tr:last-child');
-            totalPembelianRow.insertAdjacentHTML('beforebegin', newRow);
+            rowCountImport++;
 
-            setRemoveRowEvent();
-            updateTotalPembelian();
+            tableBody.insertAdjacentHTML('beforeend', newRow);
         });
+
+        setRemoveRowEvent();
+        updateTotalPembelian();
     }
+
 
     function parseCSV(data) {
         const lines = data.split('\n');

@@ -55,9 +55,11 @@ class PembelianControllers extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
         $validatedData = $request->validate([
-            'tanggal' => 'required|max:25',
-            'no_nota' => 'required|max:25',
+            'tanggal' => 'required',
+            'no_nota' => 'required',
             'kontainer' => 'required',
             'bayar' => 'nullable',
         ]);
@@ -74,6 +76,10 @@ class PembelianControllers extends Controller
 
 
 
+
+
+
+
         foreach ($tableData as $data) {
             DB::table('pembelian_detail')->insert([
                 'id_pembelian' => $pembelian->id,
@@ -84,9 +90,7 @@ class PembelianControllers extends Controller
                 'jumlah' => $data['jumlah'],
                 'subtotal' => $data['subtotal'],
                 'create_by' => auth()->id(),
-                'last_user' => auth()->id(),
-                'created_at' => now(),
-                'updated_at' => now()
+                'last_user' => auth()->id()
             ]);
         }
 
@@ -107,9 +111,13 @@ class PembelianControllers extends Controller
 
         $pembelian = Pembelian::findOrFail($id);
 
-        $detailPembelian = PembelianDetail::where('id_pembelian', $pembelian->id)->get();
+        $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
 
-        return view('pages.transaksi.pembelian.edit_pembelian', compact('title', 'barang', 'pembelian', 'detailPembelian'));
+
+        $bayar = $pembelian->bayar;
+
+
+        return view('pages.transaksi.pembelian.edit_pembelian', compact('title', 'barang', 'pembelian', 'detailPembelian', 'bayar'));
     }
 
     /**
@@ -125,7 +133,73 @@ class PembelianControllers extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+
+        DB::beginTransaction();
+
+        try {
+
+            $tanggal = $request->input('tanggal');
+            $noNota     = $request->input('no_nota');
+            $kontainer  = $request->input('kontainer');
+            $bayar      = $request->input('bayar');
+            $tableData  = $request->input('table_data');
+
+            if (empty($tanggal) || empty($noNota)) {
+                return response()->json(['status' => 'error', 'message' => 'Data tidak lengkap'], 400);
+            }
+
+            $pembelian = Pembelian::findOrFail($id);
+
+            $pembelian->update([
+                'tanggal'    => $tanggal,
+                'no_nota'    => $noNota,
+                'kontainer'  => $kontainer,
+                'bayar'      => $bayar,
+                'last_user'  => auth()->user()->id
+            ]);
+
+            PembelianDetail::where('id_pembelian', $id)->delete();
+
+            foreach ($tableData as $key => $item) {
+
+                if (!isset($item['id_barang'], $item['nama_barang'], $item['harga'], $item['jumlah'], $item['subtotal'])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Data item tidak lengkap',
+                        'item' => $item
+                    ], 400);
+                }
+
+                PembelianDetail::create([
+                    'id_pembelian' => $id,
+                    'id_barang'    => $item['id_barang'],
+                    'nama_barang'  => $item['nama_barang'],
+                    'merek'        => $item['merek'] ?? null,
+                    'harga'        => $item['harga'],
+                    'jumlah'       => $item['jumlah'],
+                    'subtotal'     => $item['subtotal'],
+                    'create_by'    => auth()->user()->id,
+                    'last_user'    => auth()->user()->id
+                ]);
+            }
+
+            DB::commit();
+
+            Alert::success('Berhasil Merubah data SET Harga.');
+
+            return redirect('/pembelian');
+
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengupdate data',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+
     }
 
     /**
@@ -148,6 +222,8 @@ class PembelianControllers extends Controller
 
 
         $pembelian = Pembelian::findOrFail($id);
+
+        dd($pembelian);
         $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
 
         $totalPembelian = $detailPembelian->sum('subtotal');

@@ -22,4 +22,9 @@ class PembelianDetail extends Model
         'create_by',
         'last_user'
     ];
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang');
+    }
 }
