@@ -11,16 +11,16 @@
                             <label>Tanggal <span style="color: red">*</span></label>
                             <div class="input-affix m-b-10">
                                 <i class="prefix-icon anticon anticon-calendar"></i>
-                                <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" required>
+                                <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal"  value="{{ $pembelian->tanggal }}" required>
                             </div>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="no_nota">No Nota <span style="color: red">*</span></label>
-                            <input type="text" class="form-control" id="no_nota" placeholder="No Nota" name="no_nota" required>
+                            <input type="text" class="form-control" id="no_nota" placeholder="No Nota" name="no_nota" value="{{ $pembelian->no_nota }}" required>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="kontainer">Kontainer <span style="color: red">*</span></label>
-                            <input type="text" class="form-control" id="kontainer" placeholder="Kontainer" name="kontainer" required>
+                            <input type="text" class="form-control" id="kontainer" placeholder="Kontainer" name="kontainer"  value="{{ $pembelian->kontainer }}"  required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -79,18 +79,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($detailPembelian as $d)
-                                        <td>No</td>
-                                        <td>Kode Barang</td>
-                                        <td>{{$d->nama}}</td>
-                                        <td>{{$d->merek}}</td>
-                                        <td>{{$d->harga}}</td>
-                                        <td>{{$d->jumlah}}</td>
-                                        <td>{{$d->subtotal}}</td>
+                                    @foreach ($detailPembelian as $index => $d)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td> <!-- Nomor urut -->
+                                            <td>{{ $d->kode_barang }}</td>
+                                            <td>{{ $d->nama_barang }}</td>
+                                            <td>{{ $d->merek }}</td>
+                                            <td>Rp{{ number_format($d->harga, 0, ',', '.') }}</td>
+                                            <td>{{ $d->jumlah }}</td>
+                                            <td>Rp{{ number_format($d->subtotal, 0, ',', '.') }}</td>
+                                            <td>
+                                                <!-- Tombol hapus atau edit jika diperlukan -->
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $d->id }}">Hapus</button>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                     <tr>
                                         <td colspan="6" style="text-align: end">Total Pembelian</td>
-                                        <td></td>
+                                        <td>Rp{{ number_format($detailPembelian->sum('subtotal'), 0, ',', '.') }}</td>
                                         <td></td>
                                     </tr>
                                 </tbody>
@@ -102,7 +108,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="bayar_input">Bayar</label>
-                                <input type="text" class="form-control" id="bayar_input" placeholder="Bayar" name="bayar">
+                                <input type="text" class="form-control" id="bayar_input" placeholder="Bayar" name="bayar" value="{{ $pembelian->bayar }}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="kembali_input">Kembali</label>
@@ -142,7 +148,7 @@
 
 @push('js')
 <script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
-{{-- <script>
+<script>
     $('.datepicker-input').datepicker();
 </script>
 
@@ -317,59 +323,5 @@
 </script>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const bayarInput = document.getElementById('bayar_input');
-        const kembaliInput = document.getElementById('kembali_input');
-        const sisaInput = document.getElementById('sisa_input');
-        const tableBody = document.querySelector('table tbody'); // Tabel body
-
-        // Function to update the total pembelian and calculations
-        function updateTotalPembelian() {
-            const subtotals = tableBody.querySelectorAll('.subtotal');
-            let total = 0;
-
-            subtotals.forEach(function (subtotalCell) {
-                const subtotalValue = subtotalCell.textContent;
-                if (!isNaN(subtotalValue)) {
-                    total += parseFloat(subtotalValue);
-                }
-            });
-
-            // Update total pembelian in the last row
-            const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
-            if (totalPembelianCell) {
-                totalPembelianCell.textContent = total.toFixed(2); // Total pembelian tanpa format
-            }
-
-            return total;
-        }
-
-        // Function to calculate sisa and kembali based on bayar and total
-        function calculateSisaDanKembali() {
-            const totalPembelian = updateTotalPembelian();
-            const bayar = parseFloat(bayarInput.value) || 0;
-            const sisa = totalPembelian - bayar;
-            const kembali = bayar >= totalPembelian ? bayar - totalPembelian : 0;
-
-            // Update sisa and kembali
-            sisaInput.value = 'Rp ' + sisa.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); // Sisa dengan format Rp
-            kembaliInput.value = 'Rp ' + kembali.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); // Kembali dengan format Rp
-        }
-
-        // Event listener for the bayar input
-        bayarInput.addEventListener('input', function () {
-            calculateSisaDanKembali();
-        });
-
-        // Recalculate values when there are changes to the items in the table
-        tableBody.addEventListener('change', function () {
-            calculateSisaDanKembali();
-        });
-
-        // Initial calculation
-        calculateSisaDanKembali();
-    });
-</script> --}}
 
 @endpush
