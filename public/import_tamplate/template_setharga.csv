@@ -1,5 +1,4 @@
-﻿Nama Barang,Harga Jual,Untung,Status,,,,,,,,,,,,,,,,,,
-POCO X3,5000,4000,Aktif,,,,,,,,,,,,,,,,,,
-XIOMI X5,5000,4000,Tidak Aktif,,,,Format tampate tidak bisa dirubah. Gunakan nama barang yang sudah tersedia pada database Barang. Pada koom Status hanya menerima Aktif/Tidak Aktif,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,
+﻿Kode Barang,Merek,Harga Jual,Status,,,,
+PC-001,POCO,5000000,Aktif,,,,
+PC-001,XIOMI,5000000,Tidak Aktif,,,,Format tampate tidak bisa dirubah. Gunakan nama barang yang sudah tersedia pada database Barang. Pada koom Status hanya menerima Aktif/Tidak Aktif
+PX-001,SAMSUNG,2000000,Aktif,,,,

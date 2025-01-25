@@ -126,6 +126,7 @@ Route::controller(PembelianControllers::class)->group(function () {
     Route::get('/modal-import-pembelian' , 'modalImport')->name('pembelian.import');
     Route::post('/validasi-detail-pembelian', 'validationDetail')->name('validasi-detail-pembelian');
     Route::post('pembelian/{id}/update', 'update')->name('update-pembelian');
+    Route::get('/delete-pembelian/{id}' , 'destroy')->name('delete-pembelian');
 
 });
 

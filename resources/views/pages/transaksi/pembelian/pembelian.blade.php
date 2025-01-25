@@ -275,4 +275,55 @@
     })
 </script>
 
+<script>
+
+    function reloadTable() {
+            $.ajax({
+                url: "{{ url()->current() }}",
+                type: "GET",
+                success: function(data) {
+                    let tableContent = $(data).find('table tbody').html();
+                    $('table tbody').html(tableContent);
+                },
+                error: function(xhr) {
+                    console.error('Failed to reload table:', xhr);
+                }
+            });
+    }
+
+
+    $(document).on('click', '.btn-pembelian-delete', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/delete-pembelian/" + id;
+        Swal.fire({
+            title: 'Apakah kamu ingin menghapus data ini?',
+            text: "data tidak dapat dikembalikan lagi!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Iya, hapus data ini!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url,
+                    type: "GET",
+                    dataType: "HTML",
+                    success: function(data) {
+                        reloadTable();
+                        Swal.fire({
+                            title: 'Terhapus!',
+                            text: 'Data Pembelian Telah berhasil dihapus.',
+                            icon: 'success',
+                            timer: 2000
+
+                        })
+                    }
+                })
+            }
+        })
+    })
+</script>
+
 @endpush

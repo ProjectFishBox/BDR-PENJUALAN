@@ -205,10 +205,7 @@ class PembelianControllers extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+
 
     public function modalDetail(Request $request)
     {
@@ -223,7 +220,6 @@ class PembelianControllers extends Controller
 
         $pembelian = Pembelian::findOrFail($id);
 
-        dd($pembelian);
         $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
 
         $totalPembelian = $detailPembelian->sum('subtotal');
@@ -300,6 +296,17 @@ class PembelianControllers extends Controller
             'status' => 'success',
             'data' => $validatedData,
         ]);
+    }
+
+    public function destroy(string $id)
+    {
+        $pembelian = Pembelian::findOrFail($id);
+
+        $pembelian->delete();
+
+        Alert::success('Data Pembelian berhasil dihapus.');
+
+        return redirect('/pembelian');
     }
 
 
