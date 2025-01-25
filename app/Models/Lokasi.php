@@ -37,4 +37,9 @@ class Lokasi extends Model
         return $this->hasMany(Pembelian::class, 'id_lokasi');
     }
 
+    public function pengeluaran()
+    {
+        return $this->hasMany(Pengeluaran::class, 'id_lokasi');
+    }
+
 }

@@ -19,4 +19,9 @@ class Pengeluaran extends Model
         'create_by',
         'last_user'
     ];
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'id_lokasi');
+    }
 }

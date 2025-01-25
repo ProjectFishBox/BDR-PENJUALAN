@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Transaksi;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pengeluaran;
 use App\Models\Pengeluaran as ModelsPengeluaran;
 use Illuminate\Http\Request;
 USE RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+
+
+use App\Models\Pengeluaran;
+use App\Models\Lokasi;
+use App\Exports\PengeluaranExport;
 
 class PengeluaranControler extends Controller
 {
@@ -16,21 +21,32 @@ class PengeluaranControler extends Controller
      */
     public function index(Request $request)
     {
-        $title = 'List Pengeuaran';
 
-        $pengeluaran = Pengeluaran::all();
-        $search = trim($request->get('search'));
+        $title = 'List Pengeluaran';
 
-        $data = Pengeluaran::when($search, function ($query, $search) {
-            return $query->where(function ($q) use ($search) {
-                $q->where('uraian', 'like', "%$search%")
-                ->orWhere('tanggal', 'like', "%$search%");
-            });
-        })
-        ->get();
+        $query = Pengeluaran::query();
 
-        return view('pages.transaksi.pengeluaran.pengeluaran', compact('title', 'pengeluaran', 'data'));
+        if ($request->filled('start') && $request->filled('end')) {
+            $query->whereBetween('tanggal', [
+                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
+                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
+            ]);
+        }
+
+        if ($request->filled('lokasi')) {
+            $query->where('id_lokasi', $request->lokasi);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('uraian', 'like', '%' . $request->search . '%');
+        }
+
+        $pengeluaran = $query->paginate(10); //entar malam task
+        $lokasi = Lokasi::all();
+
+        return view('pages.transaksi.pengeluaran.pengeluaran', compact('pengeluaran', 'lokasi', 'title'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -73,26 +89,76 @@ class PengeluaranControler extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
+        if (!$request->ajax()) {
+            return redirect('/dashboard');
+        }
+        $query = Pengeluaran::query();
 
+        if ($request->filled('start') && $request->filled('end')) {
+            $query->whereBetween('tanggal', [
+                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
+                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
+            ]);
+        }
+
+        if ($request->filled('lokasi')) {
+            $query->where('id_lokasi', $request->lokasi);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('uraian', 'like', '%' . $request->search . '%');
+        }
+
+
+        $pengeluaran = $query->get();
+
+        $title = "Detail Pengeluaran";
+
+        return view('components.modal.modal_detail_data_pengeluaran', compact('title', 'pengeluaran'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        //
+        $title = 'Edit Pengeluaran';
+
+        $pengeluaran = Pengeluaran::findOrFail($id);
+
+        return view('pages.transaksi.pengeluaran.edit_pengeluaran', compact('pengeluaran', 'title'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        // dd($request->tanggal);
+
+
+        $validateData = $request->validate([
+            'tanggal' => 'required',
+            'uraian' => 'required',
+            'total' => 'required',
+        ]);
+
+        $validateData['total'] = str_replace('.', '', $request->total);
+
+        $validateData['tanggal'] = $request->tanggal;
+
+
+        $pengeluaran = Pengeluaran::findOrFail($id);
+        $pengeluaran->update($validateData);
+
+        Alert::success('Data Pengeluaran berhasil dihapus.');
+
+        return redirect('/pengeluaran');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -108,18 +174,26 @@ class PengeluaranControler extends Controller
         return redirect('/pengeluaran');
     }
 
-    public function modalDetail(Request $request)
+    public function export(Request $request)
     {
-        if (!$request->ajax()) {
-            redirect('/dashboard');
+        $query = Pengeluaran::query();
+
+        if ($request->filled('start') && $request->filled('end')) {
+            $query->whereBetween('tanggal', [
+                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
+                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
+            ]);
         }
 
-        $title = "Detail Pengeluaran";
+        if ($request->filled('lokasi')) {
+            $query->where('id_lokasi', $request->lokasi);
+        }
+        if ($request->filled('search')) {
+            $query->where('uraian', 'like', '%' . $request->search . '%');
+        }
 
-        $id = $request->input('id');
+        $pengeluaran = $query->get();
 
-        $pengeluaran = Pengeluaran::findOrFail($id);
-
-        return view('components.modal.modal_detail_data_pengeluaran', compact('title', 'pengeluaran'));
+        return Excel::download(new PengeluaranExport($pengeluaran), 'pengeluaran.xlsx');
     }
 }

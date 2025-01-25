@@ -137,8 +137,13 @@ Route::controller(PengeluaranControler::class)->group(function () {
     Route::get('/pengeluaran', 'index')->name('pengeluaran');
     Route::get('/tambah-pengeluaran', 'create')->name('tambah-pengeluaran');
     Route::post('/tambah-pengeluaran', 'store')->name('store-pengeluaran');
-    Route::get('/modal-detail-pengeluaran', 'modalDetail')->name('pengeluaran.detai');
+    Route::get('/pengeluaran-edit/{id}', 'edit')->name('pengeluaran-edit');
+    Route::post('pengeluaran/{id}/update', 'update')->name('update-pengeluaran');
+    Route::get('/modal-detail-pengeluaran', 'show')->name('pengeluaran.detai');
     Route::get('/delete-pengeluaran/{id}' , 'destroy')->name('delete-pengeluaran');
+
+    Route::get('/pengeluaran/export', 'export')->name('pengeluaran.export');
+
 
 
 });
