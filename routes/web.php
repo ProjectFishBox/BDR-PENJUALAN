@@ -10,7 +10,9 @@ use App\Http\Controllers\Master\LokasiControllers;
 use App\Http\Controllers\Master\PenggunaControllers;
 use App\Http\Controllers\Master\PelangganControllers;
 use App\Http\Controllers\Master\SetHargaControllers;
+use App\Http\Controllers\Pengeluaran;
 use App\Http\Controllers\Transaksi\PembelianControllers;
+use App\Http\Controllers\Transaksi\PengeluaranControler;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,6 +129,17 @@ Route::controller(PembelianControllers::class)->group(function () {
     Route::post('/validasi-detail-pembelian', 'validationDetail')->name('validasi-detail-pembelian');
     Route::post('pembelian/{id}/update', 'update')->name('update-pembelian');
     Route::get('/delete-pembelian/{id}' , 'destroy')->name('delete-pembelian');
+
+});
+
+Route::controller(PengeluaranControler::class)->group(function () {
+
+    Route::get('/pengeluaran', 'index')->name('pengeluaran');
+    Route::get('/tambah-pengeluaran', 'create')->name('tambah-pengeluaran');
+    Route::post('/tambah-pengeluaran', 'store')->name('store-pengeluaran');
+    Route::get('/modal-detail-pengeluaran', 'modalDetail')->name('pengeluaran.detai');
+    Route::get('/delete-pengeluaran/{id}' , 'destroy')->name('delete-pengeluaran');
+
 
 });
 
