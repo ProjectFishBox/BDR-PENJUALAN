@@ -1,10 +1,11 @@
-@extends('components._partials.layout')
 
-@section('content')
-    <div class="card">
-        <div class="card-body">
-            <h4>{{ $title }}</h4>
-            <form action="{{ route('tambah-pelanggan')}}" method="POST">
+<div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title h4">{{$title}}</h5>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('tambah-pelanggan-penjualan')}}" method="POST" id="form-tambah-pelanggan">
                 @csrf
                 <div class="form-row">
                     <div class="form-group col-md-6">
@@ -50,11 +51,12 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <a href="/pengguna" class="btn btn-danger mr-3">Batal</a>
+                        <button data-bs-dismiss="modal">Batal</button>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-@endsection
+</div>
+

@@ -22,6 +22,18 @@
                                             <div class="d-flex align-items-center justify-content-center m-b-20">
                                                 <h4 class="m-b-0">Login</h4>
                                             </div>
+
+                                            @if (session()->has('loginError'))
+                                                <div class="alert alert-danger">
+                                                    <div class="d-flex align-items-center justify-content-start">
+                                                        <span class="alert-icon">
+                                                            <i class="anticon anticon-close-o"></i>
+                                                        </span>
+                                                        <span>{{ session('loginError') }}</span>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <form action="{{ route('login_action') }}" method="POST">
                                                 @csrf
                                                 <div class="form-group">

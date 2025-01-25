@@ -13,6 +13,7 @@ use App\Http\Controllers\Master\SetHargaControllers;
 use App\Http\Controllers\Pengeluaran;
 use App\Http\Controllers\Transaksi\PembelianControllers;
 use App\Http\Controllers\Transaksi\PengeluaranControler;
+use App\Http\Controllers\Transaksi\PenjualanControllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -141,14 +142,22 @@ Route::controller(PengeluaranControler::class)->group(function () {
     Route::post('pengeluaran/{id}/update', 'update')->name('update-pengeluaran');
     Route::get('/modal-detail-pengeluaran', 'show')->name('pengeluaran.detai');
     Route::get('/delete-pengeluaran/{id}' , 'destroy')->name('delete-pengeluaran');
-
     Route::get('/pengeluaran/export', 'export')->name('pengeluaran.export');
-
-
 
 });
 
 
+Route::controller(PenjualanControllers::class)->group(function () {
+
+    Route::get('/penjualan', 'index')->name('penjualan');
+    Route::get('/tambah-penjualan', 'create')->name('tambah-penjualan');
+    Route::get('/modal-tambah-pelanggan', 'modalTambahPelanggan')->name('modal-tambah-pelanggan');
+    Route::post('/tambah-pelanggan-penjualan', 'tambahPelangganPenjualan')->name('tambah-pelanggan-penjualan');
+    Route::get('/pelanggan-detail/{id}', 'PelanggalDetail')->name('pelanggan-detail');
+
+
+
+});
 
 
 
