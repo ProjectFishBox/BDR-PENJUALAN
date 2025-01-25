@@ -37,7 +37,7 @@
                                     <tr>
                                         <td style="text-align: center;">{{ $index + 1 }}</td>
                                         <td style="text-align: center;">
-                                            {{ $d->id_barang }}
+                                            {{ $d->barang->kode_barang }}
                                         </td>
                                         <td style="text-align: center;">
                                             {{ $d->nama_barang }}
