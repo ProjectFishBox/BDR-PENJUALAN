@@ -3,32 +3,68 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Akses;
-use App\Models\Menu;
 use App\Models\Access_menu;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
+
+use App\Models\Akses;
+use App\Models\Menu;
 
 class AksesControllers extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $title = 'List Akses';
 
-        $akses = Akses::with('accessMenus')->get();
+        $cacheKey = 'akses_data';
+        $cacheDuration = now()->addMinutes(3);
 
-        foreach ($akses as $aksesItem) {
-            $totalMenus = Menu::count();
-            $selectedMenus = $aksesItem->accessMenus()->count();
+        if ($request->ajax()) {
 
-            $aksesItem->all_menus_selected = ($totalMenus == $selectedMenus) ? true : false;
+            $data = Cache::remember($cacheKey, $cacheDuration, function () {
+                return Akses::with('accessMenus')->where('delete', 0)->get();
+            });
+
+            foreach ($data as $aksesItem) {
+                $totalMenus = Menu::count();
+                $selectedMenus = $aksesItem->accessMenus()->count();
+
+                $aksesItem->all_menus_selected = ($totalMenus == $selectedMenus) ? true : false;
+                $aksesItem->akses_menus = $aksesItem->all_menus_selected
+                    ? '<li>Semua Menu</li>'
+                    : $aksesItem->accessMenus->map(function($menuItem) {
+                        return '<li>' . $menuItem->menu->nama . '</li>';
+                    })->implode('');
+            }
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('akses_menu', function ($row) {
+                    return $row->akses_menus;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <button class="btn btn-icon btn-primary btn-akses-edit" data-id="' . $row->id . '" type="button" role="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-akses-delete" data-id="' . $row->id . '" type="button" role="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>
+                    ';
+                    return $btn;
+                })
+                ->rawColumns(['akses_menu', 'action'])
+                ->make(true);
         }
 
-        return view('pages.master.akses.akses', compact('title', 'akses'));
+        return view('pages.master.akses.akses', compact('title'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -86,6 +122,8 @@ class AksesControllers extends Controller
             }
         }
 
+        Cache::forget('akses_data');
+
         Alert::success('Berhasil Menambahkan data Akses.');
 
         return redirect('/akses');
@@ -140,6 +178,7 @@ class AksesControllers extends Controller
         }
 
         $akses->menus()->sync($menuData);
+        Cache::forget('akses_data');
 
         Alert::success('Berhasil memperbarui data akses.');
 
@@ -157,9 +196,14 @@ class AksesControllers extends Controller
         try {
             $akses = Akses::findOrFail($id);
 
-            $akses->delete();
+            $akses->update([
+                'delete' => 1,
+                'last_user' => auth()->id()
+            ]);
 
             Alert::success('Data Akses berhasil dihapus.');
+
+            Cache::forget('akses_data');
 
             return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
 

@@ -13,6 +13,7 @@ class Akses extends Model
 
     protected $fillable = [
         'nama',
+        'delete',
         'create_by',
         'last_user'
     ];

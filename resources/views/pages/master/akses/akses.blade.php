@@ -10,55 +10,20 @@
                     <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                 </a>
 
-                <!-- Input Search -->
-                <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari Akses" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <button type="submit" class="btn btn-secondary ml-2">Cari</button>
-                </form>
-
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered data-table" id="data-table"">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width: 5%;">No</th>
-                                <th scope="col" style="text-align: center; width: 60%;">Nama Akses</th>
+                                <th scope="col" style="text-align: center; width: 10%;">No</th>
+                                <th scope="col" style="text-align: center; width: 40%;">Nama Akses</th>
                                 <th scope="col" style="text-align: center; width: 30%;">Akses Menu</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Aksi</th>
-
+                                <th scope="col" style="text-align: center; width: 20%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($akses as $key => $aksesItem)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td style="text-align: center;"">{{ $aksesItem->nama }}</td>
-                                <td style="text-align: center;">
-                                    @if($aksesItem->all_menus_selected)
-                                        <li>Semua Menu</li><br>
-                                    @else
-                                        @foreach($aksesItem->accessMenus as $menuItem)
-                                            <li>{{ $menuItem->menu->nama }}</li><br>
-                                        @endforeach
-                                    @endif
-                                </td>
-                                <td style="text-align: center;">
-                                    <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                        <a href="{{ route('akses-edit', $aksesItem->id) }}">
-                                            <button class="btn btn-icon btn-primary">
-                                                <i class="anticon anticon-edit"></i>
-                                            </button>
-                                        </a>
-                                        <button class="btn-akses-delete btn btn-icon btn-danger" data-id="{{ $aksesItem->id }}"">
-                                            <i class="anticon anticon-delete"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -66,25 +31,60 @@
     </div>
 @endsection
 
+@component('components.aset_datatable.aset_datatable')@endcomponent
+
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    $(document).ready(function() {
+        dataAkses();
+        });
 
     function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
+        $('#data-table').DataTable().clear().destroy();
+        dataAkses();
     }
+</script>
+
+<script>
+    function dataAkses() {
+
+        let table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('akses') }}",
+            lengthMenu: [
+                10, 20
+            ],
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                },
+                {
+                    data: 'nama',
+                    name: 'nama'
+                },
+                {
+                    data: 'akses_menu',
+                    name: 'akses_menu',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+    }
+</script>
 
 
+<script>
     $(document).on('click', '.btn-akses-delete', function(e) {
         e.preventDefault();
         let id = $(this).data('id');
@@ -119,5 +119,33 @@
         })
     })
 </script>
+
+<script>
+    $(document).on('click', '.btn-akses-edit', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/akses-edit/" + id;
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                window.location.href = url;
+                $('.btn-akses-edit').prop('disabled', false);
+                $('.btn-akses-edit').html('<i class="anticon anticon-edit"></i>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-akses-edit').prop('disabled', false);
+                $('.btn-akses-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
+</script>
+
 
 @endpush
