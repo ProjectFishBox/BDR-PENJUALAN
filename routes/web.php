@@ -76,7 +76,7 @@ Route::controller(PelangganControllers::class)->group(function () {
     Route::post('/tambah-pelanggan', 'store')->name('store-pelanggan');
     Route::get('/pelanggan-edit/{id}', 'show')->name('pelanggan-edit');
     Route::post('pelanggan/{id}/update', 'update')->name('update-pelanggan');
-    Route::delete('pelanggan/{id}/delete', 'destroy')->name('delete-pelanggan');
+    Route::get('/delete-pelanggan/{id}' , 'destroy')->name('delete-pelanggan');
 
 });
 

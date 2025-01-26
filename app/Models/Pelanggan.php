@@ -21,7 +21,8 @@ class Pelanggan extends Model
         'id_kota',
         'id_lokasi',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
     public function lokasi()

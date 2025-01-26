@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lokasi;
 use Illuminate\Http\Request;
-use App\Models\Pelanggan;
 use RealRashid\SweetAlert\Facades\Alert;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
+
+use App\Models\Lokasi;
+use App\Models\Pelanggan;
 
 
 class PelangganControllers extends Controller
@@ -14,27 +17,62 @@ class PelangganControllers extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
     public function index(Request $request)
     {
         $title = "List Pelanggan";
+        $cacheKey = 'pelanggan_data';
+        $cacheDuration = now()->addMinutes(3);
 
-        $search = $request->get('search');
-        $lokasiId = $request->get('lokasi');
+        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(10), function () {
+            return Lokasi::all();
+        });
 
-        $lokasiList = Lokasi::all();
+        if ($request->ajax()) {
 
-        $data = Pelanggan::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%$search%");
-        })
-        ->when($lokasiId, function ($query, $lokasiId) {
-            return $query->where('id_lokasi', $lokasiId);
-        })
-        ->with('lokasi')
-        ->get();
+            $search = $request->get('search')['value'];
+            $lokasiId = $request->get('lokasi');
 
+            if (!$search && !$lokasiId) {
+                // Jika tidak ada pencarian dan filter, gunakan cache
+                $data = Cache::remember($cacheKey, $cacheDuration, function () {
+                    return Pelanggan::with('lokasi')
+                        ->where('delete', 0)
+                        ->get();
+                });
+            } else {
+                $data = Pelanggan::when($search, function ($query, $search) {
+                        return $query->where('nama', 'like', "%$search%");
+                    })
+                    ->when($lokasiId, function ($query, $lokasiId) {
+                        return $query->where('id_lokasi', $lokasiId);
+                    })
+                    ->with('lokasi')
+                    ->where('delete', 0)
+                    ->get();
+            }
 
-        return view('pages.master.pelanggan.pelanggan', compact('title', 'data', 'lokasiList'));
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <button class="btn btn-icon btn-primary btn-pelanggan-edit gap-5" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-pelanggan-delete" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('pages.master.pelanggan.pelanggan', compact('title', 'lokasiList'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -67,6 +105,8 @@ class PelangganControllers extends Controller
         $validateData['last_user'] = auth()->id();
 
         Pelanggan::create($validateData);
+
+        Cache::forget('pelanggan_data');
 
         Alert::success('Berhasil Menambahkan data Pelanggan.');
         return redirect('/pelanggan');
@@ -121,6 +161,8 @@ class PelangganControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
+        Cache::forget('pelanggan_data');
+
         Alert::success('Berhasil Merubah data Pelanggan.');
 
         return redirect('/pelanggan');
@@ -131,12 +173,25 @@ class PelangganControllers extends Controller
      */
     public function destroy(string $id)
     {
-        $pelanggan = Pelanggan::findOrFail($id);
+        try {
+            $pelanggan = Pelanggan::findOrFail($id);
 
-        $pelanggan->delete();
+            $pelanggan->update([
+                'delete' => 1,
+                'last_user' => auth()->id()
+            ]);
 
-        Alert::success('Data Pelanggan berhasil dihapus.');
+            Cache::forget('pelanggan_data');
 
-        return redirect('/pelanggan');
+            Alert::success('Data Lokasi berhasil dihapus.');
+
+            return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data.',
+            ], 500);
+        }
     }
 }
