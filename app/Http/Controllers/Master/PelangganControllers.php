@@ -25,7 +25,7 @@ class PelangganControllers extends Controller
         $cacheKey = 'pelanggan_data';
         $cacheDuration = now()->addMinutes(3);
 
-        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(10), function () {
+        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(3), function () {
             return Lokasi::all();
         });
 
@@ -35,7 +35,6 @@ class PelangganControllers extends Controller
             $lokasiId = $request->get('lokasi');
 
             if (!$search && !$lokasiId) {
-                // Jika tidak ada pencarian dan filter, gunakan cache
                 $data = Cache::remember($cacheKey, $cacheDuration, function () {
                     return Pelanggan::with('lokasi')
                         ->where('delete', 0)

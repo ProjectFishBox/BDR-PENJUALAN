@@ -22,7 +22,8 @@ class SetHarga extends Model
         'harga_jual',
         'status',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
     public function lokasi()

@@ -16,82 +16,36 @@
                 </div>
 
 
-                <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <select name="lokasi" class="form-control ml-2" style="width: 200px;">
+                <form id="filterForm" style="display: flex; align-items: center;">
+                    <input type="text" name="search" placeholder="Cari Pelanggan" class="form-control" style="width: 250px; margin-right: 10px;">
+                    <select name="lokasi" class="form-control" style="width: 200px; margin-right: 10px;">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
-                            <option value="{{ $lokasi->id }}" {{ request()->get('lokasi') == $lokasi->id ? 'selected' : '' }}>
-                                {{ $lokasi->nama }}
-                            </option>
+                            <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-secondary ml-2">Filter</button>
+                    <button type="button" class="btn btn-secondary" onclick="$('.data-table').DataTable().ajax.reload();">Filter</button>
                 </form>
 
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover data-table" id="data-table"">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width: 10%;">No</th>
-                                <th scope="col" style="text-align: center; width: 80%;">Kode</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Nama</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Merek</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Untung</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Harga Jual</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Status</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Lokasi</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Aksi</th>
+                                <th scope="col" style="text-align: center;">No</th>
+                                <th scope="col" style="text-align: center;">Kode</th>
+                                <th scope="col" style="text-align: center;">Nama</th>
+                                <th scope="col" style="text-align: center;">Merek</th>
+                                <th scope="col" style="text-align: center;">Untung</th>
+                                <th scope="col" style="text-align: center;">Harga Jual</th>
+                                <th scope="col" style="text-align: center;">Status</th>
+                                <th scope="col" style="text-align: center;">Lokasi</th>
+                                <th scope="col" style="text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $index => $setharga)
-                                <tr>
-                                    <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
-                                    <td style="text-align: center;">
-                                        {{ $setharga->kode_barang }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $setharga->nama_barang }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $setharga->merek }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ number_format($setharga->untung, 0, ',', '.') }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ number_format($setharga->harga_jual, 0, ',', '.') }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <div class="form-group d-flex align-items-center" style="margin: unset">
-                                            <div class="switch m-r-10">
-                                                <input type="checkbox" id="switch-1" {{ $setharga->status === 'Aktif' ? 'checked' : '' }}>
-                                                <label for="switch-1"></label>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $setharga->lokasi->nama }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('setharga-edit', $setharga->id) }}">
-                                                <button class="btn btn-icon btn-primary">
-                                                    <i class="anticon anticon-edit"></i>
-                                                </button>
-                                            </a>
-                                            <button class="btn-setharga-delete btn btn-icon btn-danger" data-id="{{ $setharga->id }}"">
-                                                <i class="anticon anticon-delete"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -103,25 +57,114 @@
     </div>
 @endsection
 
+@component('components.aset_datatable.aset_datatable')@endcomponent
+
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    $(document).ready(function() {
+        dataStHarga();
+        });
 
     function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
+        $('#data-table').DataTable().clear().destroy();
+        dataStHarga();
+    }
+</script>
+
+<script>
+    function dataStHarga() {
+
+        if ($.fn.DataTable.isDataTable('.data-table')) {
+            $('.data-table').DataTable().destroy();
+        }
+
+        let table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: false,
+            ajax: {
+                url: "{{ route('setharga') }}",
+                data: function (d) {
+                    d.lokasi = $('select[name="lokasi"]').val();
+                    d.search.value = $('input[name="search"]').val();
                 }
-            });
+            },
+            lengthMenu: [
+                10, 20
+            ],
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                },
+                {
+                    data: 'kode_barang',
+                    name: 'kode_barang'
+                },
+                {
+                    data: 'nama_barang',
+                    name: 'nama_barang'
+                },
+                {
+                    data: 'merek',
+                    name: 'merek'
+                },
+                {
+                    data: 'untung',
+                    name: 'untung',
+                    render: function (data, type, row) {
+                        return numberFormat(data);
+                    }
+                },
+                {
+                    data: 'harga_jual',
+                    name: 'harga_jual',
+                    render: function (data, type, row) {
+                        return numberFormat(data);
+                    }
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    render: function (data, type, row) {
+                        const checked = data === 'Aktif' ? 'checked' : '';
+                        return `
+                            <div class="form-group d-flex align-items-center" style="margin: unset">
+                                <div class="switch m-r-10">
+                                    <input type="checkbox" id="switch-${row.id}" ${checked}>
+                                    <label for="switch-${row.id}"></label>
+                                </div>
+                            </div>`;
+                    },
+                },
+                {
+                    data: 'lokasi.nama',
+                    name: 'lokasi.nama'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+        $('select[name="lokasi"], input[name="search"]').on('change keyup', function () {
+            table.ajax.reload(); // Reload data saat filter berubah
+        });
     }
 
+    dataStHarga();
 
+    function numberFormat(angka) {
+        return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+</script>
+
+<script>
     $(document).on('click', '.btn-setharga-delete', function(e) {
         e.preventDefault();
         let id = $(this).data('id');
@@ -179,6 +222,34 @@
         })
     })
 </script>
+
+<script>
+    $(document).on('click', '.btn-setharga-edit', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/setharga-edit/" + id;
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                window.location.href = url;
+                $('.btn-lokasi-edit').prop('disabled', false);
+                $('.btn-lokasi-edit').html('<i class="anticon anticon-edit"></i>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-lokasi-edit').prop('disabled', false);
+                $('.btn-lokasi-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
+</script>
+
 
 <script>
     $(document).on('submit', '#form-imporbarang', function(e){

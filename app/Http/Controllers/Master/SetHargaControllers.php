@@ -12,7 +12,8 @@ use App\Models\Lokasi;
 
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Validation\ValidationException;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
 
 
 class SetHargaControllers extends Controller
@@ -24,24 +25,55 @@ class SetHargaControllers extends Controller
     {
         $title = 'List Set Harga';
 
-        $search = trim($request->get('search'));
-        $lokasiId = $request->get('lokasi');
+        $cacheKey = 'setharga_data';
+        $cacheDuration = now()->addMinutes(3);
 
-        $lokasiList = Lokasi::all();
+        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(3), function () {
+            return Lokasi::all();
+        });
 
-        $data = SetHarga::when($search, function ($query, $search) {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('nama_barang', 'like', "%$search%")
-                    ->orWhere('kode_barang', 'like', "%$search%");
+        if ($request->ajax()) {
+
+            $search = $request->get('search')['value'];
+            $lokasiId = $request->get('lokasi');
+
+            if (!$search && !$lokasiId) {
+                $data = Cache::remember($cacheKey, $cacheDuration, function () {
+                    return SetHarga::with('lokasi')
+                        ->where('delete', 0)
+                        ->get();
                 });
-            })
-            ->when($lokasiId, function ($query, $lokasiId) {
-                return $query->where('id_lokasi', $lokasiId);
-            })
-            ->with('lokasi')
-            ->get();
+            } else {
+                $data = SetHarga::when($search, function ($query, $search) {
+                        return $query->where('nama_barang', 'like', "%$search%")
+                                        ->orWhere('merek', 'like', "%$search%")
+                                        ->orWhere('kode_barang', 'like', "%$search%");
+                    })
+                    ->when($lokasiId, function ($query, $lokasiId) {
+                        return $query->where('id_lokasi', $lokasiId);
+                    })
+                    ->with('lokasi')
+                    ->where('delete', 0)
+                    ->get();
+            }
 
-        return view('pages.master.set_harga.set_harga', compact('title', 'data', 'lokasiList'));
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <button class="btn btn-icon btn-primary btn-setharga-edit gap-5" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-setharga-delete" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('pages.master.set_harga.set_harga', compact('title', 'lokasiList'));
     }
 
 
@@ -93,6 +125,8 @@ class SetHargaControllers extends Controller
             'create_by' => auth()->id(),
             'last_user' => auth()->id(),
         ]);
+
+        Cache::forget('setharga_data');
 
         Alert::success('Berhasil Menambahkan data Set Harga.');
         return redirect('/setharga');
@@ -169,6 +203,8 @@ class SetHargaControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
+        Cache::forget('setharga_data');
+
 
         Alert::success('Berhasil Merubah data SET Harga.');
 
@@ -183,11 +219,18 @@ class SetHargaControllers extends Controller
     {
         $setharga = SetHarga::findOrFail($id);
 
-        $setharga->delete();
+        $setharga->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
+
+        Cache::forget('setharga_data');
 
         Alert::success('Data Set Harga berhasil dihapus.');
 
-        return redirect('/setharga');
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
+
+        // return redirect('/setharga');
     }
 
     public function modalImport(Request $request)
