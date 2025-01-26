@@ -15,6 +15,34 @@
     <!-- Core css -->
     <link href="{{ asset('assets/css/app.min.css')}}" rel="stylesheet">
 
+    <!-- Datatables css -->
+    <style>
+        .pagination .page-item {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        #data-table_info{
+            margin-top: 30px;
+            margin-right: 10px;
+            margin-bottom: 20px;
+        }
+
+        .data-table td, .data-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .data-table_wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        #dt-length-0{
+            padding-right: 30px
+        }
+
+    </style>
+
     @stack('css')
 
 </head>

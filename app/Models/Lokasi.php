@@ -13,6 +13,7 @@ class Lokasi extends Model
 
     protected $fillable = [
         'nama',
+        'delete',
         'create_by',
         'last_user'
     ];

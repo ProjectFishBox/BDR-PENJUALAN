@@ -8,7 +8,7 @@
 
     <link rel="shortcut icon" href="assets/images/logo/favicon.png">
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/svendors/select2/select2.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendors/select2/select2.css') }}" rel="stylesheet">
 
 </head>
 

@@ -5,13 +5,16 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@fortawesome/fontawesome-free": "^5.10.1",
+        "@ttskch/select2-bootstrap4-theme": "^1.2.3",
         "axios": "^1.1.2",
-        "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.0.0",
-        "Select2": "^3.5.7",
         "jquery": "^3.4.1",
         "jquery-validation": "^1.19.1",
-        "@fortawesome/fontawesome-free": "^5.10.1",
-        "@ttskch/select2-bootstrap4-theme": "^1.2.3"
+        "laravel-vite-plugin": "^0.7.2",
+        "Select2": "^3.5.7",
+        "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "perfect-scrollbar": "^1.5.6"
     }
 }
