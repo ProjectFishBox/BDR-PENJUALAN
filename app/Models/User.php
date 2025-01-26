@@ -25,7 +25,8 @@ class User extends Authenticatable
         'id_lokasi',
         'id_akses',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
     /**

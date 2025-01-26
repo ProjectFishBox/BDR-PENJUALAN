@@ -13,7 +13,7 @@
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered data-table" id="data-table" style="margin-bottom: 200px">
+                    <table class="table table-bordered data-table" id="data-table">
                         <thead>
                             <tr>
                                 <th scope="col" style="text-align: center; width: 10%;">No</th>
@@ -33,7 +33,7 @@
 @component('components.aset_datatable.aset_datatable')@endcomponent
 
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>\
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(document).ready(function() {

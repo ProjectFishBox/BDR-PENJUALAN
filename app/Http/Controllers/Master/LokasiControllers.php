@@ -8,11 +8,6 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Cache;
 
-use Illuminate\Support\Facades\Log;
-
-
-
-
 use App\Models\Lokasi;
 
 
@@ -30,8 +25,6 @@ class LokasiControllers extends Controller
 
         $cacheKey = 'lokasi_data';
         $cacheDuration = now()->addMinutes(3);
-
-        $search = $request->get('search');
 
         if ($request->ajax()) {
 
@@ -146,15 +139,10 @@ class LokasiControllers extends Controller
         try {
             $lokasi = Lokasi::findOrFail($id);
 
-        // dd($lokasi);
-
             $lokasi->update([
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
-
-            // Cek hasil update
-            // dd($updated);
 
             Cache::forget('lokasi_data');
 

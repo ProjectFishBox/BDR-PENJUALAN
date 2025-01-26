@@ -39,7 +39,7 @@
                         <label for="id_lokasi">Lokasi <span style="color: red">*</span></label>
                         <select id="id_lokasi" name="id_lokasi" class="form-control" required>
                             @foreach ($lokasi as $l)
-                                <option value="{{ $l->id}}">{{ $l->nama}}|</option>
+                                <option value="{{ $l->id}}">{{ $l->nama}}</option>
                             @endforeach
                         </select>
                     </div>

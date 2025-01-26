@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('jabatan', 35)->nullable();
             $table->unsignedBigInteger('id_lokasi');
             $table->unsignedBigInteger('id_akses');
-            $table->enum('delete', ['0', '1'])->default('0');
+            $table->integer('delete')->default(0);
             $table->unsignedBigInteger('create_by');
             $table->unsignedBigInteger('last_user');
             $table->timestamps();
