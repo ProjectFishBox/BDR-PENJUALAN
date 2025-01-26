@@ -16,60 +16,22 @@
                     </button>
                 </div>
 
-
-
-                <!-- Input Search -->
-                <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari Barang" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <button type="submit" class="btn btn-secondary ml-2">Cari</button>
-                </form>
-
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered data-table" id="data-table">
                         <thead>
                             <tr>
                                 <th scope="col" style="text-align: center; width: 5%;">No</th>
-                                <th scope="col" style="text-align: center; width: 50%;">Kode</th>
-                                <th scope="col" style="text-align: center; width: 20%;">Nama</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Merek</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Harga</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Kode</th>
+                                <th scope="col" style="text-align: center; width: 30%;">Nama</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Merek</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Harga</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $index => $barang)
-                                <tr>
-                                    <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
-                                    <td style="text-align: center;">
-                                        {{ $barang->kode_barang }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $barang->nama }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $barang->merek }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ number_format($barang->harga, 0, ',', '.') }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('barang-edit', $barang->id) }}">
-                                                <button class="btn btn-icon btn-primary">
-                                                    <i class="anticon anticon-edit"></i>
-                                                </button>
-                                            </a>
-                                            <button class="btn-barang-delete btn btn-icon btn-danger" data-id="{{ $barang->id }}"">
-                                                <i class="anticon anticon-delete"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -81,26 +43,97 @@
     </div>
 
 @endsection
-
+@component('components.aset_datatable.aset_datatable')@endcomponent
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    $(document).ready(function() {
+        dataBarang();
+        });
 
     function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
+        $('#data-table').DataTable().clear().destroy();
+        dataBarang();
+    }
+</script>
+
+<script>
+    function dataBarang() {
+
+        let table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('barang') }}",
+            lengthMenu: [
+                10, 20
+            ],
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
                 },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
+                {
+                    data: 'kode_barang',
+                    name: 'kode_barang'
+                },
+                {
+                    data: 'nama',
+                    name: 'nama'
+                },
+                {
+                    data: 'merek',
+                    name: 'merek'
+                },
+                {
+                    data: 'harga',
+                    name: 'harga',
+                    render: function (data, type, row) {
+                        return numberFormat(data);
+                    }
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
     }
 
+    function numberFormat(angka) {
+        return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+</script>
 
+<script>
+    $(document).on('click', '.btn-barang-edit', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/barang-edit/" + id;
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                window.location.href = url;
+                $('.btn-barang-edit').prop('disabled', false);
+                $('.btn-barang-edit').html('<i class="anticon anticon-edit"></i>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-barang-edit').prop('disabled', false);
+                $('.btn-barang-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
+</script>
+
+<script>
     $(document).on('click', '.btn-barang-delete', function(e) {
         e.preventDefault();
         let id = $(this).data('id');

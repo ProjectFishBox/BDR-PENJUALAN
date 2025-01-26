@@ -17,7 +17,8 @@ class Barang extends Model
         'merek',
         'harga',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
 }

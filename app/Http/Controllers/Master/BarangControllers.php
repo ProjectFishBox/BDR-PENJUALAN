@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Barang;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
+
+use App\Models\Barang;
 use App\Imports\BarangImport;
 
 
@@ -17,15 +20,38 @@ class BarangControllers extends Controller
      */
     public function index(Request $request)
     {
-        $title = 'Barang';
+        $title = 'List Barang';
 
-        $search = $request->get('search');
+        $cacheKey = 'barang_data';
+        $cacheDuration = now()->addMinutes(3);
 
-        $data = Barang::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%$search%");
-        })->get();
+        if ($request->ajax()) {
 
-        return view('pages.master.barang.barang', compact('title', 'data'));
+            $data = Cache::remember($cacheKey, $cacheDuration, function () {
+                return Barang::all()->where('delete', 0);
+            });
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn =
+                        '
+                            <button class="btn btn-icon btn-primary btn-barang-edit" data-id="' . $row->id . '" type="button" role="button">
+                                <i class="anticon anticon-edit"></i>
+                            </button>
+
+                            <button class="btn btn-icon btn-danger btn-barang-delete" data-id="' . $row->id . '" type="button" role="button">
+                                <i class="anticon anticon-delete"></i>
+                            </button>
+                            ';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+
+        return view('pages.master.barang.barang', compact('title'));
     }
 
     /**
@@ -47,7 +73,7 @@ class BarangControllers extends Controller
             'kode_barang' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
             'merek' => 'required|string|max:255',
-            'harga' => 'required|numeric',
+            'harga' => 'required',
         ]);
 
         $harga = str_replace('.', '', $request->harga);
@@ -57,6 +83,7 @@ class BarangControllers extends Controller
         $validateData['last_user'] = auth()->id();
 
         Barang::create($validateData);
+        Cache::forget('barang_data');
 
         Alert::success('Berhasil Menambahkan data barang.');
         return redirect('/barang');
@@ -104,6 +131,8 @@ class BarangControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
+        Cache::forget('barang_data');
+
         Alert::success('Berhasil Merubah data Barang.');
 
         return redirect('/barang');
@@ -117,7 +146,13 @@ class BarangControllers extends Controller
         try {
             $barang = Barang::findOrFail($id);
 
-            $barang->delete();
+            $barang->update([
+                'delete' => 1,
+                'last_user' => auth()->id()
+            ]);
+
+
+            Cache::forget('barang_data');
 
             Alert::success('Data Barang berhasil dihapus.');
 
@@ -174,6 +209,8 @@ class BarangControllers extends Controller
             $filePath = $file->storeAs('files', $fileName);
 
             Excel::import(new BarangImport($userId), $filePath);
+
+            Cache::forget('barang_data');
 
             return response()->json(['code' => 200, 'success' => 'Data berhasil diimpor!']);
         } catch (\Exception $e) {
