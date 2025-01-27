@@ -21,7 +21,6 @@
                             <a href="{{route('barang.download-tamplate-barang')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>
                             @break
                         @default
-
                     @endswitch
                 </div>
                 <button class="btn btn-primary" type="submit" id="savefile">Upload</button>

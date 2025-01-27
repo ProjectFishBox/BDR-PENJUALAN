@@ -53,10 +53,9 @@
             </form>
 
 
-
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered data-table" id="data-table">
                         <thead>
                             <tr>
                                 <th scope="col" style="text-align: center; width: 5%;">No</th>
@@ -70,13 +69,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @foreach ($pengeluaran as $index => $p)
+                            @foreach ($pengeluaran as $index => $p)
                                 <tr>
                                     <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
                                     <td style="text-align: center;">{{ $p->tanggal }}</td>
-                                    <td>{{ $p->uraian }}</td>
-                                    <td style="text-align: right;">{{ number_format($p->total, 0, ',', '.') }}</td>
+                                    <td style="text-align: center;">{{ $p->no_nota }}</td>
+                                    <td style="text-align: center;">{{ $p->pelanggan->nama }}</td>
+                                    <td style="text-align: right;">{{ number_format($p->total_penjualan, 0, ',', '.') }}</td>
                                     <td style="text-align: center;">{{ $p->lokasi->nama }}</td>
+                                    <td style="text-align: center;">
+                                        <button class="btn btn-primary btn-detail" id="btn-detail" data-id="{{ $p->id}}">
+                                            Detail
+                                        </button>
+                                    </td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
                                             <a href="{{ route('pengeluaran-edit', $p->id) }}">
@@ -90,7 +95,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -98,10 +103,13 @@
         </div>
     </div>
 
-    <div class="modal fade bd-example-modal" style="display: none;" id="detailexport" tabindex="-1" role="dialog"
-    aria-labelledby="importModalLabel" aria-hidden="true">
-</div>
+    <div class="modal fade bd-example-modal" style="display: none;" id="detailpenjualanmodal" tabindex="-1" role="dialog"
+        aria-labelledby="importModalLabel" aria-hidden="true">
+    </div>
 @endsection
+
+@component('components.aset_datatable.aset_datatable')@endcomponent
+
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -109,169 +117,31 @@
 <script>
     $('.datepicker-input').datepicker();
 </script>
+
 <script>
-
-    function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
-    }
-
-
-    $(document).on('click', '.btn-lokasi-delete', function(e) {
-        e.preventDefault();
-        let id = $(this).data('id');
-        console.log('data id delete', id);
-        let url = "/delete-lokasi/" + id;
-        Swal.fire({
-            title: 'Apakah kamu ingin menghapus data ini?',
-            text: "data tidak dapat dikembalikan lagi!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Iya, hapus data ini!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url,
-                    type: "GET",
-                    dataType: "HTML",
-                    success: function(data) {
-                        reloadTable();
-                        Swal.fire({
-                            title: 'Terhapus!',
-                            text: 'Data Lokasi Telah berhasil dihapus.',
-                            icon: 'success',
-                            timer: 2000
-
-                        })
-                    }
-                })
-            }
-        })
-    })
-</script>
-
-{{-- <script>
     $(document).on('click', '.btn-detail', function(e) {
         e.preventDefault();
-        let url = "/modal-detail-pengeluaran";
-        const start = $('#start').val();  // Ambil nilai start
-        const end = $('#end').val();  // Ambil nilai end
-        const lokasi = $('#lokasi').val();  // Ambil nilai lokasi
+        let id = $(this).data('id');
+        console.log('data id',id)
+        let url = "/modal-detail-penjualan";
         $(this).prop('disabled', true)
         $.ajax({
             url,
-            data: { start, end, lokasi },
+            data: {
+                id
+            },
             type: "GET",
-            // dataType: "HTML",
+            dataType: "HTML",
             success: function(data) {
-                $('#detailexport').html(data);
-                $('#detailexport').modal('show');
+                $('#detailpenjualanmodal').html(data);
+                $('#detailpenjualanmodal').modal('show');
                 $('.btn-detail').prop("disabled", false);
-                $('.btn-detail').html('<span>Export</span>');
+                $('.btn-detail').html('<span>Detail</span>');
             },
             error: function(error) {
                 console.error(error);
                 $('.btn-detail').prop('disabled', false);
-                $('.btn-detail').html('</i><span>Export</span>');
-            }
-        })
-    })
-</script> --}}
-
-<script>
-    $(document).on('click', '.btn-detail', function(e) {
-    e.preventDefault();
-    let url = "/modal-detail-pengeluaran"; // Pastikan URL-nya benar
-
-    // Ambil data dari form
-    const start = $('input[name="start"]').val(); // Ambil nilai start
-    const end = $('input[name="end"]').val(); // Ambil nilai end
-    const lokasi = $('select[name="lokasi"]').val(); // Ambil nilai lokasi
-
-    $(this).prop('disabled', true); // Menonaktifkan tombol export sementara
-
-    // Lakukan request AJAX untuk mengambil data dengan filter yang dikirim
-    $.ajax({
-        url: url, // URL untuk membuka modal dan mengirimkan data filter
-        data: { start, end, lokasi }, // Kirimkan data filter
-        type: "GET", // Method request
-        success: function(data) {
-            // Update modal dengan data yang diterima dari server
-            $('#detailexport').html(data);
-            $('#detailexport').modal('show'); // Tampilkan modal
-            $('.btn-detail').prop("disabled", false); // Aktifkan tombol kembali
-            $('.btn-detail').html('<span>Export</span>'); // Kembalikan teks tombol
-        },
-        error: function(error) {
-            console.error(error);
-            $('.btn-detail').prop('disabled', false); // Aktifkan tombol jika error
-            $('.btn-detail').html('<span>Export</span>'); // Kembalikan teks tombol
-        }
-    });
-});
-
-</script>
-
-<script>
-
-    function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
-    }
-
-
-    $(document).on('click', '.btn-barang-delete', function(e) {
-        e.preventDefault();
-        let id = $(this).data('id');
-
-        console.log(id);
-        console.log('data id delete', id);
-        let url = "/delete-pengeluaran/" + id;
-        Swal.fire({
-            title: 'Apakah kamu ingin menghapus data ini?',
-            text: "data tidak dapat dikembalikan lagi!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Iya, hapus data ini!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url,
-                    type: "GET",
-                    dataType: "HTML",
-                    success: function(data) {
-                        reloadTable();
-                        Swal.fire({
-                            title: 'Terhapus!',
-                            text: 'Data pengeluaran Telah berhasil dihapus.',
-                            icon: 'success',
-                            timer: 2000
-
-                        })
-                    }
-                })
+                $('.btn-detail').html('</i><span>Detail</span>');
             }
         })
     })

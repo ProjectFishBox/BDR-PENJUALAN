@@ -34,4 +34,10 @@ class Pelanggan extends Model
     {
         return $this->belongsTo(Kota::class, 'id_kota', 'id');
     }
+
+    public function penjualan()
+    {
+        return $this->hasMany(Penjualan::class, 'id_pelanggan', 'id');
+    }
+
 }

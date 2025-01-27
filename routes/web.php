@@ -154,7 +154,10 @@ Route::controller(PenjualanControllers::class)->group(function () {
     Route::get('/modal-tambah-pelanggan', 'modalTambahPelanggan')->name('modal-tambah-pelanggan');
     Route::post('/tambah-pelanggan-penjualan', 'tambahPelangganPenjualan')->name('tambah-pelanggan-penjualan');
     Route::get('/pelanggan-detail/{id}', 'PelanggalDetail')->name('pelanggan-detail');
-
+    Route::get('/modal-import-penjualan' , 'modalImport')->name('penjualan.import');
+    Route::post('/validasi-detail-penjualan', 'validationDetail')->name('validasi-detail-penjualan');
+    Route::post('/tambah-penjualan', 'store')->name('store-penjualan');
+    Route::get('/modal-detail-penjualan' , 'modalDetail')->name('penjualan.detail');
 
 
 });

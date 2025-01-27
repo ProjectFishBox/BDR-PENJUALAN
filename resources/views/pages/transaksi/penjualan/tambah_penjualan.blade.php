@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-body">
             <h4 class="mb-3">{{ $title }}</h4>
-            <form action="{{ route('tambah-pembelian') }}" method="POST" id="form-pembelian">
+            <form action="{{ route('tambah-penjualan') }}" method="POST" id="form-pembelian">
                 @csrf
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -25,7 +25,7 @@
                     <div class="col-auto">
                         <div class="form-group">
                             <label for="pelanggan">Pelanggan</label>
-                            <select id="pelanggan" class="form-control">
+                            <select id="pelanggan" class="form-control" name="pelanggan">
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
                                     <option value="{{ $p->id }}">{{ $p->nama }}</option>
@@ -64,7 +64,7 @@
                         <select id="nama_barang" class="form-control">
                             <option value="">Pilih Barang</option>
                             @foreach ($barang as $b)
-                                <option value="{{ $b->id }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama }}</option>
+                                <option value="{{ $b->id }}" data-id="{{ $b->id }} data-harga="{{ $b->harga }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <button class="btn btn-danger btn-import" id="btn-import">Import</button>
+                <button class="btn btn-danger btn-import mb-3 btn-import" id="btn-import">Import</button>
 
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -138,8 +138,8 @@
                             <input type="text" class="form-control" id="diskon_nota" placeholder="Diskon Nota" name="diskon_nota">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="bayar">Bayar</label>
-                            <input type="text" class="form-control" id="bayar" placeholder="Bayar">
+                            <label for="bayar_input">Bayar</label>
+                            <input type="text" class="form-control" id="bayar_input" placeholder="Bayar" name="bayar">
                         </div>
                     </div>
                 </div>
@@ -148,28 +148,36 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="total">Total</label>
-                            <input type="text" class="form-control" id="total" placeholder="Diskon Nota" name="total">
+                            <input type="text" class="form-control" id="total" placeholder="Total" name="total">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="kembali">Kembali</label>
-                            <input type="text" class="form-control" id="kembali" placeholder="kembali">
+                            <label for="kembali_input">Kembali</label>
+                            <input type="text" class="form-control" id="kembali_input" placeholder="kembali">
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end">
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="sisa">Sisa</label>
-                            <input type="text" class="form-control" id="sisa" placeholder="Diskon Nota" name="sisa">
+                        <div class="form-group col-md-12">
+                            <label for="sisa_input">Sisa</label>
+                            <input type="text" class="form-control" id="sisa_input" placeholder="Diskon Nota" name="sisa">
                         </div>
                     </div>
                 </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="/penjualan" class="btn btn-danger mr-3">Batal</a>
+                    <button class="btn btn-success" type="submit">simpan</button>
+                </div>
+
             </form>
         </div>
     </div>
 
     <div class="modal fade bd-example-modal-add" style="display: none;" id="pelangganmodal" tabindex="-1" role="dialog" aria-labelledby="pelangganModalLabel" aria-hidden="true"></div>
+
+    <div class="modal fade bd-example-modal-import" style="display: none;" id="importmodal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -212,30 +220,25 @@
 
     <script>
         $(document).ready(function () {
-            // Event submit form modal
             $('#form-tambah-pelanggan').on('submit', function (e) {
-                e.preventDefault(); // Mencegah reload halaman
-
-                let formData = $(this).serialize(); // Mengambil data dari form modal
+                e.preventDefault();
+                let formData = $(this).serialize();
 
                 $.ajax({
-                    url: $(this).attr('action'), // URL yang didefinisikan pada atribut action
+                    url: $(this).attr('action'),
                     method: 'POST',
                     data: formData,
                     success: function (response) {
-                        // Tambahkan data pelanggan baru ke dropdown
                         $('#pelanggan').append(
                             `<option value="${response.id}" selected>${response.nama}</option>`
                         );
 
-                        // Isi otomatis alamat, kota, dan telepon
                         $('#alamat').val(response.alamat);
                         $('#kota').val(response.kota);
                         $('#telepon').val(response.telepon);
 
-                        // Tutup modal
-                        $('#form-tambah-pelanggan')[0].reset(); // Reset form
-                        $('.modal').modal('hide'); // Tutup modal
+                        $('#form-tambah-pelanggan')[0].reset();
+                        $('.modal').modal('hide');
                     },
                     error: function (xhr) {
                         alert('Terjadi kesalahan, silakan coba lagi.');
@@ -250,12 +253,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             const newPelanggan = @json(session('new_pelanggan'));
             if (newPelanggan) {
-                // Set pelanggan yang baru ditambahkan di select
                 const pelangganSelect = document.getElementById('pelanggan');
                 const newOption = new Option(newPelanggan.nama, newPelanggan.id, true, true);
                 pelangganSelect.add(newOption);
 
-                // Isi field alamat, kota, dan telepon
+
                 document.getElementById('alamat').value = newPelanggan.alamat;
                 document.getElementById('kota').value = newPelanggan.kota;
                 document.getElementById('telepon').value = newPelanggan.telepon;
@@ -281,7 +283,6 @@
                     return;
                 }
 
-                // AJAX Request
                 fetch(`/pelanggan-detail/${selectedId}`)
                     .then(response => response.json())
                     .then(data => {
@@ -295,57 +296,495 @@
         });
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const namaBarangSelect = document.getElementById('nama_barang');
-    const merekSelect = document.getElementById('merek');
-    const kodeBarangInput = document.getElementById('kode_barang');
-    const semuaOption = [...namaBarangSelect.options];
+    <script>
+        $(document).on('click', '.btn-import', function(e) {
+            e.preventDefault();
+            let url = "/modal-import-penjualan";
+            $(this).prop('disabled', true)
+            $.ajax({
+                url,
+                type: "GET",
+                dataType: "HTML",
+                success: function(data) {
+                    $('#importmodal').html(data);
+                    $('#importmodal').modal('show');
+                    $('.btn-import').prop("disabled", false);
+                    $('.btn-import').html('<span>Import</span>');
+                },
+                error: function(error) {
+                    console.error(error);
+                    $('.btn-import').prop('disabled', false);
+                    $('.btn-import').html('<span>Import</span>');
+                }
+            })
+        })
+    </script>
 
-    namaBarangSelect.addEventListener('change', function () {
-        const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-        const kodeBarang = selectedOption.getAttribute('data-kode');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-        merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
-        kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
+            const namaBarangSelect = document.getElementById('nama_barang');
+            const merekSelect = document.getElementById('merek');
+            const kodeBarangInput = document.getElementById('kode_barang');
+            const hargaInput = document.getElementById('harga');
+            const jumlahInput = document.getElementById('jumlah');
+            const diskonInput = document.getElementById('diskon');
+            const subTotalInput = document.getElementById('sub_total');
+            const semuaOption = [...namaBarangSelect.options];
+            const tableBody = document.querySelector('table tbody');
 
-        semuaOption.forEach(option => {
-            if (option.getAttribute('data-kode') === kodeBarang) {
-                const merek = option.getAttribute('data-merek');
-                const merekOption = document.createElement('option');
-                merekOption.value = merek;
-                merekOption.textContent = merek;
-                merekSelect.appendChild(merekOption);
+            const addButton = document.querySelector('button[type="submit"]');
+
+            function formatNumber(value) {
+                return new Intl.NumberFormat('id-ID').format(value);
+            }
+
+            namaBarangSelect.addEventListener('change', function () {
+                const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+                const kodeBarang = selectedOption.getAttribute('data-kode');
+                const harga = selectedOption.getAttribute('data-harga');
+                const merek = selectedOption.getAttribute('data-merek');
+                const idBarang = selectedOption.getAttribute('data-id');
+
+                kodeBarangInput.value = kodeBarang ? kodeBarang : '';
+                hargaInput.value = harga ? formatNumber(harga) : '';
+                merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+                semuaOption.forEach(option => {
+                    if (option.getAttribute('data-kode') === kodeBarang) {
+                        const merekOption = document.createElement('option');
+                        merekOption.value = option.getAttribute('data-merek');
+                        merekOption.textContent = option.getAttribute('data-merek');
+                        merekSelect.appendChild(merekOption);
+                    }
+                });
+            });
+
+            merekSelect.addEventListener('change', function () {
+                const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;
+                console.log('Merek yang dipilih:', selectedMerek);
+            });
+
+            function calculateSubtotal() {
+                const harga = parseFloat(hargaInput.value.replace(/\./g, '').replace(',', '.')) || 0;
+                const jumlah = parseFloat(jumlahInput.value) || 0;
+                const diskon = parseFloat(diskonInput.value) || 0;
+
+                const hargaSetelahDiskon = harga - diskon;
+                const subTotal = hargaSetelahDiskon * jumlah;
+
+                subTotalInput.value = subTotal;
+            }
+
+            [hargaInput, jumlahInput, diskonInput].forEach(input => {
+                input.addEventListener('input', calculateSubtotal);
+            });
+
+
+            let rowCount = 0;
+
+            addButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;
+                const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const kodeBarang = kodeBarangInput.value;
+                const merek = selectedMerek;
+                const harga = hargaInput.value;
+                const jumlah = jumlahInput.value;
+                const subTotal = subTotalInput.value;
+                const diskon = diskonInput.value;
+
+                console.log('Merek yang Dipilih:', merek);
+                console.log('Subtotal yang Dihitung:', subTotal);
+                const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute(
+                    'data-id');
+
+                if (!namaBarang || !kodeBarang || !merek || !harga || !jumlah || !subTotal || !idBarang) {
+
+                    console.error("Debugging data kosong:");
+                    if (!namaBarang) console.error("Nama Barang kosong.");
+                    if (!kodeBarang) console.error("Kode Barang kosong.");
+                    if (!merek) console.error("Merek kosong.");
+                    if (!harga) console.error("Harga kosong.");
+                    if (!jumlah) console.error("Jumlah kosong.");
+                    if (!subTotal) console.error("Sub Total kosong.");
+                    if (!idBarang) console.error("ID Barang kosong.");
+
+                    alert('Mohon lengkapi semua data sebelum menambahkan!');
+                    return;
+                }
+
+                const itemData = {
+                    id_barang: idBarang,
+                    kode_barang: kodeBarang,
+                    nama_barang: namaBarang,
+                    merek: merek,
+                    harga: harga,
+                    diskon : diskon,
+                    jumlah: jumlah,
+                    subtotal: subTotal
+                };
+
+                const newRow = `
+                <tr>
+                    <td></td>
+                    <td>${kodeBarang}</td>
+                    <td>${namaBarang}</td>
+                    <td>${merek}</td>
+                    <td>${harga}</td>
+                    <td>${diskon}</td>
+                    <td>${jumlah}</td>
+                    <td class="subtotal">${subTotal}</td>
+                    <td>
+                        <button class="btn btn-icon btn-danger btn-rounded remove-row">
+                            <i class="anticon anticon-close"></i>
+                        </button>
+                    </td>
+                    <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${idBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${namaBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][merek]" value="${merek}">
+                    <input type="hidden" name="table_data[${rowCount}][harga]" value="${harga}">
+                    <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${jumlah}">
+                    <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${subTotal}">
+                    <input type="hidden" name="table_data[${rowCount}][diskon]" value="${diskon}">
+
+                </tr>
+            `;
+
+                rowCount++;
+
+                const totalPembelianRow = tableBody.querySelector('tr:last-child');
+                totalPembelianRow.insertAdjacentHTML('beforebegin', newRow);
+
+                resetForm();
+                updateTotalPembelian();
+                setRemoveRowEvent();
+                updateRowNumbers();
+
+
+            });
+
+            function resetForm() {
+                namaBarangSelect.value = '';
+                kodeBarangInput.value = '';
+                merek.value = '';
+                hargaInput.value = '';
+                jumlahInput.value = '';
+                diskonInput.value = '';
+                subTotalInput.value = '';
+
+            }
+
+            function setRemoveRowEvent() {
+                const removeButtons = document.querySelectorAll('.remove-row');
+                removeButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const row = button.closest('tr');
+                        row.remove();
+                        updateRowNumbers();
+
+                        updateTotalPembelian();
+                    });
+                });
+            }
+
+            function updateRowNumbers() {
+                const rows = tableBody.querySelectorAll(
+                    'tr:not(:last-child)'); // Abaikan baris terakhir (Total Pembelian)
+                rows.forEach((row, index) => {
+                    // Update nomor baris
+                    row.querySelector('td:first-child').innerText = index + 1;
+
+                    // Update atribut 'name' untuk input hidden
+                    const inputs = row.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        const inputName = input.name.replace(/\[\d+\]/, `[${index}]`);
+                        input.setAttribute('name', inputName);
+                    });
+                });
+            }
+
+            function updateTotalPembelian() {
+                const tableBody = document.querySelector('table tbody');
+
+                const subtotals = tableBody.querySelectorAll('.subtotal');
+                let total = 0;
+
+                subtotals.forEach(function(subtotalCell) {
+                    const subtotalValue = subtotalCell.textContent.replace(/[^\d.-]/g, '');
+                    if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
+                        total += parseFloat(subtotalValue);
+                    }
+                });
+
+                const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
+                if (totalPembelianCell) {
+                    totalPembelianCell.textContent = Math.floor(total);
+                }
+
+                return total;
+            }
+
+        });
+    </script>
+
+    <script>
+        $(document).on('submit', '#form-imporbarang', function(e) {
+            e.preventDefault();
+
+            const fileInput = $('#customFile')[0];
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = event.target.result;
+
+                    const parsedData = parseCSV(data);
+                    searchInDatabase(parsedData, function(response) {
+                        const updatedResponse = response.map(item => {
+                            const parsedItem = parsedData.find(parsed => parsed.kode_barang === item.kode_barang);
+                            if (parsedItem) {
+                                item.diskon = parsedItem.diskon // Pastikan diskon adalah angka
+                            }
+                            return item;
+                        });
+                        importToTable(updatedResponse);
+                    });
+
+                    fileInput.value = '';
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Silakan pilih file terlebih dahulu.");
             }
         });
-    });
-});
 
-</script>
+        let rowCount = 0;
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const namaBarangSelect = document.getElementById('nama_barang');
-        const kodeBarangInput = document.getElementById('kode_barang');
+        function setRemoveRowEvent() {
+            const removeButtons = document.querySelectorAll('.remove-row');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = button.closest('tr');
+                    row.remove();
+                    updateRowNumbers();
+                    updateTotalPembelian();
+                });
+            });
+        }
+
+        function searchInDatabase(data, callback) {
+            $.ajax({
+                url: '/validasi-detail-penjualan',
+                type: 'POST',
+                data: {
+                    items: data
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        callback(response.data);
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 404) {
+                        const errorMessage = xhr.responseJSON.message;
+                        alert(errorMessage);
+                    } else {
+                        alert('Terjadi kesalahan saat memvalidasi data.');
+                    }
+                }
+            });
+        }
+
+        function importToTable(data) {
+
+            const tableBody = document.querySelector('table tbody');
+
+            data.forEach(item => {
+                // const formattedHarga = item.harga.toString();
+                const formattedHarga = formatNumber(item.harga);
+                const formattedSubtotal = item.subtotal.toString();
+
+
+                const newRow = `
+                <tr>
+                    <td></td>
+                    <td>${item.kode_barang}</td>
+                    <td>${item.nama_barang}</td>
+                    <td>${item.merek}</td>
+                    <td>${formattedHarga}</td>
+                    <td>${item.diskon}</td>
+                    <td>${item.jumlah}</td>
+                    <td class="subtotal">${formattedSubtotal}</td>
+                    <td>
+                        <button class="btn btn-icon btn-danger btn-rounded remove-row">
+                            <i class="anticon anticon-close"></i>
+                        </button>
+                    </td>
+                    <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${item.id_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${item.kode_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${item.nama_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][merek]" value="${item.merek}">
+                    <input type="hidden" name="table_data[${rowCount}][harga]" value="${item.harga}">
+                    <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${item.jumlah}">
+                    <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${item.subtotal}">
+                    <input type="hidden" name="table_data[${rowCount}][diskon]" value="${item.diskon}">
+
+
+                </tr>
+                `;
+
+                rowCount++;
+                const totalPembelianRow = tableBody.querySelector('tr:last-child');
+                totalPembelianRow.insertAdjacentHTML('beforebegin', newRow);
+            });
+
+            updateRowNumbers();
+            setRemoveRowEvent();
+            updateTotalPembelian();
+        }
 
         function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
-        namaBarangSelect.addEventListener('change', function () {
-            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            const harga = selectedOption.getAttribute('data-harga');
-            const kodeBarang = selectedOption.getAttribute('data-kode');
-            const  merek= selectedOption.getAttribute('data-merek');
 
-            hargaInput.value = harga ? formatNumber(harga) : '';
-            kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
-            merekInput.value = merek  ? merek  : '';
+        function parseCSV(data) {
+            const lines = data.split('\n');
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                const columns = lines[i].split(',');
 
-            merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+                // Cek apakah kode_barang tidak kosong atau undefined
+                if (columns[0] && columns[0] !== undefined && columns[0].trim() !== '') {
+                    result.push({
+                        kode_barang: columns[0],
+                        merek: columns[1],
+                        jumlah: parseInt(columns[2], 10) || 0,
+                        diskon: parseInt(columns[3], 10) || 0,
+                    });
+                }
+            }
+            console.log(result);
+            return result;
+        }
 
+
+        function updateRowNumbers() {
+            const tableBody = document.querySelector('table tbody');
+
+            const rows = tableBody.querySelectorAll('tr:not(:last-child)');
+            rowCount = 0; // Reset rowCount
+            rows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                row.querySelector('td:first-child').innerText = index + 1;
+
+                inputs.forEach(input => {
+                    const inputName = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    input.setAttribute('name', inputName);
+                });
+                rowCount++;
+            });
+        }
+
+        function updateTotalPembelian() {
+            const tableBody = document.querySelector('table tbody');
+
+            const subtotals = tableBody.querySelectorAll('.subtotal');
+            let total = 0;
+
+            subtotals.forEach(function(subtotalCell) {
+                const subtotalValue = subtotalCell.textContent.replace(/[^\d.-]/g, '');
+                if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
+                    total += parseFloat(subtotalValue);
+                }
+            });
+
+            const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
+            if (totalPembelianCell) {
+                totalPembelianCell.textContent = Math.floor(total);
+            }
+
+            return total;
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const diskonNotaInput = document.getElementById('diskon_nota');
+            const bayarInput = document.getElementById('bayar_input');
+            const kembaliInput = document.getElementById('kembali_input');
+            const sisaInput = document.getElementById('sisa_input');
+            const totalInput = document.getElementById('total');
+            const tableBody = document.querySelector('table tbody');
+
+            function formatRupiah(value) {
+                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            function parseRupiah(value) {
+                return parseFloat(value.replace(/[^0-9]/g, '') || 0);
+            }
+
+            function updateTotalPembelian() {
+                const subtotals = tableBody.querySelectorAll('.subtotal');
+                let total = 0;
+
+                subtotals.forEach(function (subtotalCell) {
+                    const subtotalValue = parseFloat(subtotalCell.textContent.replace(/[^0-9.-]+/g, "")) || 0;
+                    total += subtotalValue;
+                });
+
+                const diskonNota = parseRupiah(diskonNotaInput.value) || 0;
+
+                total -= diskonNota;
+
+                total = Math.max(total, 0);
+
+                totalInput.value = formatRupiah(total);
+
+                return total;
+            }
+
+            function calculateSisaDanKembali() {
+                const totalPembelian = updateTotalPembelian();
+                const bayar = parseRupiah(bayarInput.value) || 0;
+                const sisa = Math.max(totalPembelian - bayar, 0);
+                const kembali = Math.max(bayar - totalPembelian, 0);
+
+                sisaInput.value = formatRupiah(sisa);
+                kembaliInput.value = formatRupiah(kembali);
+            }
+
+
+            function formatInputAsRupiah(event) {
+                const input = event.target;
+                const value = parseRupiah(input.value);
+                input.value = formatRupiah(value);
+            }
+
+            diskonNotaInput.addEventListener('input', function (event) {
+                formatInputAsRupiah(event);
+                calculateSisaDanKembali();
+            });
+
+            bayarInput.addEventListener('input', function (event) {
+                formatInputAsRupiah(event);
+                calculateSisaDanKembali();
+            });
+
+            tableBody.addEventListener('change', function () {
+                calculateSisaDanKembali();
+            });
+
+            calculateSisaDanKembali();
         });
-    });
-</script> --}}
+    </script>
 
 @endpush

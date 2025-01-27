@@ -29,5 +29,12 @@ class Penjualan extends Model
         return $this->belongsTo(Lokasi::class, 'id_lokasi');
     }
 
+    public function pelanggan()
+    {
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan', 'id');
+    }
+
+
+
 
 }
