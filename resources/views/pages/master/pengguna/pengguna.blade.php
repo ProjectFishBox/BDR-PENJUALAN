@@ -13,7 +13,7 @@
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered data-table" id="data-table">
+                    <table class="table table-bordered table-hover data-table" id="data-table">
                         <thead>
                             <tr>
                                 <th scope="col">No</th>

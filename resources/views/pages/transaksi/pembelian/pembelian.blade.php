@@ -12,68 +12,24 @@
                     </a>
                 </div>
 
-
-
-                <!-- Input Search -->
-                <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                    <button type="submit" class="btn btn-secondary ml-2">Cari</button>
-                </form>
-
             </div>
             <div class="m-t-25">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover data-table" id="data-table"">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center; width: 5%;">No</th>
-                                <th scope="col" style="text-align: center; width: 50%;">Tanggal</th>
-                                <th scope="col" style="text-align: center; width: 20%;">No Nota</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Kontainer</th>
-                                <th scope="col" style="text-align: center; width: 10%;">Total</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Lokasi</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Detail</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Akse</th>
+                                <th scope="col" style="text-align: center;">No</th>
+                                <th scope="col" style="text-align: center;">Tanggal</th>
+                                <th scope="col" style="text-align: center;">No Nota</th>
+                                <th scope="col" style="text-align: center;">Kontainer</th>
+                                <th scope="col" style="text-align: center;">Total</th>
+                                <th scope="col" style="text-align: center;">Lokasi</th>
+                                <th scope="col" style="text-align: center;">Detail</th>
+                                <th scope="col" style="text-align: center;">Akses</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($data as $index => $pembelian)
-                                <tr>
-                                    <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
-                                    <td style="text-align: center;">
-                                        {{ $pembelian->tanggal }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $pembelian->no_nota }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $pembelian->kontainer }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $pembelian->bayar }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        {{ $pembelian->lokasi->nama }}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn btn-primary btn-detail" id="btn-detail" data-id={{ $pembelian->id }}>Detail</button>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('pembelian-edit', $pembelian->id) }}">
-                                                <button class="btn btn-icon btn-primary">
-                                                    <i class="anticon anticon-edit"></i>
-                                                </button>
-                                            </a>
-                                            <button class="btn-pembelian-delete btn btn-icon btn-danger" data-id="{{ $pembelian->id }}"">
-                                                <i class="anticon anticon-delete"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -86,165 +42,77 @@
 
 @endsection
 
+@component('components.aset_datatable.aset_datatable')@endcomponent
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{{-- <script>
+
+<script>
+    $(document).ready(function() {
+        dataPembelian();
+        });
 
     function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
+        $('#data-table').DataTable().clear().destroy();
+        dataPembelian();
     }
-
-
-    $(document).on('click', '.btn-barang-delete', function(e) {
-        e.preventDefault();
-        let id = $(this).data('id');
-        console.log('data id delete', id);
-        let url = "/delete-barang/" + id;
-        Swal.fire({
-            title: 'Apakah kamu ingin menghapus data ini?',
-            text: "data tidak dapat dikembalikan lagi!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Iya, hapus data ini!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url,
-                    type: "GET",
-                    dataType: "HTML",
-                    success: function(data) {
-                        reloadTable();
-                        Swal.fire({
-                            title: 'Terhapus!',
-                            text: 'Data Lokasi Telah berhasil dihapus.',
-                            icon: 'success',
-                            timer: 2000
-
-                        })
-                    }
-                })
-            }
-        })
-    })
 </script>
 
 <script>
-    $(document).on('click', '.btn-import', function(e) {
-        e.preventDefault();
-        let url = "/modal-import-barang";
-        $(this).prop('disabled', true)
-        $.ajax({
-            url,
-            type: "GET",
-            dataType: "HTML",
-            success: function(data) {
-                $('#importmodal').html(data);
-                $('#importmodal').modal('show');
-                $('.btn-import').prop("disabled", false);
-                $('.btn-import').html('<i class="far fa-file-excel mr-1"></i><span>Import</span>');
-            },
-            error: function(error) {
-                console.error(error);
-                $('.btn-import').prop('disabled', false);
-                $('.btn-import').html('<i class="far fa-file-excel mr-1"></i><span>Import</span>');
-            }
-        })
-    })
-</script>
+    function dataPembelian() {
 
-<script>
-    $(document).on('submit', '#form-imporbarang', function(e){
-        e.preventDefault();
-        let data = new FormData(this);
-        const url = '/import-barang';
-        $('#savefile').html("Uploading");
-        $('#savefile').prop("disabled",true);
-        console.log("berhasil ditekan");
-        $.ajax({
-            url,
-            data,
-            type: "POST",
-            dataType: "JSON",
-            cache:false,
-            processData: false,
-            contentType: false,
-            beforeSend: function() {
-                Swal.fire({
-                    title: 'Loading...',
-                    html: 'Please wait while we are uploading your file.',
-                    icon: "info",
-                    buttons: false,
-                    dangerMode: true,
-                    showConfirmButton: false
-                });
-            },
-            success: function(data)
-            {
-                if(data.code == 200)
+        let table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('pembelian') }}",
+            lengthMenu: [
+                10, 20
+            ],
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                },
                 {
-                    Swal.fire({
-                        title: 'Success',
-                        text: data.success,
-                        icon: "success",
-                        timer: 2000
-                    });
-                    $('#savefile').prop("disabled",false);
-                    $('#savefile').html('Save');
-                    $('#importmodal').modal('hide');
-                    reloadTable();
-                }else if(data.code == 400)
+                    data: 'tanggal',
+                    name: 'tanggal'
+                },
                 {
-                    Swal.fire({
-                        title: 'Failed',
-                        icon: "error",
-                        text: data.error,
-                        showConfirmButton: true,
-                        confirmButtonText: "Ok",
-                        confirmButtonColor: "#DD6B55",
-                    });
-                    $('#savefile').prop("disabled",false);
-                    $('#savefile').html('Save');
-                }
-            },
-            error: function(error) {
-                let errorMessage = 'An error occurred. Please try again.';
-                if (error.responseJSON) {
-                    // Handle detailed error message
-                    errorMessage = error.responseJSON.message;
-                    if (error.responseJSON.errors) {
-                        const errorDetails = Object.values(error.responseJSON.errors)
-                            .flat()
-                            .join(', ');
-                        errorMessage += `: ${errorDetails}`;
-                    }
-                }
-                Swal.fire({
-                    title: 'Failed',
-                    icon: "error",
-                    text: errorMessage,
-                    showConfirmButton: true,
-                    confirmButtonText: "Ok",
-                    confirmButtonColor: "#DD6B55",
-                });
-                console.error(error);
-                $('#savefile').prop("disabled", false);
-                $('#savefile').html('Save');
-            }
+                    data: 'no_nota',
+                    name: 'no_nota'
+                },
+                {
+                    data: 'kontainer',
+                    name: 'kontainer'
+                },
+                {
+                    data: 'bayar',
+                    name: 'bayar'
+                },
+                {
+                    data: 'lokasi.nama',
+                    name: 'lokasi.nama'
+                },
+                {
+                    data: 'nama',
+                    name: 'nama',
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-primary btn-detail" id="btn-detail-${row.id}" data-id="${row.id}">
+                                Detail
+                            </button>`;
+                    },
+
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
         });
-    })
-</script> --}}
+    }
+</script>
 
 <script>
     $(document).on('click', '.btn-detail', function(e) {
@@ -276,22 +144,33 @@
 </script>
 
 <script>
+    $(document).on('click', '.btn-pembelian-edit', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/pembelian-edit/" + id;
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                window.location.href = url;
+                $('.btn-pembelian-edit').prop('disabled', false);
+                $('.btn-pembelian-edit').html('<i class="anticon anticon-edit"></i>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-pembelian-edit').prop('disabled', false);
+                $('.btn-pembelian-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
+</script>
 
-    function reloadTable() {
-            $.ajax({
-                url: "{{ url()->current() }}",
-                type: "GET",
-                success: function(data) {
-                    let tableContent = $(data).find('table tbody').html();
-                    $('table tbody').html(tableContent);
-                },
-                error: function(xhr) {
-                    console.error('Failed to reload table:', xhr);
-                }
-            });
-    }
-
-
+<script>
     $(document).on('click', '.btn-pembelian-delete', function(e) {
         e.preventDefault();
         let id = $(this).data('id');

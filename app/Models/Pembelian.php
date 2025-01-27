@@ -18,7 +18,8 @@ class Pembelian extends Model
         'bayar',
         'id_lokasi',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
 

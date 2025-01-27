@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Transaksi;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pembelian;
-use App\Models\Barang;
-use App\Models\Lokasi;
-use App\Models\PembelianDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
+
+use App\Models\Pembelian;
+use App\Models\Barang;
+use App\Models\Lokasi;
+use App\Models\PembelianDetail;
+
 
 class PembelianControllers extends Controller
 {
@@ -21,20 +25,35 @@ class PembelianControllers extends Controller
     {
         $title = 'List Pembelian';
 
-        $pembelian = Pembelian::all();
-        $search = trim($request->get('search'));
+        $cacheKey = 'pembelian_data';
+        $cacheDuration = now()->addMinutes(3);
 
+        if ($request->ajax()) {
 
-        $data = Pembelian::when($search, function ($query, $search) {
-            return $query->where(function ($q) use ($search) {
-                $q->where('no_nota', 'like', "%$search%")
-                ->orWhere('kontainer', 'like', "%$search%");
+            $data = Cache::remember($cacheKey, $cacheDuration, function () {
+                return Pembelian::with('lokasi')->where('delete', 0)->get();
             });
-        })
-        ->with('lokasi')
-        ->get();
 
-        return view('pages.transaksi.pembelian.pembelian', compact('title','pembelian', 'data'));
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn =
+                        '
+                            <button class="btn btn-icon btn-primary btn-pembelian-edit" data-id="' . $row->id . '" type="button" role="button">
+                                <i class="anticon anticon-edit"></i>
+                            </button>
+
+                            <button class="btn btn-icon btn-danger btn-pembelian-delete" data-id="' . $row->id . '" type="button" role="button">
+                                <i class="anticon anticon-delete"></i>
+                            </button>
+                            ';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('pages.transaksi.pembelian.pembelian', compact('title'));
     }
 
     /**
@@ -86,6 +105,8 @@ class PembelianControllers extends Controller
                 'last_user' => auth()->id()
             ]);
         }
+
+        Cache::forget('pembelian_data');
 
         Alert::success('Berhasil Menambahkan data Pembelian.');
 
@@ -177,6 +198,8 @@ class PembelianControllers extends Controller
             }
 
             DB::commit();
+
+            Cache::forget('pembelian_data');
 
             Alert::success('Berhasil Merubah data SET Harga.');
 
@@ -296,11 +319,16 @@ class PembelianControllers extends Controller
     {
         $pembelian = Pembelian::findOrFail($id);
 
-        $pembelian->delete();
+        $pembelian->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
+
+        Cache::forget('pembelian_data');
 
         Alert::success('Data Pembelian berhasil dihapus.');
 
-        return redirect('/pembelian');
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
     }
 
 
