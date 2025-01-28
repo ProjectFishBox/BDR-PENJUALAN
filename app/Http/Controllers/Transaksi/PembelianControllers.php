@@ -331,6 +331,19 @@ class PembelianControllers extends Controller
         return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
     }
 
+    public function downloadTamplate()
+    {
+        $filePath = public_path('import_tamplate/tamplate_pembelian_detail.csv');
+        $fileName = 'tamplate_pembelian_detail_.csv';
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $fileName);
+    }
+
+
 
 
 

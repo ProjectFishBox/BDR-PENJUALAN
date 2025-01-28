@@ -337,4 +337,16 @@ class PenjualanControllers extends Controller
         return view('components.modal.modal_detail_data_penjualan', compact('title', 'penjualan', 'detailpenjualan', 'lokasi', 'detailPelanggan', 'totalPenjualan', 'subtotalItem', 'kota'));
     }
 
+    public function downloadTamplate()
+    {
+        $filePath = public_path('import_tamplate/tamplate_penjualan_detail.csv');
+        $fileName = 'tamplate_penjualan_detail_.csv';
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $fileName);
+    }
+
 }
