@@ -22,39 +22,79 @@ class PenjualanControllers extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
         $title = 'List Penjualan';
 
-        $lokasi = Lokasi::all();
-        $pelanggan = Pelanggan::all();
+        $cacheDuration = now()->addMinutes(3);
 
-        $query = Penjualan::with(['pelanggan', 'lokasi']);
+        $lokasiList = Cache::remember('lokasiList', $cacheDuration, function () {
+            return Lokasi::all();
+        });
 
-        if ($request->filled('start') && $request->filled('end')) {
-            $query->whereBetween('tanggal', [
-                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
-                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
-            ]);
+        $pelangganList = Cache::remember('pelangganList', $cacheDuration, function () {
+            return Pelanggan::all();
+        });
+
+        if ($request->ajax()) {
+            $search = $request->query('search');
+            $lokasiId = $request->query('lokasi');
+            $pelangganId = $request->query('pelanggan');
+            $daterange = $request->query('daterange');
+
+            $query = Penjualan::with('pelanggan', 'lokasi')->where('delete', 0);
+
+            if ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('no_nota', 'like', "%$search%")
+                        ->orWhere('total_penjualan', 'like', "%$search%");
+                });
+            }
+
+            if ($lokasiId) {
+                $query->where('id_lokasi', $lokasiId);
+            }
+
+            if ($pelangganId) {
+                $query->where('id_pelanggan', $pelangganId);
+
+            }
+
+            if ($daterange) {
+                $dates = explode(' - ', $daterange);
+
+                if (count($dates) === 2) {
+                    $startDate = date('Y-m-d', strtotime($dates[0]));
+                    $endDate = date('Y-m-d', strtotime($dates[1]));
+                    $query->whereBetween('tanggal', [$startDate, $endDate]);
+                }
+            }
+
+            $data = $query->get();
+
+
+            if ($data->isEmpty()) {
+                return response()->json(['data' => []]);
+            }
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <button class="btn btn-icon btn-primary btn-penjualan-edit" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-penjualan-delete" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-
-        if ($request->filled('pelanggan')) {
-            $query->where('id_pelanggan', $request->pelanggan);
-        }
-
-        if ($request->filled('lokasi')) {
-            $query->where('id_lokasi', $request->lokasi);
-        }
-
-
-        if ($request->filled('search')) {
-            $query->where('no_nota', 'like', '%' . $request->search . '%');
-        }
-
-        $pengeluaran = $query->paginate(10);
-
-        return view('pages.transaksi.penjualan.penjualan', compact('pengeluaran', 'lokasi', 'title', 'pelanggan'));
+        return view('pages.transaksi.penjualan.penjualan', compact('title', 'lokasiList', 'pelangganList'));
     }
 
 
@@ -89,8 +129,6 @@ class PenjualanControllers extends Controller
             'total' => 'nullable',
             'sisa' => 'nullable'
         ]);
-
-        $validatedData['tanggal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
 
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
         $validatedData['create_by'] = auth()->id();

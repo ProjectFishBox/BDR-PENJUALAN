@@ -4,11 +4,11 @@
     <div class="card">
         <div class="card-body">
             <h4 class="mb-3">{{ $title }}</h4>
-             <form action="{{ route('update-pengeluaran', $pengeluaran->id) }}" method="POST">
+            <form action="{{ route('update-pengeluaran', $pengeluaran->id) }}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label for="tanggal">Tanggal <span style="color: red">*</span></label>
-                    <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" value="{{ $pengeluaran->tanggal}}">
+                    <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" required  value="{{ $pengeluaran->tanggal}}"/>
                 </div>
                 <div class="form-group">
                     <label for="uraian">Uraian <span style="color: red">*</span></label>
@@ -32,41 +32,53 @@
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
-             </form>
+            </form>
         </div>
     </div>
 
 @endsection
 
+@push('css')
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+@endpush
+
+
 @push('js')
-<script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
-    $('.datepicker-input').datepicker();
+    $(function() {
+        $('input[name="tanggal"]').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD',
+                cancelLabel: 'Clear'
+            },
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+        });
+    });
 </script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const totalInput = document.getElementById('total');
 
-        // Fungsi untuk memformat angka ke format ribuan (Indonesia)
         function formatNumber(value) {
             if (!value) return '';
             const number = parseInt(value.replace(/\./g, ''), 10);
             return new Intl.NumberFormat('id-ID').format(number);
         }
 
-        // Fungsi untuk menghapus separator ribuan sebelum pengolahan angka
         function removeThousandSeparator(value) {
             return value.replace(/\./g, '');
         }
 
-        // Format ulang angka saat halaman dimuat
         if (totalInput.value) {
             const rawValue = removeThousandSeparator(totalInput.value);
             totalInput.value = formatNumber(rawValue);
         }
 
-        // Tambahkan event listener untuk memformat angka saat pengguna mengetik
         totalInput.addEventListener('input', function () {
             const rawValue = removeThousandSeparator(totalInput.value);
             if (!isNaN(rawValue)) {

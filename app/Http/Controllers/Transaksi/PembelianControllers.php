@@ -74,16 +74,12 @@ class PembelianControllers extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->all());
-
         $validatedData = $request->validate([
             'tanggal' => 'required',
             'no_nota' => 'required',
             'kontainer' => 'required',
             'bayar' => 'nullable',
         ]);
-
-        $validatedData['tanggal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
 
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
         $validatedData['create_by'] = auth()->id();
@@ -199,9 +195,7 @@ class PembelianControllers extends Controller
 
             DB::commit();
 
-            Cache::forget('pembelian_data');
-
-            Alert::success('Berhasil Merubah data SET Harga.');
+            Alert::success('Berhasil Merubah data Pembelian.');
 
             return redirect('/pembelian');
 
@@ -234,8 +228,6 @@ class PembelianControllers extends Controller
 
 
         $pembelian = Pembelian::findOrFail($id);
-
-        // $detailPembelian = PembelianDetail::where('id_pembelian', $id)->get();
 
         $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
 

@@ -17,7 +17,8 @@ class Pengeluaran extends Model
         'uraian',
         'total',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
     public function lokasi()

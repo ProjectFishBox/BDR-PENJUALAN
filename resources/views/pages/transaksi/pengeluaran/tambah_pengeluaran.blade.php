@@ -8,7 +8,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="tanggal">Tanggal <span style="color: red">*</span></label>
-                    <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" >
+                    <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" required/>
                 </div>
                 <div class="form-group">
                     <label for="uraian">Uraian <span style="color: red">*</span></label>
@@ -29,10 +29,25 @@
     </div>
 @endsection
 
+@push('css')
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+@endpush
+
 @push('js')
-<script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
-    $('.datepicker-input').datepicker();
+    $(function() {
+        $('input[name="tanggal"]').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD',
+                cancelLabel: 'Clear'
+            },
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+        });
+    });
 </script>
 
 <script>

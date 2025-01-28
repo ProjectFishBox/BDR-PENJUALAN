@@ -11,8 +11,7 @@
                         <label>Tanggal <span style="color: red">*</span></label>
                         <div class="input-affix m-b-10">
                             <i class="prefix-icon anticon anticon-calendar"></i>
-                            <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal"
-                                name="tanggal" required>
+                            <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" required/>
                         </div>
                     </div>
                     <div class="form-group col-md-4">
@@ -132,7 +131,7 @@
 @endsection
 
 @push('css')
-    <link href="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <style>
         .txt {
             text-align: center;
@@ -141,9 +140,20 @@
 @endpush
 
 @push('js')
-    <script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
-        $('.datepicker-input').datepicker();
+        $(function() {
+            $('input[name="tanggal"]').daterangepicker({
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    cancelLabel: 'Clear'
+                },
+                singleDatePicker: true,
+                showDropdowns: true,
+                minYear: 1901,
+            });
+        });
     </script>
 
 

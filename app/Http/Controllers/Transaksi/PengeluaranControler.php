@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 USE RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
 
 
 use App\Models\Pengeluaran;
@@ -21,30 +23,67 @@ class PengeluaranControler extends Controller
      */
     public function index(Request $request)
     {
-
         $title = 'List Pengeluaran';
 
-        $query = Pengeluaran::query();
+        $cacheKey = 'pengeluaran_data';
+        $cacheDuration = now()->addMinutes(3);
 
-        if ($request->filled('start') && $request->filled('end')) {
-            $query->whereBetween('tanggal', [
-                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
-                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
-            ]);
+        $lokasiList = Cache::remember('lokasiList', $cacheDuration, function () {
+            return Lokasi::all();
+        });
+
+        if ($request->ajax()) {
+            $search = $request->query('search');
+            $lokasiId = $request->query('lokasi');
+            $daterange = $request->query('daterange');
+
+            $query = Pengeluaran::with('lokasi')->where('delete', 0);
+
+            if ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('uraian', 'like', "%$search%")
+                        ->orWhere('total', 'like', "%$search%");
+                });
+            }
+
+            if ($lokasiId) {
+                $query->where('id_lokasi', $lokasiId);
+            }
+
+            if ($daterange) {
+                $dates = explode(' - ', $daterange);
+
+                if (count($dates) === 2) {
+                    $startDate = date('Y-m-d', strtotime($dates[0]));
+                    $endDate = date('Y-m-d', strtotime($dates[1]));
+                    $query->whereBetween('tanggal', [$startDate, $endDate]);
+                }
+            }
+
+            $data = $query->get();
+
+
+            if ($data->isEmpty()) {
+                return response()->json(['data' => []]);
+            }
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '
+                        <button class="btn btn-icon btn-primary btn-pengeluaran-edit" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-pengeluaran-delete" data-id="' . $row->id . '" type="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        if ($request->filled('lokasi')) {
-            $query->where('id_lokasi', $request->lokasi);
-        }
-
-        if ($request->filled('search')) {
-            $query->where('uraian', 'like', '%' . $request->search . '%');
-        }
-
-        $pengeluaran = $query->paginate(10); //entar malam task
-        $lokasi = Lokasi::all();
-
-        return view('pages.transaksi.pengeluaran.pengeluaran', compact('pengeluaran', 'lokasi', 'title'));
+        return view('pages.transaksi.pengeluaran.pengeluaran', compact('title', 'lokasiList'));
     }
 
 
@@ -71,7 +110,6 @@ class PengeluaranControler extends Controller
             'total' => 'nullable',
         ]);
 
-        $validateData['tanggal'] = Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
         $total = str_replace('.', '', $request->total);
         $validateData['total'] = $total;
         $validateData['id_lokasi'] = auth()->user()->id_lokasi;
@@ -154,7 +192,7 @@ class PengeluaranControler extends Controller
         $pengeluaran = Pengeluaran::findOrFail($id);
         $pengeluaran->update($validateData);
 
-        Alert::success('Data Pengeluaran berhasil dihapus.');
+        Alert::success('Data Pengeluaran berhasil di Update.');
 
         return redirect('/pengeluaran');
     }
@@ -167,11 +205,14 @@ class PengeluaranControler extends Controller
     {
         $pengeluaran = Pengeluaran::findOrFail($id);
 
-        $pengeluaran->delete();
+        $pengeluaran->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
 
         Alert::success('Data Pengeluaran berhasil dihapus.');
 
-        return redirect('/pengeluaran');
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
     }
 
     public function export(Request $request)
