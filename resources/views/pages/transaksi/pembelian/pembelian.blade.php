@@ -86,7 +86,10 @@
                 },
                 {
                     data: 'bayar',
-                    name: 'bayar'
+                    name: 'bayar',
+                    render: function (data, type, row) {
+                        return numberFormat(data);
+                    }
                 },
                 {
                     data: 'lokasi.nama',
@@ -111,6 +114,10 @@
                 },
             ]
         });
+    }
+
+    function numberFormat(angka) {
+        return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 </script>
 

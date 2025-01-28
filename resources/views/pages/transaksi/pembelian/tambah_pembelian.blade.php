@@ -156,7 +156,6 @@
         });
     </script>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const hargaInput = document.getElementById('harga');
@@ -167,12 +166,12 @@
 
             function hitungHargaJual() {
 
-                const harga = hargaInput.value || 0;
+                console.log(parseFloat(hargaInput.value.replace(/[^\d]/g, '')));
+                const harga = parseFloat(hargaInput.value.replace(/[^\d]/g, '')) || 0;
                 const jumlah = jumlahInput.value || 0;
 
                 const hargaJual = harga * jumlah;
-                bayarInput.value = 'Rp ' + hargaJual.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,
-                    '$&,'); // Sisa dengan format Rp
+                bayarInput.value = 'Rp ' + hargaJual.toFixed(2).replace(/\d(?=(\d{3})+\.)/g,'$&,'); // Sisa dengan format Rp
             }
 
             hargaInput.addEventListener('input', hitungHargaJual);
@@ -181,7 +180,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const bayarInput = document.getElementById('bayar_input');
             const kembaliInput = document.getElementById('kembali_input');
             const sisaInput = document.getElementById('sisa_input');
@@ -189,43 +188,76 @@
 
             function updateTotalPembelian() {
                 const subtotals = tableBody.querySelectorAll('.subtotal');
+
                 let total = 0;
 
-                subtotals.forEach(function(subtotalCell) {
+                subtotals.forEach(function (subtotalCell) {
                     const subtotalValue = subtotalCell.textContent;
-                    if (!isNaN(subtotalValue)) {
-                        total += parseFloat(subtotalValue);
+                    const totalFormat = parseFloat(subtotalValue.replace(/[^\d]/g, ''));
+
+
+                    if (!isNaN(totalFormat)) {
+                        total += totalFormat;
                     }
                 });
 
-
+                let totalValueFormat = 0;
                 const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
+
                 if (totalPembelianCell) {
-                    totalPembelianCell.textContent = total.toFixed(2);
+                    const totalValue = totalPembelianCell.textContent;
+                    totalValueFormat = parseFloat(totalValue.replace(/[^\d]/g, '')) || 0;
+                    console.log('data totalValueFormat akhir', totalValueFormat);
                 }
 
-                return total;
+                return totalValueFormat;
+            }
+
+            function formatToRupiah(value) {
+                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            function parseRupiah(value) {
+                return parseFloat(value.replace(/[^\d]/g, '')) || 0;
             }
 
             function calculateSisaDanKembali() {
                 const totalPembelian = updateTotalPembelian();
-                const bayar = parseFloat(bayarInput.value) || 0;
-                const sisa = totalPembelian - bayar;
-                const kembali = bayar >= totalPembelian ? bayar - totalPembelian : 0;
-                sisaInput.value = 'Rp ' + sisa.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-                kembaliInput.value = 'Rp ' + kembali.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                console.log('data total totalPembelian', totalPembelian);
+
+                const bayar = parseRupiah(bayarInput.value);
+                console.log('data bayar', bayar);
+
+                if (bayar > totalPembelian) {
+                    const kembali = bayar - totalPembelian;
+                    kembaliInput.value = formatToRupiah(kembali.toFixed(2));
+                    sisaInput.value = formatToRupiah(0);
+                    console.warn('Sisa tidak boleh minus. Uang kembali dihitung.');
+                } else {
+                    const sisa = totalPembelian - bayar;
+                    const kembali = 0;
+                    sisaInput.value = formatToRupiah(sisa.toFixed(2));
+                    kembaliInput.value = formatToRupiah(kembali.toFixed(2));
+                }
             }
 
+            bayarInput.addEventListener('input', function (e) {
+                const rawValue = parseRupiah(e.target.value);
+                bayarInput.value = formatToRupiah(rawValue);
 
-            bayarInput.addEventListener('input', function() {
+                if (rawValue > updateTotalPembelian()) {
+                    console.warn('Jumlah bayar lebih besar dari total pembelian.');
+                }
+
                 calculateSisaDanKembali();
             });
 
-            tableBody.addEventListener('change', function() {
-                calculateSisaDanKembali();
-            });
 
-            calculateSisaDanKembali();
+                tableBody.addEventListener('change', function () {
+                    calculateSisaDanKembali();
+                });
+
+                calculateSisaDanKembali();
         });
     </script>
 
@@ -253,7 +285,6 @@
         })
     </script>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const namaBarangSelect = document.getElementById('nama_barang');
@@ -272,10 +303,15 @@
                 const merek = selectedOption.getAttribute('data-merek');
                 const idBarang = selectedOption.getAttribute('data-id');
 
-                hargaInput.value = harga ? harga : '';
+                function formatRibuan(value) {
+                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                }
+
+                hargaInput.value = harga ? formatRibuan(harga) : '';
                 kodeBarangInput.value = kodeBarang ? kodeBarang : '';
                 merekInput.value = merek ? merek : '';
             });
+
 
             let rowCount = 0;
 
@@ -286,8 +322,9 @@
                 const kodeBarang = kodeBarangInput.value;
                 const merek = merekInput.value;
                 const harga = hargaInput.value;
+                const cleanHarga = parseFloat(harga.replace(/[^\d]/g, '')) || 0;
                 const jumlah = jumlahInput.value;
-                const subTotal = bayarInput.value;
+                const subTotal = parseFloat(bayarInput.value.replace(/[^\d]/g, ''));
                 const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute(
                     'data-id');
 
@@ -307,7 +344,8 @@
                 }
 
 
-                const calculatedSubTotal = parseFloat(harga) * parseFloat(jumlah);
+                const calculatedSubTotal = cleanHarga * jumlah;
+                const subTotalCurrency = 'Rp ' + calculatedSubTotal.toFixed(0).replace(/\d(?=(\d{3})+(?!\d))/g, '$&.') ;
 
                 const itemData = {
                     id_barang: idBarang,
@@ -327,7 +365,7 @@
                     <td>${merek}</td>
                     <td>${harga}</td>
                     <td>${jumlah}</td>
-                    <td class="subtotal">${calculatedSubTotal}</td>
+                    <td class="subtotal">${subTotalCurrency}</td>
                     <td>
                         <button class="btn btn-icon btn-danger btn-rounded remove-row">
                             <i class="anticon anticon-close"></i>
@@ -395,31 +433,29 @@
             }
 
             function updateTotalPembelian() {
-                const subtotals = tableBody.querySelectorAll('.subtotal'); // Ambil semua subtotal
+                const subtotals = tableBody.querySelectorAll('.subtotal');
                 let total = 0;
 
                 subtotals.forEach(function(subtotalCell) {
-                    const subtotalValue = subtotalCell.textContent.replace(/[^\d.-]/g,
-                    ''); // Ambil angka saja
+                    const subtotalValue = subtotalCell.textContent.replace(/[^\d]/g, '');
+
+                    console.log('jumlah subtotal',subtotalValue)
+
                     if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
                         total += parseFloat(subtotalValue);
                     }
                 });
 
-                // Update cell untuk "Total Pembelian"
                 const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
                 if (totalPembelianCell) {
-                    totalPembelianCell.textContent = 'Rp ' + total.toLocaleString('id-ID'); // Format dalam rupiah
+                    totalPembelianCell.textContent = 'Rp ' + total.toLocaleString('id-ID');
                 }
 
                 return total;
             }
 
-
-
         });
     </script>
-
 
     <script>
         $(document).on('submit', '#form-imporbarang', function(e) {
@@ -493,8 +529,17 @@
             const tableBody = document.querySelector('table tbody');
 
             data.forEach(item => {
+
+                function formatRibuan(value) {
+                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                }
                 const formattedHarga = item.harga.toString();
+                const hargaFormatThousand = formatRibuan(formattedHarga)
                 const formattedSubtotal = item.subtotal.toString();
+                // const SubtotalFormatThousand = formatRibuan(formattedSubtotal)
+                const subTotalCurrency = 'Rp ' + formattedSubtotal.replace(/\d(?=(\d{3})+(?!\d))/g, '$&.') ;
+
+
 
                 const newRow = `
         <tr>
@@ -502,9 +547,9 @@
             <td>${item.kode_barang}</td>
             <td>${item.nama_barang}</td>
             <td>${item.merek}</td>
-            <td>${formattedHarga}</td>
+            <td>${hargaFormatThousand}</td>
             <td>${item.jumlah}</td>
-            <td class="subtotal">${formattedSubtotal}</td>
+            <td class="subtotal">${subTotalCurrency}</td>
             <td>
                 <button class="btn btn-icon btn-danger btn-rounded remove-row">
                     <i class="anticon anticon-close"></i>
@@ -527,11 +572,7 @@
 
 
             updateRowNumbers();
-
-
             setRemoveRowEvent();
-
-
             updateTotalPembelian();
         }
 
@@ -539,7 +580,7 @@
         function parseCSV(data) {
             const lines = data.split('\n');
             const result = [];
-            for (let i = 1; i < lines.length; i++) { // skip header
+            for (let i = 1; i < lines.length; i++) {
                 const columns = lines[i].split(',');
                 result.push({
                     kode_barang: columns[0],
@@ -569,22 +610,24 @@
 
         function updateTotalPembelian() {
             const tableBody = document.querySelector('table tbody');
-
             const subtotals = tableBody.querySelectorAll('.subtotal');
             let total = 0;
 
             subtotals.forEach(function(subtotalCell) {
-                // Mengambil nilai subtotal, menghapus karakter yang bukan angka
-                const subtotalValue = subtotalCell.textContent.replace(/[^\d.-]/g, ''); // Menghapus simbol lainnya
+                const subtotalValue = subtotalCell.textContent.replace(/[^\d]/g, '');
+
+                console.log('data subtotal import', subtotalValue);
                 if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
                     total += parseFloat(subtotalValue);
+
+                    console.log('data subtotal import', subtotalValue);
+
                 }
             });
 
             const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
             if (totalPembelianCell) {
-                // Menampilkan total dalam format angka bulat tanpa angka desimal
-                totalPembelianCell.textContent = Math.floor(total); // Menggunakan Math.floor untuk menghilangkan desimal
+                    totalPembelianCell.textContent = 'Rp ' + total.toLocaleString('id-ID');
             }
 
             return total;

@@ -81,6 +81,8 @@ class PembelianControllers extends Controller
             'bayar' => 'nullable',
         ]);
 
+
+        $validatedData['bayar'] = preg_replace('/[^\d]/', '', $request->bayar);
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
         $validatedData['create_by'] = auth()->id();
         $validatedData['last_user'] = auth()->id();
@@ -89,12 +91,15 @@ class PembelianControllers extends Controller
 
         $tableData = $request->input('table_data');
         foreach ($tableData as $data) {
+
+            $harga = preg_replace('/[^\d]/', '', $data['harga']);
+
             DB::table('pembelian_detail')->insert([
                 'id_pembelian' => $pembelian->id,
                 'id_barang' => $data['id_barang'],
                 'nama_barang' => $data['nama_barang'],
                 'merek' => $data['merek'],
-                'harga' => $data['harga'],
+                'harga' => $harga,
                 'jumlah' => $data['jumlah'],
                 'subtotal' => $data['subtotal'],
                 'create_by' => auth()->id(),
@@ -151,7 +156,8 @@ class PembelianControllers extends Controller
             $tanggal = $request->input('tanggal');
             $noNota     = $request->input('no_nota');
             $kontainer  = $request->input('kontainer');
-            $bayar      = $request->input('bayar');
+            $bayar      = preg_replace('/[^\d]/', '', $request->input('bayar'));
+
             $tableData  = $request->input('table_data');
 
             if (empty($tanggal) || empty($noNota)) {
@@ -179,13 +185,14 @@ class PembelianControllers extends Controller
                         'item' => $item
                     ], 400);
                 }
+                $harga = preg_replace('/[^\d]/', '', $item['harga']);
 
                 PembelianDetail::create([
                     'id_pembelian' => $id,
                     'id_barang'    => $item['id_barang'],
                     'nama_barang'  => $item['nama_barang'],
                     'merek'        => $item['merek'] ?? null,
-                    'harga'        => $item['harga'],
+                    'harga'        => $harga,
                     'jumlah'       => $item['jumlah'],
                     'subtotal'     => $item['subtotal'],
                     'create_by'    => auth()->user()->id,
