@@ -9,10 +9,12 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="nama_barang">Barang <span style="color: red">*</span></label>
-                        <select id="nama_barang" class="form-control" name="nama_barang" required>
+                        <select id="nama_barang" class="select2" name="nama_barang" required >
                             <option value="">Pilih Barang</option>
-                            @foreach ($barang as $b)
-                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama}}</option>
+                            @foreach ($barang->unique('kode_barang') as $b)
+                                <option value="{{ $b->id }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-nama="{{ $b->nama }}">
+                                    {{ $b->nama }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -61,53 +63,51 @@
     </div>
 @endsection
 
+@component('components.aset_datatable.aset_select2')@endcomponent
+
 @push('js')
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const namaBarangSelect = document.getElementById('nama_barang');
-        const hargaInput = document.getElementById('harga');
-        const kodeBarangInput = document.getElementById('kode_barang');
-        const merekInput = document.getElementById('merek');
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Pilih Barang',
+    });
 
-        function formatNumber(value) {
-            return new Intl.NumberFormat('id-ID').format(value);
-        }
+    $('#nama_barang').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        var kodeBarang = selectedOption.data('kode');
+        var namaBarang = selectedOption.data('nama');
 
-        namaBarangSelect.addEventListener('change', function () {
-            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            const harga = selectedOption.getAttribute('data-harga');
-            const kodeBarang = selectedOption.getAttribute('data-kode');
-            const  merek= selectedOption.getAttribute('data-merek');
+        $('#harga').val('');
 
-            hargaInput.value = harga ? formatNumber(harga) : '';
-            kodeBarangInput.value = kodeBarang  ? kodeBarang  : '';
-            merekInput.value = merek  ? merek  : '';
+        $('#kode_barang').val(kodeBarang);
+        var filteredMerek = @json($barang);
 
-            merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+        $('#merek').empty().append('<option value="">Pilih Merek</option>');
 
+        filteredMerek.forEach(function(item) {
+            if (item.kode_barang === kodeBarang) {
+                $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+            }
+        });
+
+        $('#merek').select2({
+            width: '100%',
+            placeholder: 'Pilih Merek'
         });
     });
-</script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const hargaInput = document.getElementById('harga');
-        const untungInput = document.getElementById('untung');
-        const hargaJualInput = document.getElementById('harga_jual');
-
-        function hitungHargaJual() {
-
-            const harga = parseFloat(hargaInput.value) || 0;
-            const untung = parseFloat(untungInput.value) || 0;
-
-            const hargaJual = harga + untung;
-            hargaJualInput.value = hargaJual;
-        }
-
-        hargaInput.addEventListener('input', hitungHargaJual);
-        untungInput.addEventListener('input', hitungHargaJual);
+    $('#merek').on('change', function() {
+        var selectedMerek = $(this).find('option:selected');
+        var harga = formatNumber(selectedMerek.data('harga'));
+        $('#harga').val(harga);
     });
+
+    function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+    }
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -122,14 +122,14 @@
         function removeThousandSeparator(value) {
             return value.replace(/\./g, '');
         }
-        [hargaInput, untungInput].forEach(input => {
+
+        [hargaInput, untungInput, hargaJualInput].forEach(input => {
             input.addEventListener('input', function () {
                 const rawValue = removeThousandSeparator(input.value);
                 const formattedValue = formatNumber(rawValue);
                 input.value = formattedValue;
             });
         });
-
 
         function hitungHargaJual() {
             const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
@@ -138,35 +138,24 @@
             hargaJualInput.value = formatNumber(hargaJual);
         }
 
+        function hitungUntung() {
+            const hargaJual = parseFloat(removeThousandSeparator(hargaJualInput.value)) || 0;
+            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
+            let untung = hargaJual - harga;
+
+            if (untung < 0) {
+                untung = 0;
+            }
+
+            untungInput.value = formatNumber(untung);
+        }
+
         hargaInput.addEventListener('input', hitungHargaJual);
         untungInput.addEventListener('input', hitungHargaJual);
+        hargaJualInput.addEventListener('input', hitungUntung);
     });
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const namaBarangSelect = document.getElementById('nama_barang');
-    const merekSelect = document.getElementById('merek');
-    const semuaOption = [...namaBarangSelect.options];
 
-    namaBarangSelect.addEventListener('change', function () {
-        const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-        const kodeBarang = selectedOption.getAttribute('data-kode');
-
-        merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
-
-        semuaOption.forEach(option => {
-            if (option.getAttribute('data-kode') === kodeBarang) {
-                const merek = option.getAttribute('data-merek');
-                const merekOption = document.createElement('option');
-                merekOption.value = merek;
-                merekOption.textContent = merek;
-                merekSelect.appendChild(merekOption);
-            }
-        });
-    });
-});
-
-</script>
 
 @endpush

@@ -85,7 +85,10 @@ class SetHargaControllers extends Controller
     {
         $title = 'Tambah Set Harga';
 
-        $barang = Barang::all();
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->distinct()
+        ->get();
+
 
         return view('pages.master.set_harga.tambah_set_harga', compact('title', 'barang'));
     }
