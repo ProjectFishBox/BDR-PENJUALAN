@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nama_barang');
             $table->string('merek');
             $table->integer('harga');
-            $table->integer('diskon_barang');
+            $table->integer('diskon_barang')->nullable();
             $table->integer('jumlah');
             $table->integer('delete')->default(0);
             $table->integer('create_by');

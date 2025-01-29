@@ -51,7 +51,7 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <button data-bs-dismiss="modal">Batal</button>
+                        <button class="btn btn-danger mr-3" data-bs-dismiss="modal">Batal</button>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>

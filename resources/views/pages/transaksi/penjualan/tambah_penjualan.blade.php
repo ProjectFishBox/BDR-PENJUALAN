@@ -62,7 +62,7 @@
                         <label for="nama_barang">Barang</label>
                         <select id="nama_barang" class="form-control">
                             <option value="">Pilih Barang</option>
-                            @foreach ($barang as $b)
+                            @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id }}" data-id="{{ $b->id }} data-harga="{{ $b->harga }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama }}</option>
                             @endforeach
                         </select>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="merek">Merek</label>
-                        <select id="merek" class="form-control">
+                        <select id="merek" class="form-control" name="merek">
                             <option value="">Pilih Merek</option>
                         </select>
                     </div>
@@ -134,7 +134,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="diskon_nota">Diskon Nota</label>
-                            <input type="text" class="form-control" id="diskon_nota" placeholder="Diskon Nota" name="diskon_nota">
+                            <input type="text" class="form-control" id="diskon_nota" placeholder="Diskon Nota" name="diskon_nota" pattern="[0-9]+">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="bayar_input">Bayar</label>
@@ -179,6 +179,9 @@
     <div class="modal fade bd-example-modal-import" style="display: none;" id="importmodal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true"></div>
 @endsection
 
+@component('components.aset_datatable.aset_select2')@endcomponent
+
+
 @push('css')
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 @endpush
@@ -186,6 +189,49 @@
 @push('js')
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script>
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Pilih Barang',
+        });
+
+        $('#nama_barang').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var kodeBarang = selectedOption.data('kode');
+            var namaBarang = selectedOption.data('nama');
+
+            $('#harga').val('');
+
+            $('#kode_barang').val(kodeBarang);
+            var filteredMerek = @json($barang);
+
+            $('#merek').empty().append('<option value="">Pilih Merek</option>');
+
+            filteredMerek.forEach(function(item) {
+                if (item.kode_barang === kodeBarang) {
+                    $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+                }
+            });
+
+            $('#merek').select2({
+                width: '100%',
+                placeholder: 'Pilih Merek'
+            });
+        });
+
+        $('#merek').on('change', function() {
+            var selectedMerek = $(this).find('option:selected');
+            var harga = formatNumber(selectedMerek.data('harga'));
+            $('#harga').val(harga);
+        });
+
+        function formatNumber(value) {
+                return new Intl.NumberFormat('id-ID').format(value);
+        }
+    </script>
+
+
     <script>
         $(function() {
             $('input[name="tanggal"]').daterangepicker({
@@ -350,25 +396,25 @@
                 }
             }
 
-            namaBarangSelect.addEventListener('change', function () {
-                const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-                const kodeBarang = selectedOption.getAttribute('data-kode');
-                const harga = selectedOption.getAttribute('data-harga');
-                const merek = selectedOption.getAttribute('data-merek');
-                const idBarang = selectedOption.getAttribute('data-id');
+            // namaBarangSelect.addEventListener('change', function () {
+            //     const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+            //     const kodeBarang = selectedOption.getAttribute('data-kode');
+            //     const harga = selectedOption.getAttribute('data-harga');
+            //     const merek = selectedOption.getAttribute('data-merek');
+            //     const idBarang = selectedOption.getAttribute('data-id');
 
-                kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-                hargaInput.value = harga ? formatNumber(harga) : '';
-                merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
-                semuaOption.forEach(option => {
-                    if (option.getAttribute('data-kode') === kodeBarang) {
-                        const merekOption = document.createElement('option');
-                        merekOption.value = option.getAttribute('data-merek');
-                        merekOption.textContent = option.getAttribute('data-merek');
-                        merekSelect.appendChild(merekOption);
-                    }
-                });
-            });
+            //     kodeBarangInput.value = kodeBarang ? kodeBarang : '';
+            //     hargaInput.value = harga ? formatNumber(harga) : '';
+            //     merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+            //     semuaOption.forEach(option => {
+            //         if (option.getAttribute('data-kode') === kodeBarang) {
+            //             const merekOption = document.createElement('option');
+            //             merekOption.value = option.getAttribute('data-merek');
+            //             merekOption.textContent = option.getAttribute('data-merek');
+            //             merekSelect.appendChild(merekOption);
+            //         }
+            //     });
+            // });
 
             merekSelect.addEventListener('change', function () {
                 const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;

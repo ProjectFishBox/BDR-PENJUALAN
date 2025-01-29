@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('no_nota');
             $table->unsignedBigInteger('id_pelanggan');
             $table->integer('total_penjualan');
-            $table->integer('diskon_nota');
+            $table->integer('diskon_nota')->nullable();
             $table->integer('bayar');
             $table->integer('delete')->default(0);
             $table->integer('create_by');

@@ -107,7 +107,10 @@ class PenjualanControllers extends Controller
 
         $pelanggan = Pelanggan::all();
 
-        $barang = Barang::all();
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->distinct()
+        ->get();
+
 
         return view('pages.transaksi.penjualan.tambah_penjualan', compact('title', 'pelanggan', 'barang'));
     }
@@ -134,7 +137,7 @@ class PenjualanControllers extends Controller
         $validatedData['create_by'] = auth()->id();
         $validatedData['last_user'] = auth()->id();
 
-        $diskonnota = preg_replace('/[Rp. ]/', '', $request->diskon_nota);
+        $diskonnota = $request->diskon_nota ? preg_replace('/[Rp. ]/', '', $request->diskon_nota) : 0;
         $bayar = preg_replace('/[Rp. ]/', '', $request->bayar);
         $total = preg_replace('/[Rp. ]/', '', $request->total);
         $sisa = preg_replace('/[Rp. ]/', '', $request->sisa);
@@ -157,7 +160,8 @@ class PenjualanControllers extends Controller
 
             $idBarang = preg_replace('/\D/', '', $data['id_barang']);
             $harga = str_replace('.', '', $data['harga']);
-            $diskon = str_replace('.', '', $data['diskon']);
+            $diskon = $data['diskon'] ? preg_replace('/[Rp. ]/', '', $data['diskon']) : 0;
+
 
             DB::table('penjualan_detail')->insert([
                 'id_penjualan' => $penjualan->id,
@@ -193,11 +197,9 @@ class PenjualanControllers extends Controller
 
         $penjualanDetail = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
 
-        $barang = Barang::all();
-
-        // $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
-
-        // $bayar = $pembelian->bayar;
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->distinct()
+        ->get();
 
 
         return view('pages.transaksi.penjualan.edit_penjualan', compact('title', 'barang', 'pelanggan', 'penjualan', 'penjualanDetail'));

@@ -37,7 +37,7 @@
                     <div class="form-group col-md-6">
                         <label for="merek">Merek <span style="color: red">*</span></label>
                         <select id="merek" class="form-control" name="merek" required>
-                            <option value="">Pilih Barang</option>
+                            <option value="">Pilih Merek</option>
                         </select>
                     </div>
                     <div class="form-group col-md-6">
