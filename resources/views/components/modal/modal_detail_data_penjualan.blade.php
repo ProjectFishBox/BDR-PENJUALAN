@@ -5,14 +5,14 @@
             <h5 class="modal-title h4">{{$title}}</h5>
         </div>
         <div class="modal-body">
-            <div class="d-flex justify-content-between mb-3">
+            <div class="d-flex mb-3">
                 <div class="mr-5">
                     <h5 style="font-weight: lighter">Tanggal   : {{ $penjualan->tanggal}}</h5>
                     <h5 style="font-weight: lighter">No Nota   : {{ $penjualan->no_nota}}</h5>
                     <h5 style="font-weight: lighter">Lokasi    : {{ $lokasi->nama}}</h5>
 
                 </div>
-                <div>
+                <div class="ml-5">
                     <h5 style="font-weight: lighter">Pelanggan : {{ $detailPelanggan->nama}}</h5>
                     <h5 style="font-weight: lighter">Alamat : {{ $detailPelanggan->alamat}}</h5>
                     <h5 style="font-weight: lighter">Kota : {{ $kota->nama}}</h5>

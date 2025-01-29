@@ -21,7 +21,8 @@ class Penjualan extends Model
         'bayar',
         'delete',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete'
     ];
 
     public function lokasi()

@@ -157,6 +157,7 @@ class PenjualanControllers extends Controller
 
             $idBarang = preg_replace('/\D/', '', $data['id_barang']);
             $harga = str_replace('.', '', $data['harga']);
+            $diskon = str_replace('.', '', $data['diskon']);
 
             DB::table('penjualan_detail')->insert([
                 'id_penjualan' => $penjualan->id,
@@ -164,7 +165,7 @@ class PenjualanControllers extends Controller
                 'nama_barang' => $data['nama_barang'],
                 'merek' => $data['merek'],
                 'harga' => $harga,
-                'diskon_barang' => $data['diskon'],
+                'diskon_barang' => $diskon,
                 'jumlah' => $data['jumlah'],
                 'create_by' => auth()->user()->id,
                 'last_user' => auth()->user()->id
@@ -184,7 +185,22 @@ class PenjualanControllers extends Controller
      */
     public function show(string $id)
     {
-        //
+        $title = 'Edit Penjualan';
+
+        $pelanggan = Pelanggan::all();
+
+        $penjualan = Penjualan::findOrFail($id);
+
+        $penjualanDetail = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
+
+        $barang = Barang::all();
+
+        // $detailPembelian = PembelianDetail::with('barang')->where('id_pembelian', $pembelian->id)->get();
+
+        // $bayar = $pembelian->bayar;
+
+
+        return view('pages.transaksi.penjualan.edit_penjualan', compact('title', 'barang', 'pelanggan', 'penjualan', 'penjualanDetail'));
     }
 
     /**
@@ -200,7 +216,81 @@ class PenjualanControllers extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // dd($request->all());
+
+        DB::beginTransaction();
+
+        try {
+
+            $tanggal = $request->input('tanggal');
+            $noNota     = $request->input('no_nota');
+            $pelanggan  = $request->input('pelanggan');
+            $diskonnota = preg_replace('/[^\d]/', '', $request->input('diskon_nota'));
+            $bayar      = preg_replace('/[^\d]/', '', $request->input('bayar'));
+            $total = preg_replace('/[^\d]/', '', $request->input('total'));
+            $sisa = preg_replace('/[^\d]/', '', $request->input('sisa'));
+
+            $tableData  = $request->input('table_data');
+
+            if (empty($tanggal) || empty($noNota)) {
+                return response()->json(['status' => 'error', 'message' => 'Data tidak lengkap'], 400);
+            }
+
+            $pembelian = Penjualan::findOrFail($id);
+
+            $pembelian->update([
+                'tanggal'    => $tanggal,
+                'no_nota'    => $noNota,
+                'id_pelanggan' => $pelanggan,
+                'diskon_nota' => $diskonnota,
+                'total_penjualan' => $total,
+                'sisa' => $sisa,
+                'bayar'      => $bayar,
+                'last_user'  => auth()->user()->id
+            ]);
+
+            PenjualanDetail::where('id_penjualan', $id)->delete();
+
+            foreach ($tableData as $key => $item) {
+
+                if (!isset($item['id_barang'], $item['nama_barang'], $item['harga'], $item['jumlah'], $item['subtotal'])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Data item tidak lengkap',
+                        'item' => $item
+                    ], 400);
+                }
+                $harga = preg_replace('/[^\d]/', '', $item['harga']);
+                $diskon = str_replace('.', '', $item['diskon']);
+
+                PenjualanDetail::create([
+                    'id_penjualan' => $id,
+                    'id_barang'    => $item['id_barang'],
+                    'nama_barang'  => $item['nama_barang'],
+                    'merek'        => $item['merek'] ?? null,
+                    'harga'        => $harga,
+                    'jumlah'        => $item['jumlah'],
+                    'diskon_barang' => $diskon,
+                    'create_by'    => auth()->user()->id,
+                    'last_user'    => auth()->user()->id
+                ]);
+            }
+
+            DB::commit();
+
+            Alert::success('Berhasil Merubah data Pembelian.');
+
+            return redirect('/penjualan');
+
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengupdate data',
+                'error' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -208,7 +298,21 @@ class PenjualanControllers extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $penjualan = Penjualan::findOrFail($id);
+
+        $penjualan->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
+
+        PenjualanDetail::where('id_penjualan', $id)->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
+
+        Alert::success('Data Penjualan berhasil dihapus.');
+
+        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
     }
 
     public function modalTambahPelanggan(Request $request)

@@ -4,20 +4,19 @@
     <div class="card">
         <div class="card-body">
             <h4 class="mb-3">{{ $title }}</h4>
-            <form action="{{ route('tambah-penjualan') }}" method="POST" id="form-pembelian">
+            <form action="{{ route('update-penjualan', $penjualan->id) }}" method="POST" id="form-penjualan">
                 @csrf
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label>Tanggal <span style="color: red">*</span></label>
                         <div class="input-affix m-b-10">
                             <i class="prefix-icon anticon anticon-calendar"></i>
-                            <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" required>
+                            <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" required value="{{ $penjualan->tanggal }}">
                         </div>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="no_nota">No Nota <span style="color: red">*</span></label>
-                        <input type="text" class="form-control" id="no_nota" placeholder="No Nota" name="no_nota"
-                            required>
+                        <input type="text" class="form-control" id="no_nota" placeholder="No Nota" name="no_nota" required value="{{ $penjualan->no_nota }}">
                     </div>
                 </div>
                 <div class="form-row align-items-center" style="gap: 15px;">
@@ -27,7 +26,7 @@
                             <select id="pelanggan" class="form-control" name="pelanggan">
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
-                                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                                    <option value="{{ $p->id }}" data-alamat="{{ $p->alamat }}" data-kota="{{ $p->kota->nama }}" data-telepon="{{ $p->telepon }}"  {{ $p->id == $penjualan->id_pelanggan ? 'selected' : '' }}>{{ $p->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -63,7 +62,7 @@
                         <select id="nama_barang" class="form-control">
                             <option value="">Pilih Barang</option>
                             @foreach ($barang as $b)
-                                <option value="{{ $b->id }}" data-id="{{ $b->id }} data-harga="{{ $b->harga }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama }}</option>
+                                <option value="{{ $b->id }}" data-id="{{ $b->id }}"  data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek}}">{{ $b->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -121,7 +120,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="7" style="text-align: end">Total Penjualan</td>
+                                <td colspan="7" id="total-penjualan" style="text-align: end">Total Penjualan</td>
                                 <td></td>
                                 <td></td>
                             </tr>
@@ -184,8 +183,8 @@
 @endpush
 
 @push('js')
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
         $(function() {
             $('input[name="tanggal"]').daterangepicker({
@@ -302,6 +301,40 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pelangganSelect = document.getElementById('pelanggan');
+            const alamatField = document.getElementById('alamat');
+            const kotaField = document.getElementById('kota');
+            const teleponField = document.getElementById('telepon');
+
+            // Fungsi untuk mengisi field input berdasarkan data pelanggan yang terpilih
+            function setPelangganData() {
+                const selectedOption = pelangganSelect.options[pelangganSelect.selectedIndex];
+
+                if (selectedOption && selectedOption.value) {
+                    // Mengambil data dari data atribut option yang terpilih
+                    const alamat = selectedOption.getAttribute('data-alamat');
+                    const kota = selectedOption.getAttribute('data-kota');
+                    const telepon = selectedOption.getAttribute('data-telepon');
+
+                    // Mengisi input field sesuai dengan data yang terpilih
+                    alamatField.value = alamat || '';
+                    kotaField.value = kota || '';
+                    teleponField.value = telepon || '';
+                }
+            }
+
+            // Memanggil fungsi setPelangganData saat halaman dimuat, untuk mengisi data sesuai pilihan yang sudah ada
+            setPelangganData();
+
+            // Menambahkan event listener untuk perubahan pilihan pelanggan
+            pelangganSelect.addEventListener('change', function () {
+                setPelangganData();
+            });
+        });
+    </script>
+
+    <script>
         $(document).on('click', '.btn-import', function(e) {
             e.preventDefault();
             let url = "/modal-import-penjualan";
@@ -324,6 +357,187 @@
             })
         })
     </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const namaBarangSelect = document.getElementById('nama_barang');
+            const hargaInput = document.getElementById('harga');
+            const kodeBarangInput = document.getElementById('kode_barang');
+            const bayarInput = document.getElementById('bayar_input');
+            const diskonNotaInput = document.getElementById('diskon_nota');
+            const totalPenjualan = document.getElementById('total');
+            const subTotalInput = document.getElementById('sub_total');
+            const merekInput = document.getElementById('merek');
+            const jumlahInput = document.getElementById('jumlah');
+            const addButton = document.querySelector('button[type="submit"]');
+            const tableBody = document.querySelector('table tbody');
+            let rowCount = 0;
+
+            const itemsFromDB = @json($penjualanDetail);
+            const bayarFromDB = @json($penjualan->bayar);
+
+            function formatRupiah(value) {
+                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            bayarInput.value = formatRupiah(bayarFromDB);
+            diskonNotaInput.value = formatRupiah(@json($penjualan->diskon_nota));
+            totalPenjualan.value = formatRupiah(@json($penjualan->total_penjualan));
+
+            itemsFromDB.forEach(function (item) {
+                addRowToTable(item);
+            });
+
+            function formatNumber(value) {
+                return new Intl.NumberFormat('id-ID').format(value);
+            }
+            namaBarangSelect.addEventListener('change', function () {
+                const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+                if (!selectedOption) return;
+
+                const harga = selectedOption.getAttribute('data-harga');
+                const kodeBarang = selectedOption.getAttribute('data-kode');
+
+                const merek = selectedOption.getAttribute('data-merek');
+
+                function formatRibuan(value) {
+                        return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                }
+
+                hargaInput.value = harga ? formatRibuan(harga) : '';
+                kodeBarangInput.value = kodeBarang ? kodeBarang : '';
+                merekInput.value = merek ? merek : '';
+            });
+
+            addButton.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const kodeBarang = kodeBarangInput.value;
+                const merek = merekInput.value;
+                const harga = hargaInput.value;
+                const cleanHarga = parseFloat(harga.replace(/[^\d]/g, '')) || 0;
+                const jumlah = jumlahInput.value;
+                const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute('data-id');
+
+                const calculatedSubTotal = cleanHarga * jumlah;
+
+                const itemData = {
+                    id_barang: idBarang,
+                    kode_barang: kodeBarang,
+                    nama_barang: namaBarang,
+                    merek: merek,
+                    harga: harga,
+                    jumlah: jumlah,
+                    subtotal: calculatedSubTotal.toFixed(0)
+                };
+
+                addRowToTable(itemData);
+                resetForm();
+                updateTotalPembelian();
+            });
+
+
+            function formatToRupiah(value) {
+                return 'Rp ' + parseFloat(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            function formatRibuan(value) {
+                const numericValue = value.toString().replace(/[^0-9]/g, '');
+                return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+
+            function addRowToTable(itemData) {
+                const formattedHarga = formatRibuan(itemData.harga);
+                const hargaSetelahDiskon = itemData.harga - itemData.diskon_barang;
+                const subtotal = hargaSetelahDiskon * itemData.jumlah;
+                const formattedSubtotal = formatRibuan(subtotal);
+                const formattedDiskon = formatRibuan(itemData.diskon_barang);
+
+                const kodeBarang = itemData.barang ? itemData.barang.kode_barang : itemData.kode_barang;
+
+                const newRow = `
+                    <tr>
+                        <td>${++rowCount}</td>
+                        <td>${kodeBarang}</td> <!-- Gunakan kode_barang dari itemData -->
+                        <td>${itemData.nama_barang}</td>
+                        <td>${itemData.merek}</td>
+                        <td>${formattedHarga}</td> <!-- Format harga -->
+                        <td>${formattedDiskon}</td> <!-- Format diskon -->
+                        <td>${itemData.jumlah}</td>
+                        <td class="subtotal">${formattedSubtotal}</td> <!-- Format subtotal -->
+                        <td>
+                            <button class="btn btn-icon btn-danger btn-rounded remove-row">
+                                <i class="anticon anticon-close"></i>
+                            </button>
+                        </td>
+                        <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${itemData.id_barang}">
+                        <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${itemData.kode_barang}">
+                        <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${itemData.nama_barang}">
+                        <input type="hidden" name="table_data[${rowCount}][merek]" value="${itemData.merek}">
+                        <input type="hidden" name="table_data[${rowCount}][harga]" value="${itemData.harga}">
+                        <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${itemData.jumlah}">
+                        <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${subtotal}">
+                        <input type="hidden" name="table_data[${rowCount}][diskon]" value="${formattedDiskon}">
+                    </tr>
+                `;
+                // tableBody.insertAdjacentHTML('beforeend', newRow);
+                tableBody.insertAdjacentHTML('afterbegin', newRow);
+                updateTotalPembelian();
+            }
+
+
+            function resetForm() {
+                namaBarangSelect.value = '';
+                kodeBarangInput.value = '';
+                merekInput.value = '';
+                hargaInput.value = '';
+                jumlahInput.value = '';
+                subTotalInput.value = '';
+            }
+
+            tableBody.addEventListener('click', function (e) {
+                if (e.target.closest('.remove-row')) {
+                    const row = e.target.closest('tr');
+                    row.remove();
+                    updateRowNumbers();
+                    updateTotalPembelian();
+                }
+            });
+
+            function updateRowNumbers() {
+                const rows = tableBody.querySelectorAll('tr');
+                rowCount = 0;
+                rows.forEach((row, index) => {
+                    row.querySelector('td:first-child').innerText = index + 1;
+                    rowCount++;
+                });
+            }
+
+            function updateTotalPembelian() {
+                const subtotals = tableBody.querySelectorAll('.subtotal');
+                let total = 0;
+
+                subtotals.forEach(function(subtotalCell) {
+                    const subtotalValue = subtotalCell.textContent.replace(/[^\d]/g, '');
+
+                    if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
+                        total += parseFloat(subtotalValue);
+                    }
+                });
+
+                const totalPembelianCell = tableBody.querySelector('tr:last-child td:nth-child(2)');
+                if (totalPembelianCell) {
+                    totalPembelianCell.textContent = 'Rp ' + total.toLocaleString('id-ID');
+                }
+
+                return total;
+            }
+        });
+    </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -528,8 +742,6 @@
                 subtotals.forEach(function(subtotalCell) {
                     const subtotalValue = subtotalCell.textContent.replace(/[^\d]/g, '');
 
-                    console.log('jumlah subtotal',subtotalValue)
-
                     if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
                         total += parseFloat(subtotalValue);
                     }
@@ -546,6 +758,7 @@
 
         });
     </script>
+
 
     <script>
         $(document).on('submit', '#form-imporbarang', function(e) {
@@ -708,6 +921,8 @@
             });
         }
 
+
+
         function updateTotalPembelian() {
             const tableBody = document.querySelector('table tbody');
             const subtotals = tableBody.querySelectorAll('.subtotal');
@@ -733,6 +948,7 @@
             return total;
         }
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -804,6 +1020,5 @@
             calculateSisaDanKembali();
         });
     </script>
-
 
 @endpush

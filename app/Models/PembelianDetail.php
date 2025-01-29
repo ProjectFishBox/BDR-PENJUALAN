@@ -20,7 +20,8 @@ class PembelianDetail extends Model
         'jumlah',
         'subtotal',
         'create_by',
-        'last_user'
+        'last_user',
+        'delete',
     ];
 
     public function barang()

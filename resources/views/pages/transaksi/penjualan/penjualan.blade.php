@@ -61,33 +61,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- @foreach ($pengeluaran as $index => $p)
-                                <tr>
-                                    <th scope="row" style="text-align: center;">{{ $index + 1 }}</th>
-                                    <td style="text-align: center;">{{ $p->tanggal }}</td>
-                                    <td style="text-align: center;">{{ $p->no_nota }}</td>
-                                    <td style="text-align: center;">{{ $p->pelanggan->nama }}</td>
-                                    <td style="text-align: right;">{{ number_format($p->total_penjualan, 0, ',', '.') }}</td>
-                                    <td style="text-align: center;">{{ $p->lokasi->nama }}</td>
-                                    <td style="text-align: center;">
-                                        <button class="btn btn-primary btn-detail" id="btn-detail" data-id="{{ $p->id}}">
-                                            Detail
-                                        </button>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <div class="btn-group" style="display: flex; gap: 5px; justify-content: center;">
-                                            <a href="{{ route('pengeluaran-edit', $p->id) }}">
-                                                <button class="btn btn-icon btn-primary">
-                                                    <i class="anticon anticon-edit"></i>
-                                                </button>
-                                            </a>
-                                            <button class="btn-barang-delete btn btn-icon btn-danger" data-id="{{ $p->id }}">
-                                                <i class="anticon anticon-delete"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach --}}
                         </tbody>
                     </table>
                 </div>
@@ -220,6 +193,68 @@
                 console.error(error);
                 $('.btn-detail').prop('disabled', false);
                 $('.btn-detail').html('</i><span>Detail</span>');
+            }
+        })
+    })
+</script>
+
+<script>
+    $(document).on('click', '.btn-penjualan-edit', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/penjualan-edit/" + id;
+        $(this).prop('disabled', true)
+        $.ajax({
+            url,
+            data: {
+                id
+            },
+            type: "GET",
+            dataType: "HTML",
+            success: function(data) {
+                window.location.href = url;
+                $('.btn-penjualan-edit').prop('disabled', false);
+                $('.btn-penjualan-edit').html('<i class="anticon anticon-edit"></i>');
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-penjualan-edit').prop('disabled', false);
+                $('.btn-penjualan-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
+</script>
+
+<script>
+    $(document).on('click', '.btn-penjualan-delete', function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let url = "/delete-penjualan/" + id;
+        Swal.fire({
+            title: 'Apakah kamu ingin menghapus data ini?',
+            text: "data tidak dapat dikembalikan lagi!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Iya, hapus data ini!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url,
+                    type: "GET",
+                    dataType: "HTML",
+                    success: function(data) {
+                        reloadTable();
+                        Swal.fire({
+                            title: 'Terhapus!',
+                            text: 'Data penjualan Telah berhasil dihapus.',
+                            icon: 'success',
+                            timer: 2000
+
+                        })
+                    }
+                })
             }
         })
     })

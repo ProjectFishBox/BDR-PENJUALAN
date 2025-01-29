@@ -323,6 +323,11 @@ class PembelianControllers extends Controller
             'last_user' => auth()->id()
         ]);
 
+        PembelianDetail::where('id_pembelian', $id)->update([
+            'delete' => 1,
+            'last_user' => auth()->id()
+        ]);
+
         Cache::forget('pembelian_data');
 
         Alert::success('Data Pembelian berhasil dihapus.');

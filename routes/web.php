@@ -161,9 +161,9 @@ Route::controller(PenjualanControllers::class)->group(function () {
     Route::post('/tambah-penjualan', 'store')->name('store-penjualan');
     Route::get('/modal-detail-penjualan' , 'modalDetail')->name('penjualan.detail');
     Route::get('/download-tamplate-detail-penjualan', 'downloadTamplate')->name('download-tamplate-detail-penjualan');
-
-
-
+    Route::get('/penjualan-edit/{id}', 'show')->name('penjualan-edit');
+    Route::post('penjualan/{id}/update', 'update')->name('update-penjualan');
+    Route::get('/delete-penjualan/{id}' , 'destroy')->name('delete-penjualan');
 });
 
 
