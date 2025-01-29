@@ -28,9 +28,9 @@
                 <div class="form-row">
                     <div class="form-group col-md-2">
                         <label for="nama_barang">Barang</label>
-                        <select id="nama_barang" class="form-control">
+                        <select id="nama_barang" class="select2 form-control">
                             <option value="">Pilih Barang</option>
-                            @foreach ($barang as $b)
+                            @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id }}" data-id="{{ $b->id }}"
                                     data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}"
                                     data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek }}>{{ $b->nama }}
@@ -44,7 +44,9 @@
                     </div>
                     <div class="form-group col-md-2">
                         <label for="merek">Merek</label>
-                        <input type="text" class="form-control" id="merek" readonly>
+                        <select id="merek" class="form-control" >
+                            <option value="">Pilih Barang</option>
+                        </select>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="harga">Harga</label>
@@ -139,9 +141,53 @@
     </style>
 @endpush
 
+@component('components.aset_datatable.aset_select2')@endcomponent
+
 @push('js')
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script>
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Pilih Barang',
+        });
+
+        $('#nama_barang').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var kodeBarang = selectedOption.data('kode');
+            var namaBarang = selectedOption.data('nama');
+
+            $('#harga').val('');
+
+            $('#kode_barang').val(kodeBarang);
+            var filteredMerek = @json($barang);
+
+            $('#merek').empty().append('<option value="">Pilih Merek</option>');
+
+            filteredMerek.forEach(function(item) {
+                if (item.kode_barang === kodeBarang) {
+                    $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+                }
+            });
+
+            $('#merek').select2({
+                width: '100%',
+                placeholder: 'Pilih Merek'
+            });
+        });
+
+        $('#merek').on('change', function() {
+            var selectedMerek = $(this).find('option:selected');
+            var harga = formatNumber(selectedMerek.data('harga'));
+            $('#harga').val(harga);
+        });
+
+        function formatNumber(value) {
+                return new Intl.NumberFormat('id-ID').format(value);
+        }
+    </script>
+
     <script>
         $(function() {
             $('input[name="tanggal"]').daterangepicker({
@@ -165,8 +211,6 @@
             const tableBody = document.querySelector('#table-body');
 
             function hitungHargaJual() {
-
-                console.log(parseFloat(hargaInput.value.replace(/[^\d]/g, '')));
                 const harga = parseFloat(hargaInput.value.replace(/[^\d]/g, '')) || 0;
                 const jumlah = jumlahInput.value || 0;
 
@@ -296,23 +340,6 @@
             const addButton = document.querySelector('button[type="submit"]');
             const tableBody = document.querySelector('table tbody');
 
-            namaBarangSelect.addEventListener('change', function() {
-                const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-                const harga = selectedOption.getAttribute('data-harga');
-                const kodeBarang = selectedOption.getAttribute('data-kode');
-                const merek = selectedOption.getAttribute('data-merek');
-                const idBarang = selectedOption.getAttribute('data-id');
-
-                function formatRibuan(value) {
-                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                }
-
-                hargaInput.value = harga ? formatRibuan(harga) : '';
-                kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-                merekInput.value = merek ? merek : '';
-            });
-
-
             let rowCount = 0;
 
             addButton.addEventListener('click', function(e) {
@@ -322,6 +349,8 @@
                 const kodeBarang = kodeBarangInput.value;
                 const merek = merekInput.value;
                 const harga = hargaInput.value;
+
+                console.log('harga', harga)
                 const cleanHarga = parseFloat(harga.replace(/[^\d]/g, '')) || 0;
                 const jumlah = jumlahInput.value;
                 const subTotal = parseFloat(bayarInput.value.replace(/[^\d]/g, ''));
@@ -401,6 +430,8 @@
                 hargaInput.value = '';
                 jumlahInput.value = '';
                 bayarInput.value = '';
+                $('#nama_barang').select2().val(null).trigger('change');
+                $('#merek').select2().val(null).trigger('change');
             }
 
             function setRemoveRowEvent() {
@@ -418,12 +449,9 @@
 
             function updateRowNumbers() {
                 const rows = tableBody.querySelectorAll(
-                    'tr:not(:last-child)'); // Abaikan baris terakhir (Total Pembelian)
+                    'tr:not(:last-child)');
                 rows.forEach((row, index) => {
-                    // Update nomor baris
                     row.querySelector('td:first-child').innerText = index + 1;
-
-                    // Update atribut 'name' untuk input hidden
                     const inputs = row.querySelectorAll('input');
                     inputs.forEach(input => {
                         const inputName = input.name.replace(/\[\d+\]/, `[${index}]`);

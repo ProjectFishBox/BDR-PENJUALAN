@@ -63,7 +63,10 @@ class PembelianControllers extends Controller
     {
         $title = 'Tambah Pembelian';
 
-        $barang = Barang::all();
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->distinct()
+        ->get();
+
 
         return view('pages.transaksi.pembelian.tambah_pembelian', compact('title', 'barang'));
     }
@@ -122,7 +125,10 @@ class PembelianControllers extends Controller
     {
         $title = 'Edit Pembelian';
 
-        $barang = Barang::all();
+
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+                ->distinct()
+                ->get();
 
         $pembelian = Pembelian::findOrFail($id);
 

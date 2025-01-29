@@ -28,9 +28,9 @@
                     <div class="form-row">
                         <div class="form-group col-md-2">
                             <label for="nama_barang">Barang</label>
-                            <select id="nama_barang" class="form-control">
+                            <select id="nama_barang" class="select2 form-control">
                                 <option value="">Pilih Barang</option>
-                                @foreach ($barang as $b)
+                                @foreach ($barang->unique('kode_barang') as $b)
                                     <option value="{{ $b->id}}" data-id="{{ $b->id }}" data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama}}</option>
                                 @endforeach
                             </select>
@@ -41,7 +41,9 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="merek">Merek</label>
-                            <input type="text" class="form-control" id="merek" readonly >
+                            <select id="merek" class="form-control" >
+                                <option value="">Pilih Barang</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="harga">Harga</label>
@@ -128,20 +130,63 @@
     <div class="modal fade bd-example-modal-import" style="display: none;" id="importmodal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true"></div>
 
 @endsection
+
+@component('components.aset_datatable.aset_select2')@endcomponent
+
+
+@push('css')
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <style>
     .txt{
         text-align: center;
     }
 </style>
-@push('css')
-
-
 @endpush
 
 @push('js')
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Pilih Barang',
+    });
+
+    $('#nama_barang').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        var kodeBarang = selectedOption.data('kode');
+        var namaBarang = selectedOption.data('nama');
+
+        $('#harga').val('');
+
+        $('#kode_barang').val(kodeBarang);
+        var filteredMerek = @json($barang);
+
+        $('#merek').empty().append('<option value="">Pilih Merek</option>');
+
+        filteredMerek.forEach(function(item) {
+            if (item.kode_barang === kodeBarang) {
+                $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+            }
+        });
+
+        $('#merek').select2({
+            width: '100%',
+            placeholder: 'Pilih Merek'
+        });
+    });
+
+    $('#merek').on('change', function() {
+        var selectedMerek = $(this).find('option:selected');
+        var harga = formatNumber(selectedMerek.data('harga'));
+        $('#harga').val(harga);
+    });
+
+    function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+    }
+</script>
 
 <script>
     $(function() {
@@ -378,21 +423,21 @@
         function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
-        namaBarangSelect.addEventListener('change', function () {
-            const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            const harga = selectedOption.getAttribute('data-harga');
-            const kodeBarang = selectedOption.getAttribute('data-kode');
+        // namaBarangSelect.addEventListener('change', function () {
+        //     const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
+        //     const harga = selectedOption.getAttribute('data-harga');
+        //     const kodeBarang = selectedOption.getAttribute('data-kode');
 
-            const merek = selectedOption.getAttribute('data-merek');
+        //     const merek = selectedOption.getAttribute('data-merek');
 
-            function formatRibuan(value) {
-                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
+        //     function formatRibuan(value) {
+        //             return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        //     }
 
-            hargaInput.value = harga ? formatRibuan(harga) : '';
-            kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-            merekInput.value = merek ? merek : '';
-        });
+        //     hargaInput.value = harga ? formatRibuan(harga) : '';
+        //     kodeBarangInput.value = kodeBarang ? kodeBarang : '';
+        //     merekInput.value = merek ? merek : '';
+        // });
 
         addButton.addEventListener('click', function (e) {
             e.preventDefault();
@@ -405,10 +450,6 @@
             const jumlah = jumlahInput.value;
             const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute('data-id');
 
-            if (!namaBarang || !kodeBarang || !merek || !harga || !jumlah || !idBarang) {
-                alert('Mohon lengkapi semua data sebelum menambahkan!');
-                return;
-            }
 
             const calculatedSubTotal = cleanHarga * jumlah;
 
