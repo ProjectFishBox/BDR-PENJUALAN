@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi');
     }
+
+    public function gabungkan()
+    {
+        return $this->hasMany(Gabungkan::class, 'create_by');
+    }
 }

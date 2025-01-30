@@ -43,4 +43,9 @@ class Lokasi extends Model
         return $this->hasMany(Pengeluaran::class, 'id_lokasi');
     }
 
+    public function gabungkan()
+    {
+        return $this->hasMany(Gabungkan::class, 'id_lokasi');
+    }
+
 }

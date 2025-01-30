@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
+use App\Http\Controllers\Transaksi\GabungkanControllers;
 use App\Http\Controllers\Master\AksesControllers;
 use App\Http\Controllers\Master\BarangControllers;
 use App\Http\Controllers\User\ProfileControllers;
@@ -165,6 +166,22 @@ Route::controller(PenjualanControllers::class)->group(function () {
     Route::post('penjualan/{id}/update', 'update')->name('update-penjualan');
     Route::get('/delete-penjualan/{id}' , 'destroy')->name('delete-penjualan');
 });
+
+Route::controller(GabungkanControllers::class)->group(function () {
+
+    Route::get('/gabungkan', 'index')->name('gabungkan');
+    Route::get('/tambah-gabungkan', 'create')->name('tambah-gabungkan');
+    Route::get('/modal-import-gabungkan' , 'modalImport')->name('gabungkan.import');
+    Route::get('download-tamplate-detail-gabungkan', 'downloadTamplate')->name('download-tamplate-detail-gabungkan');
+    Route::post('/tambah-gabungkan', 'store')->name('store-gabungkan');
+    Route::get('/modal-detail-gabungkan' , 'show')->name('gabungkan.detail');
+    Route::get('/gabungkan-edit/{id}', 'edit')->name('gabungkan-edit');
+    Route::post('gabungkan/{id}/update', 'update')->name('update-gabungkan');
+    Route::get('/delete-gabungkan/{id}' , 'destroy')->name('delete-gabungkan');
+    Route::get('/print-gabungkan/{id}' , 'printData')->name('print-gabungkan');
+
+});
+
 
 
 

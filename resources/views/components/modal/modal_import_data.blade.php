@@ -26,7 +26,11 @@
                         @case('detailPenjualan')
                             <a href="{{route('download-tamplate-detail-penjualan')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>
                             @break
+                        @case('detailGabungkan')
+                            <a href="{{route('download-tamplate-detail-gabungkan')}}" style="color: rgb(0, 168, 0); margin-top: 10px" >click here to download tamplate</a>
+                            @break
                         @break
+
                         @default
                     @endswitch
                 </div>
