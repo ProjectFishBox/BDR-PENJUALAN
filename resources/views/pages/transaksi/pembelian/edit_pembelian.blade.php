@@ -31,7 +31,7 @@
                             <select id="nama_barang" class="select2 form-control">
                                 <option value="">Pilih Barang</option>
                                 @foreach ($barang->unique('kode_barang') as $b)
-                                    <option value="{{ $b->id}}" data-id="{{ $b->id }}" data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama}}</option>
+                                    <option value="{{ $b->id}}" data-id="{{ $b->id }}" data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>({{$b->kode_barang}}) {{ $b->nama}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -443,6 +443,7 @@
             e.preventDefault();
 
             const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+            const cleanedNamaBarang = namaBarang.replace(/\(.*?\)\s*/, '');
             const kodeBarang = kodeBarangInput.value;
             const merek = merekInput.value;
             const harga = hargaInput.value;
@@ -456,7 +457,7 @@
             const itemData = {
                 id_barang: idBarang,
                 kode_barang: kodeBarang,
-                nama_barang: namaBarang,
+                nama_barang: cleanedNamaBarang,
                 merek: merek,
                 harga: harga,
                 jumlah: jumlah,

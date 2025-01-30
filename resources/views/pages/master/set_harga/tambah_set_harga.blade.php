@@ -13,7 +13,7 @@
                             <option value="">Pilih Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-nama="{{ $b->nama }}">
-                                    {{ $b->nama }}
+                                    ({{$b->kode_barang}}) {{ $b->nama }}
                                 </option>
                             @endforeach
                         </select>

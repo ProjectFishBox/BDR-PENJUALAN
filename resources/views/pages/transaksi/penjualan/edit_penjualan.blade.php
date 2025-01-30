@@ -62,7 +62,7 @@
                         <select id="nama_barang" class="select2 form-control">
                             <option value="">Pilih Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
-                                <option value="{{ $b->id }}" data-id="{{ $b->id }}"  data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek}}">{{ $b->nama }}</option>
+                                <option value="{{ $b->id }}" data-id="{{ $b->id }}"  data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek}}">({{$b->kode_barang}}) {{ $b->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -353,12 +353,10 @@
             const kotaField = document.getElementById('kota');
             const teleponField = document.getElementById('telepon');
 
-            // Fungsi untuk mengisi field input berdasarkan data pelanggan yang terpilih
             function setPelangganData() {
                 const selectedOption = pelangganSelect.options[pelangganSelect.selectedIndex];
 
                 if (selectedOption && selectedOption.value) {
-                    // Mengambil data dari data atribut option yang terpilih
                     const alamat = selectedOption.getAttribute('data-alamat');
                     const kota = selectedOption.getAttribute('data-kota');
                     const telepon = selectedOption.getAttribute('data-telepon');
@@ -370,10 +368,9 @@
                 }
             }
 
-            // Memanggil fungsi setPelangganData saat halaman dimuat, untuk mengisi data sesuai pilihan yang sudah ada
+
             setPelangganData();
 
-            // Menambahkan event listener untuk perubahan pilihan pelanggan
             pelangganSelect.addEventListener('change', function () {
                 setPelangganData();
             });
@@ -460,6 +457,7 @@
                 e.preventDefault();
 
                 const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const cleanedNamaBarang = namaBarang.replace(/\(.*?\)\s*/, '');
                 const kodeBarang = kodeBarangInput.value;
                 const merek = merekInput.value;
                 const harga = hargaInput.value;
@@ -472,7 +470,7 @@
                 const itemData = {
                     id_barang: idBarang,
                     kode_barang: kodeBarang,
-                    nama_barang: namaBarang,
+                    nama_barang: cleanedNamaBarang,
                     merek: merek,
                     harga: harga,
                     jumlah: jumlah,
@@ -665,6 +663,7 @@
 
                 const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;
                 const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const cleanedNamaBarang = namaBarang.replace(/\(.*?\)\s*/, '');
                 const kodeBarang = kodeBarangInput.value;
                 const merek = selectedMerek;
                 const harga = hargaInput.value;
@@ -695,7 +694,7 @@
                 const itemData = {
                     id_barang: idBarang,
                     kode_barang: kodeBarang,
-                    nama_barang: namaBarang,
+                    nama_barang: cleanedNamaBarang,
                     merek: merek,
                     harga: harga,
                     diskon : diskon,
@@ -707,7 +706,7 @@
                 <tr>
                     <td></td>
                     <td>${kodeBarang}</td>
-                    <td>${namaBarang}</td>
+                    <td>${cleanedNamaBarang}</td>
                     <td>${merek}</td>
                     <td>${harga}</td>
                     <td>${diskon}</td>
@@ -720,7 +719,7 @@
                     </td>
                     <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${idBarang}">
                     <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${namaBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${cleanedNamaBarang}">
                     <input type="hidden" name="table_data[${rowCount}][merek]" value="${merek}">
                     <input type="hidden" name="table_data[${rowCount}][harga]" value="${harga}">
                     <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${jumlah}">

@@ -12,7 +12,7 @@
                         <select id="nama_barang" class="form-control" name="nama_barang" required>
                             <option value="">Pilih Barang</option>
                             @foreach ($barang as $b)
-                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>{{ $b->nama}}</option>
+                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>({{$b->kode_barang}}) {{ $b->nama}}</option>
                             @endforeach
                         </select>
                     </div>
