@@ -9,7 +9,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="nama_barang">Barang <span style="color: red">*</span></label>
-                        <select id="nama_barang" class="form-control" name="nama_barang" required>
+                        <select id="nama_barang" class="select2 form-control" name="nama_barang" required>
                             <option value="">Pilih Barang</option>
                             @foreach ($barang as $b)
                                 <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>({{$b->kode_barang}}) {{ $b->nama}}</option>
@@ -61,7 +61,51 @@
     </div>
 @endsection
 
+@component('components.aset_datatable.aset_select2')@endcomponent
+
+
 @push('js')
+
+<script>
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Pilih Barang',
+    });
+
+    $('#nama_barang').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        var kodeBarang = selectedOption.data('kode');
+        var namaBarang = selectedOption.data('nama');
+
+        $('#harga').val('');
+
+        $('#kode_barang').val(kodeBarang);
+        var filteredMerek = @json($barang);
+
+        $('#merek').empty().append('<option value="">Pilih Merek</option>');
+
+        filteredMerek.forEach(function(item) {
+            if (item.kode_barang === kodeBarang) {
+                $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+            }
+        });
+
+        $('#merek').select2({
+            width: '100%',
+            placeholder: 'Pilih Merek'
+        });
+    });
+
+    $('#merek').on('change', function() {
+        var selectedMerek = $(this).find('option:selected');
+        var harga = formatNumber(selectedMerek.data('harga'));
+        $('#harga').val(harga);
+    });
+
+    function formatNumber(value) {
+            return new Intl.NumberFormat('id-ID').format(value);
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
