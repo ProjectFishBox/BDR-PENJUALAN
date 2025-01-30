@@ -60,10 +60,10 @@
                 <div class="form-row align-items-center" style="gap: 15px;">
                     <div class="form-group col-md-4">
                         <label for="nama_barang">Barang</label>
-                        <select id="nama_barang" class="form-control">
+                        <select id="nama_barang" class="select2 form-control">
                             <option value="">Pilih Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
-                                <option value="{{ $b->id }}" data-id="{{ $b->id }} data-harga="{{ $b->harga }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>{{ $b->nama }}</option>
+                                <option value="{{ $b->id }}" data-id="{{ $b->id }} data-harga="{{ $b->harga }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}}>({{$b->kode_barang}}) {{ $b->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -230,7 +230,6 @@
                 return new Intl.NumberFormat('id-ID').format(value);
         }
     </script>
-
 
     <script>
         $(function() {
@@ -451,6 +450,7 @@
 
                 const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;
                 const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const cleanedNamaBarang = namaBarang.replace(/\(.*?\)\s*/, '');
                 const kodeBarang = kodeBarangInput.value;
                 const merek = selectedMerek;
                 const harga = hargaInput.value;
@@ -458,8 +458,6 @@
                 const subTotal = subTotalInput.value;
                 const diskon = diskonInput.value;
 
-
-                console.log('Subtotal yang Dihitung:', subTotal);
                 const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute(
                     'data-id');
 
@@ -481,7 +479,7 @@
                 const itemData = {
                     id_barang: idBarang,
                     kode_barang: kodeBarang,
-                    nama_barang: namaBarang,
+                    nama_barang: cleanedNamaBarang,
                     merek: merek,
                     harga: harga,
                     diskon : diskon,
@@ -489,11 +487,13 @@
                     subtotal: subTotal
                 };
 
+
+
                 const newRow = `
                 <tr>
                     <td></td>
                     <td>${kodeBarang}</td>
-                    <td>${namaBarang}</td>
+                    <td>${cleanedNamaBarang}</td>
                     <td>${merek}</td>
                     <td>${harga}</td>
                     <td>${diskon}</td>
@@ -506,7 +506,7 @@
                     </td>
                     <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${idBarang}">
                     <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${namaBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${cleanedNamaBarang}">
                     <input type="hidden" name="table_data[${rowCount}][merek]" value="${merek}">
                     <input type="hidden" name="table_data[${rowCount}][harga]" value="${harga}">
                     <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${jumlah}">
