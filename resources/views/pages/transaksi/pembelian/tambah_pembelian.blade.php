@@ -33,7 +33,7 @@
                             @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id }}" data-id="{{ $b->id }}"
                                     data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}"
-                                    data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek }}>{{ $b->nama }}
+                                    data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek }}>({{$b->kode_barang}}){{ $b->nama }}
                                 </option>
                             @endforeach
                         </select>
@@ -346,6 +346,7 @@
                 e.preventDefault();
 
                 const namaBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].text;
+                const cleanedNamaBarang = namaBarang.replace(/\(.*?\)\s*/, '');
                 const kodeBarang = kodeBarangInput.value;
                 const merek = merekInput.value;
                 const harga = hargaInput.value;
@@ -379,7 +380,7 @@
                 const itemData = {
                     id_barang: idBarang,
                     kode_barang: kodeBarang,
-                    nama_barang: namaBarang,
+                    nama_barang: cleanedNamaBarang,
                     merek: merek,
                     harga: harga,
                     jumlah: jumlah,
@@ -402,7 +403,7 @@
                     </td>
                     <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${idBarang}">
                     <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
-                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${namaBarang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${cleanedNamaBarang}">
                     <input type="hidden" name="table_data[${rowCount}][merek]" value="${merek}">
                     <input type="hidden" name="table_data[${rowCount}][harga]" value="${harga}">
                     <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${jumlah}">
