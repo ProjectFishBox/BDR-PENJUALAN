@@ -24,7 +24,7 @@
                     <div class="col-auto">
                         <div class="form-group">
                             <label for="pelanggan">Pelanggan</label>
-                            <select id="pelanggan" class="form-control" name="pelanggan">
+                            <select id="pelanggan" class="form-control" name="pelanggan" required>
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
                                     <option value="{{ $p->id }}">{{ $p->nama }}</option>
