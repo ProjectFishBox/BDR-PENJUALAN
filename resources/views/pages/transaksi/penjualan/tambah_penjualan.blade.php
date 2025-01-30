@@ -134,7 +134,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="diskon_nota">Diskon Nota</label>
-                            <input type="text" class="form-control" id="diskon_nota" placeholder="Diskon Nota" name="diskon_nota" pattern="[0-9]+">
+                            <input type="text" class="form-control" id="diskon_nota" placeholder="Diskon Nota" name="diskon_nota">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="bayar_input">Bayar</label>
@@ -614,6 +614,7 @@
                             }
                             return item;
                         });
+                        $('.modal').modal('hide');
                         importToTable(updatedResponse);
                     });
 
