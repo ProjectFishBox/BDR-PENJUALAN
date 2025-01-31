@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
+use App\Http\Controllers\Laporan\StokControllers;
 use App\Http\Controllers\Transaksi\GabungkanControllers;
 use App\Http\Controllers\Master\AksesControllers;
 use App\Http\Controllers\Master\BarangControllers;
@@ -179,6 +180,16 @@ Route::controller(GabungkanControllers::class)->group(function () {
     Route::post('gabungkan/{id}/update', 'update')->name('update-gabungkan');
     Route::get('/delete-gabungkan/{id}' , 'destroy')->name('delete-gabungkan');
     Route::get('/print-gabungkan/{id}' , 'printData')->name('print-gabungkan');
+
+});
+
+Route::controller(StokControllers::class)->group(function () {
+
+    Route::get('/stok', 'index')->name('stok');
+    Route::get('/stok/filtered', 'getFilteredData')->name('stok.filtered');
+    Route::get('/export-pdf' , 'printData')->name('stok.exportpdf');
+    Route::get('/export-excel' , 'exportExcel')->name('stok.exportexcel');
+
 
 });
 

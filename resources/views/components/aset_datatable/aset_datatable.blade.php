@@ -4,6 +4,29 @@
     <link href="{{ asset('assets/vendors/datatables/dataTables.bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.bootstrap4.min.css">
+    <link href="{{ asset('vendor/select2/css/select2.css') }}" rel="stylesheet">
+
+    <style>
+        .select2-container .select2-selection--single {
+            height: 38px !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 5px !important;
+            padding: 6px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            line-height: 26px !important;
+            font-size: 14px !important;
+            color: #495057 !important;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__arrow {
+            height: 36px !important;
+        }
+    </style>
 
 @endpush
 
@@ -24,5 +47,7 @@
     <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.colVis.min.js"></script>
+
+    <script src="{{ asset('vendor/select2/js/select2.js') }}"></script>
 
 @endpush

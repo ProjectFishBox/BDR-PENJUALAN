@@ -253,18 +253,6 @@ class GabungkanControllers extends Controller
         $pdf = Pdf::loadView('components.pdf.gabungkan_pdf', compact('gabungkan', 'detailGabungkan'));
 
         return $pdf->stream('gabungkan-'.$id.'.pdf');
-
-        // $title = "Cetak Gabungkan";
-
-        // $id = $request->input('id');
-
-        // $gabungkan = Gabungkan::with('lokasi', 'user')->where('id', $id)->first();
-
-        // $detailGabungkan = GabungkanDetail::where('id_gabungkan', $id)->get();
-
-        // dd($detailGabungkan);
-
-        // return view('components.pdf.gabungkan_pdf', compact('title', 'gabungkan'));
     }
 
 
