@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
+use App\Http\Controllers\Laporan\LaporanPembelianController;
 use App\Http\Controllers\Laporan\StokControllers;
 use App\Http\Controllers\Transaksi\GabungkanControllers;
 use App\Http\Controllers\Master\AksesControllers;
@@ -190,9 +191,18 @@ Route::controller(StokControllers::class)->group(function () {
     Route::get('/export-pdf' , 'printData')->name('stok.exportpdf');
     Route::get('/export-excel' , 'exportExcel')->name('stok.exportexcel');
 
-
 });
 
 
+Route::controller(LaporanPembelianController::class)->group(function () {
 
+    Route::get('/laporan-pembelian', 'index')->name('laporan-pembelian');
+    Route::get('/laporan-penjualan/filtered', 'getFilteredData')->name('laporan-penjualan.filtered');
+    Route::get('/laporan-penjualan/exportpdf', 'printData')->name('laporan-penjualan.exportpdf');
+    Route::get('/laporan-penjualan-export-excel' , 'exportExcel')->name('laporan-penjualan.exportexcel');
+
+
+
+
+});
 
