@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\Laporan\LaporanPembelianController;
-use App\Http\Controllers\Laporan\LaporanPenjualanController;
+use App\Http\Controllers\Laporan\LaporanPenjualanControllers;
 use App\Http\Controllers\Laporan\StokControllers;
 use App\Http\Controllers\Transaksi\GabungkanControllers;
 use App\Http\Controllers\Master\AksesControllers;
@@ -200,10 +200,15 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(LaporanPembelianController::class)->group(function () {
 
         Route::get('/laporan-pembelian', 'index')->name('laporan-pembelian');
-        Route::get('/laporan-penjualan/filtered', 'getFilteredData')->name('laporan-penjualan.filtered');
-        Route::get('/laporan-penjualan/exportpdf', 'printData')->name('laporan-penjualan.exportpdf');
-        Route::get('/laporan-penjualan-export-excel' , 'exportExcel')->name('laporan-penjualan.exportexcel');
+        Route::get('/laporan-pembelian/filtered', 'getFilteredData')->name('laporan-pembelian.filtered');
+        Route::get('/laporan-pembelian/exportpdf', 'printData')->name('laporan-pembelian.exportpdf');
+        Route::get('/laporan-pembelian-export-excel' , 'exportExcel')->name('laporan-pembelian.exportexcel');
 
+    });
+
+    Route::controller(LaporanPenjualanControllers::class)->group(function () {
+
+        Route::get('/laporan-penjualan', 'index')->name('laporan-penjualan');
 
     });
 
