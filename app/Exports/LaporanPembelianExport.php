@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\DB;
 
-class LaporanPenjualanExport implements FromCollection, WithHeadings
+class LaporanPembelianExport implements FromCollection, WithHeadings
 {
     protected $request;
 
@@ -34,8 +34,8 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = DB::table('penjualan as p')
-            ->join('penjualan_detail as dp', 'p.id', '=', 'dp.id_penjualan')
+        $query = DB::table('pembelian as p')
+            ->join('pembelian_detail as dp', 'p.id', '=', 'dp.id_pembelian')
             ->join('barang as b', 'b.id', '=', 'dp.id_barang')
             ->select(
                 'p.no_nota',
@@ -45,7 +45,7 @@ class LaporanPenjualanExport implements FromCollection, WithHeadings
                 'dp.merek',
                 'dp.harga',
                 'dp.jumlah',
-                DB::raw('((dp.harga - dp.diskon_barang) * dp.jumlah) as total')
+                DB::raw('(dp.jumlah * dp.harga) as total')
             );
 
         if ($this->request->filled('daterange')) {

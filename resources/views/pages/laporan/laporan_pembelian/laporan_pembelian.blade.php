@@ -157,8 +157,8 @@
                 },
                 {data: 'jumlah', name: 'jumlah'},
                 {
-                    data: 'total_item',
-                    name: 'total_item',
+                    data: 'total',
+                    name: 'total',
                     render: function(data) {
                         return 'Rp ' + data;
                     }

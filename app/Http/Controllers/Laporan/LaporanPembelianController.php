@@ -14,8 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\Barang;
 use App\Models\Lokasi;
-use App\Exports\LaporanPenjualanExport;
-
+use App\Exports\LaporanPembelianExport;
 
 class LaporanPembelianController extends Controller
 {
@@ -34,30 +33,34 @@ class LaporanPembelianController extends Controller
             $cacheDuration = now()->addMinutes(2);
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return $this->getLaporanPenjualan();
+                return $this->getLaporanPembelian();
             });
-
 
             $flattenedData = collect($data)->flatMap(function ($item) {
                 return collect($item['detail'])->map(function ($detail) use ($item) {
+
+
                     return [
                         'id' => $item['id'],
                         'tanggal' => $item['tanggal'],
                         'no_nota' => $item['no_nota'],
-                        'total' => $item['total'],
+                        'total' => $detail['total_item'],
                         'kode_barang' => $detail['kode_barang'],
                         'nama_barang' => $detail['nama_barang'],
                         'merek' => $detail['merek'],
                         'jumlah' => $detail['jumlah'],
                         'harga' => $detail['harga'],
-                        'total_item' => number_format($detail['total_item'],0, ',', '.' )
                     ];
                 });
             })->values();
 
-            $totalPenjualan = array_sum(array_column($data, 'total'));
+            $totalKeseluruhan = $flattenedData->sum(function ($item) {
+                return (int) str_replace('.', '', $item['total']);
+            });
 
-            return DataTables::of($flattenedData)
+            $flattenedDataArray = $flattenedData->toArray();
+
+            return DataTables::of($flattenedDataArray)
                 ->addIndexColumn()
                 ->editColumn('harga', function($row) {
                     return number_format($row['harga'], 0, ',', '.');
@@ -69,7 +72,7 @@ class LaporanPembelianController extends Controller
                     return number_format($row['total'], 0, ',', '.');
                 })
                 ->with([
-                    'total_penjualan' => number_format($totalPenjualan, 0, ',', '.')
+                    'total_penjualan' => number_format($totalKeseluruhan, 0, ',', '.')
                 ])
                 ->make(true);
         }
@@ -77,11 +80,11 @@ class LaporanPembelianController extends Controller
         return view('pages.laporan.laporan_pembelian.laporan_pembelian', compact('title', 'barang', 'lokasi'));
     }
 
-    public function getLaporanPenjualan()
+    public function getLaporanPembelian()
     {
         try {
-            $query = DB::table('penjualan as p')
-                ->join('penjualan_detail as dp', 'p.id', '=', 'dp.id_penjualan')
+            $query = DB::table('pembelian as p')
+                ->join('pembelian_detail as dp', 'p.id', '=', 'dp.id_pembelian')
                 ->join('barang as b', 'b.id', '=', 'dp.id_barang')
                 ->select(
                     'p.id',
@@ -91,30 +94,30 @@ class LaporanPembelianController extends Controller
                     'b.nama',
                     'dp.jumlah',
                     'dp.harga',
-                    'dp.diskon_barang',
                     'dp.merek',
                     'b.kode_barang',
-                    DB::raw('((dp.harga - dp.diskon_barang) * dp.jumlah) as total_item')
                 );
+
 
             $data = $query->orderBy('p.tanggal', 'desc')
                         ->orderBy('p.id', 'desc')
                         ->get();
 
+
             $result = [];
+
             foreach ($data as $row) {
+
                 if (!isset($result[$row->id])) {
                     $result[$row->id] = [
                         'id' => $row->id,
                         'tanggal' => $row->tanggal,
                         'no_nota' => $row->no_nota,
-                        'total' => 0,
                         'detail' => []
                     ];
                 }
 
-                $result[$row->id]['total'] += $row->total_item;
-
+                $subtotal = $row->jumlah * $row->harga;
 
                 $result[$row->id]['detail'][] = [
                     'id_barang' => $row->id_barang,
@@ -123,13 +126,8 @@ class LaporanPembelianController extends Controller
                     'merek' => $row->merek,
                     'jumlah' => $row->jumlah,
                     'harga' => $row->harga,
-                    'diskon_barang' => $row->diskon_barang,
-                    'total_item' => $row->total_item
+                    'total_item' => $subtotal
                 ];
-            }
-
-            foreach ($result as &$item) {
-                $item['total_penjualan'] = $item['total'];
             }
 
             return array_values($result);
@@ -147,8 +145,8 @@ class LaporanPembelianController extends Controller
     {
 
         try {
-            $query = DB::table('penjualan as p')
-                ->join('penjualan_detail as dp', 'p.id', '=', 'dp.id_penjualan')
+            $query = DB::table('pembelian as p')
+                ->join('pembelian_detail as dp', 'p.id', '=', 'dp.id_pembelian')
                 ->join('barang as b', 'b.id', '=', 'dp.id_barang')
                 ->select(
                     'p.id',
@@ -158,10 +156,8 @@ class LaporanPembelianController extends Controller
                     'b.nama',
                     'dp.jumlah',
                     'dp.harga',
-                    'dp.diskon_barang',
                     'dp.merek',
                     'b.kode_barang',
-                    DB::raw('((dp.harga - dp.diskon_barang) * dp.jumlah) as total_item')
                 );
 
             if ($request->filled('daterange')) {
@@ -190,12 +186,11 @@ class LaporanPembelianController extends Controller
                         'id' => $row->id,
                         'tanggal' => $row->tanggal,
                         'no_nota' => $row->no_nota,
-                        'total' => 0,
                         'detail' => []
                     ];
                 }
 
-                $result[$row->id]['total'] += $row->total_item;
+                $subtotal = $row->jumlah * $row->harga;
 
                 $result[$row->id]['detail'][] = [
                     'id_barang' => $row->id_barang,
@@ -204,8 +199,7 @@ class LaporanPembelianController extends Controller
                     'merek' => $row->merek,
                     'jumlah' => $row->jumlah,
                     'harga' => $row->harga,
-                    'diskon_barang' => $row->diskon_barang,
-                    'total_item' => $row->total_item
+                    'total_item' => $subtotal
                 ];
             }
 
@@ -232,8 +226,8 @@ class LaporanPembelianController extends Controller
     {
 
         try {
-            $query = DB::table('penjualan as p')
-                ->join('penjualan_detail as dp', 'p.id', '=', 'dp.id_penjualan')
+            $query = DB::table('pembelian as p')
+                ->join('pembelian_detail as dp', 'p.id', '=', 'dp.id_pembelian')
                 ->join('barang as b', 'b.id', '=', 'dp.id_barang')
                 ->select(
                     'p.id',
@@ -243,10 +237,8 @@ class LaporanPembelianController extends Controller
                     'b.nama',
                     'dp.jumlah',
                     'dp.harga',
-                    'dp.diskon_barang',
                     'dp.merek',
                     'b.kode_barang',
-                    DB::raw('((dp.harga - dp.diskon_barang) * dp.jumlah) as total_item')
                 );
 
             if ($request->filled('daterange')) {
@@ -275,12 +267,11 @@ class LaporanPembelianController extends Controller
                         'id' => $row->id,
                         'tanggal' => $row->tanggal,
                         'no_nota' => $row->no_nota,
-                        'total' => 0,
                         'detail' => []
                     ];
                 }
 
-                $result[$row->id]['total'] += $row->total_item;
+                $subtotal = $row->jumlah * $row->harga;
 
                 $result[$row->id]['detail'][] = [
                     'id_barang' => $row->id_barang,
@@ -289,8 +280,7 @@ class LaporanPembelianController extends Controller
                     'merek' => $row->merek,
                     'jumlah' => $row->jumlah,
                     'harga' => $row->harga,
-                    'diskon_barang' => $row->diskon_barang,
-                    'total_item' => $row->total_item
+                    'total_item' => $subtotal
                 ];
             }
 
@@ -318,7 +308,7 @@ class LaporanPembelianController extends Controller
     public function exportExcel(Request $request)
     {
         try {
-            $fileName = 'Laporan_Penjualan';
+            $fileName = 'Laporan_Pembelian';
 
             if ($request->filled('lokasi')) {
                 $namaLokasi = Lokasi::find($request->lokasi)->nama;
@@ -337,7 +327,7 @@ class LaporanPembelianController extends Controller
             $fileName .= '_' . date('d-m-Y') . '.xlsx';
 
             return Excel::download(
-                new LaporanPenjualanExport($request),
+                new LaporanPembelianExport($request),
                 $fileName,
                 \Maatwebsite\Excel\Excel::XLSX
             );
