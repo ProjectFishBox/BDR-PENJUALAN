@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="form-group col-md-4">
-                    <h5 class="mb-3">Transaksi</h5>
+                    <h5 class="mb-3">Laporan</h5>
                     @foreach ($menus as $menu)
                         @if ($menu->parent == 2)
                             <div class="form-group">
@@ -86,5 +86,6 @@
         </form>
     </div>
 </div>
+
 
 @endsection

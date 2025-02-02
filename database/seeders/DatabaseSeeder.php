@@ -17,7 +17,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             LokasiSeeder::class,
             KotaSeeder::class,
-            MenuSeeder::class
+            MenuSeeder::class,
+            AksesSeeder::class,
+            AksesMenuSeeder::class
         ]);
     }
 }

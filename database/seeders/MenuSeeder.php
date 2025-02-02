@@ -15,86 +15,100 @@ class MenuSeeder extends Seeder
     {
         DB::table('Menu')->insert([
             [
+                'id' => 1,
                 'Nama' => 'Dashboard',
-                'icon' => '<i class="anticon anticon-step-backward"></i>',
-                'url' => '/akses',
+                'icon' => 'anticon anticon-step-backward',
+                'url' => '/dashboard',
                 'parent' => 0
             ],
             [
-                'Nama' => 'Master Akses',
-                'icon' => '<i class="anticon anticon-step-backward"></i>',
+                'id' => 2,
+                'Nama' => 'Akses',
+                'icon' => 'anticon anticon-step-backward',
                 'url' => '/akses',
                 'parent' => 1
             ],
             [
-                'Nama' => 'Master Pengguna',
-                'icon' => '<i class="anticon anticon-step-forward"></i>',
+                'id' => 3,
+                'Nama' => 'Pengguna',
+                'icon' => 'anticon anticon-step-forward',
                 'url' => '/pengguna',
                 'parent' => 1
             ],
             [
-                'Nama' => 'Master Pelanggan',
-                'icon' => '<i class="anticon anticon-fast-backward"></i>',
+                'id' => 4,
+                'Nama' => 'Pelanggan',
+                'icon' => 'anticon anticon-fast-backward',
                 'url' => '/pelanggan',
                 'parent' => 1
             ],
             [
-                'Nama' => 'Master Barang',
-                'icon' => '<i class="anticon anticon-shrink"></i>',
+                'id' => 5,
+                'Nama' => 'Barang',
+                'icon' => 'anticon anticon-shrink',
                 'url' => '/barang',
                 'parent' => 1
             ],
             [
-                'Nama' => 'Master SetHarga',
-                'icon' => '<i class="anticon anticon-left"></i>',
+                'id' => 6,
+                'Nama' => 'SetHarga',
+                'icon' => 'anticon anticon-left',
                 'url' => '/setharga',
                 'parent' => 1
             ],
             [
+                'id' => 7,
                 'Nama' => 'Pembelian',
-                'icon' => '<i class="anticon anticon-up-circle"></i>',
+                'icon' => 'anticon anticon-shopping-cart',
                 'url' => '/pembelian',
                 'parent' => NULL
             ],
             [
+                'id' => 8,
                 'Nama' => 'Pengeluaran',
-                'icon' => '<i class="anticon anticon-vertical-right"></i>',
+                'icon' => 'anticon anticon-shopping',
                 'url' => '/pengeluaran',
                 'parent' => NULL
             ],
             [
-                'Nama' => 'Pengeluaran',
-                'icon' => '<i class="anticon anticon-vertical-right"></i>',
-                'url' => '/lap-pengeluaran',
+                'id' => 9,
+                'Nama' => 'Penjualan',
+                'icon' => 'anticon anticon-shop',
+                'url' => '/penjualan',
                 'parent' => NULL
             ],
             [
+                'id' => 10,
                 'Nama' => 'Gabungkan',
-                'icon' => '<i class="anticon anticon-retweet"></i>',
+                'icon' => 'anticon anticon-retweet',
                 'url' => '/gabungkan',
                 'parent' => NULL
             ],
             [
+                'id' => 11,
                 'Nama' => 'Laporan Stok',
-                'icon' => '<i class="anticon anticon-right-square"></i>',
+                'icon' => 'anticon anticon-right-square',
                 'url' => '/stok',
                 'parent' => 2
             ],
             [
+                'id' => 12,
                 'Nama' => 'Laporan Pembelian',
-                'icon' => '<i class="anticon anticon-highlight"></i>',
-                'url' => '/lap-pembelian',
+                'icon' => 'anticon anticon-highlight',
+                'url' => '/laporan-pembelian',
                 'parent' => 2
             ],
             [
+                'id' => 13,
                 'Nama' => 'Laporan Penjualan',
-                'icon' => '<i class="anticon anticon-bar-chart"></i>',
-                'url' => '/lap-penjualan',
+                'icon' => 'anticon anticon-bar-chart',
+                'url' => '/laporan-penjualan',
                 'parent' => 2
             ],
             [
+                'id' => 14,
                 'Nama' => 'Laporan Pendapatan',
-                'icon' => '<i class="anticon anticon-box-plot"></i>',
+                'icon' => 'anticon anticon-box-plot',
                 'url' => '/pendapatan',
                 'parent' => 2
             ],
