@@ -80,11 +80,6 @@
             const merek = merekInput.value;
             const jumlah = jumlahInput.value;
 
-            if (!kodeBarang || !merek || !jumlah) {
-                alert('Mohon lengkapi semua data sebelum menambahkan!');
-                return;
-            }
-
             const newRow = `
             <tr>
                 <td></td>

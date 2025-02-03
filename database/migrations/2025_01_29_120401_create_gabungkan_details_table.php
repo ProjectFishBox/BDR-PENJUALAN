@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('gabungkan_detail', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_gabungkan');
-            $table->string('kode_barang', 15);
-            $table->string('merek', 25);
-            $table->integer('jumlah');
+            $table->string('kode_barang', 15)->nullable();
+            $table->string('merek', 25)->nullable();
+            $table->integer('jumlah')->nullable();
             $table->integer('delete')->default(0);
             $table->integer('create_by');
             $table->integer('last_user');

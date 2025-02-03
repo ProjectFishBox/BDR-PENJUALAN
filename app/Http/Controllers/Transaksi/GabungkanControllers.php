@@ -127,6 +127,10 @@ class GabungkanControllers extends Controller
 
         $gabungkan = Gabungkan::with('lokasi', 'user')->where('id', $id)->first();
 
+        if (is_null($gabungkan)) {
+            $gabungkan = new Gabungkan();
+        }
+
         $detailGabungkan = GabungkanDetail::where('id_gabungkan', $id)->get();
 
         return view('components.modal.modal_detail_data_gabungkan', compact('title', 'gabungkan', 'detailGabungkan'));
@@ -176,8 +180,8 @@ class GabungkanControllers extends Controller
 
             GabungkanDetail::create([
                 'id_gabungkan' => $gabungkan->id,
-                'kode_barang' => $item['kode_barang'],
-                'merek' => $item['merek'],
+                'kode_barang' => !empty($item['kode_barang']) ? $item['kode_barang'] : NULL,
+                'merek' => !empty($item['merek']) ? $item['merek'] : NULL,
                 'jumlah' => $item['jumlah'],
                 'create_by' => auth()->id(),
                 'last_user' => auth()->id()

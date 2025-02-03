@@ -87,11 +87,6 @@
             const merek = merekInput.value;
             const jumlah = jumlahInput.value;
 
-            if (!kodeBarang || !merek || !jumlah) {
-                alert('Mohon lengkapi semua data sebelum menambahkan!');
-                return;
-            }
-
             const itemData = {
                 kode_barang: kodeBarang,
                 merek: merek,
@@ -107,8 +102,8 @@
             const newRow = `
             <tr>
                 <td></td>
-                <td>${itemData.kode_barang}</td>
-                <td>${itemData.merek}</td>
+                <td>${itemData.kode_barang || ''}</td>
+                <td>${itemData.merek || ''}</td>
                 <td>${itemData.jumlah}</td>
                 <td style="text-align: center">
                     <button class="btn btn-icon btn-danger btn-rounded remove-row">

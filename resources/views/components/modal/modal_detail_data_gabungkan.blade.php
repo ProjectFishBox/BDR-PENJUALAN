@@ -33,10 +33,10 @@
                                     <tr>
                                         <td style="text-align: center;">{{ $index + 1 }}</td>
                                         <td style="text-align: center;">
-                                            {{ $d->kode_barang }}
+                                            {{ $d->kode_barang ?? '' }}
                                         </td>
                                         <td style="text-align: center;">
-                                            {{ $d->merek }}
+                                            {{ $d->merek ?? '' }}
                                         </td>
                                         <td style="text-align: center;">
                                             {{ $d->jumlah }}
