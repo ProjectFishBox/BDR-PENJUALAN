@@ -14,6 +14,7 @@ use App\Models\Pembelian;
 use App\Models\Barang;
 use App\Models\Lokasi;
 use App\Models\PembelianDetail;
+use App\Models\SetHarga;
 
 
 class PembelianControllers extends Controller
@@ -63,10 +64,12 @@ class PembelianControllers extends Controller
     {
         $title = 'Tambah Pembelian';
 
-        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-        ->distinct()
-        ->get();
+        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
 
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+            ->whereIn('id', $barangSetHarga)
+            ->distinct()
+            ->get();
 
         return view('pages.transaksi.pembelian.tambah_pembelian', compact('title', 'barang'));
     }
@@ -125,10 +128,13 @@ class PembelianControllers extends Controller
     {
         $title = 'Edit Pembelian';
 
+        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
 
         $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-                ->distinct()
-                ->get();
+            ->whereIn('id', $barangSetHarga)
+            ->distinct()
+            ->get();
+
 
         $pembelian = Pembelian::findOrFail($id);
 

@@ -16,6 +16,8 @@ use App\Models\Penjualan;
 use App\Models\Barang;
 use App\Models\Kota;
 use App\Models\PenjualanDetail;
+use App\Models\SetHarga;
+
 
 class PenjualanControllers extends Controller
 {
@@ -107,10 +109,12 @@ class PenjualanControllers extends Controller
 
         $pelanggan = Pelanggan::all();
 
-        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-        ->distinct()
-        ->get();
+        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
 
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+            ->whereIn('id', $barangSetHarga)
+            ->distinct()
+            ->get();
 
         return view('pages.transaksi.penjualan.tambah_penjualan', compact('title', 'pelanggan', 'barang'));
     }
@@ -197,9 +201,12 @@ class PenjualanControllers extends Controller
 
         $penjualanDetail = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
 
+        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
+
         $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-        ->distinct()
-        ->get();
+            ->whereIn('id', $barangSetHarga)
+            ->distinct()
+            ->get();
 
 
         return view('pages.transaksi.penjualan.edit_penjualan', compact('title', 'barang', 'pelanggan', 'penjualan', 'penjualanDetail'));
