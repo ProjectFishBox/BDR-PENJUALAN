@@ -79,6 +79,7 @@
         var namaBarang = selectedOption.data('nama');
 
         $('#harga').val('');
+        $('#harga').attr('readonly', true);
 
         $('#kode_barang').val(kodeBarang);
         var filteredMerek = @json($barang);
@@ -101,6 +102,7 @@
         var selectedMerek = $(this).find('option:selected');
         var harga = formatNumber(selectedMerek.data('harga'));
         $('#harga').val(harga);
+        $('#harga').attr('readonly', false);
     });
 
     function formatNumber(value) {
