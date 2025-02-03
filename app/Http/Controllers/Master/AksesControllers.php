@@ -86,6 +86,7 @@ class AksesControllers extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'dashboard' => 'nullable',
+            'master_lokasi' => 'nullable',
             'master_akses' => 'nullable',
             'master_pengguna' => 'nullable',
             'master_pelanggan' => 'nullable',

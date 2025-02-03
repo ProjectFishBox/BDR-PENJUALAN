@@ -112,6 +112,13 @@ class MenuSeeder extends Seeder
                 'url' => '/pendapatan',
                 'parent' => 2
             ],
+            [
+                'id' => 15,
+                'Nama' => 'Lokasi',
+                'icon' => 'anticon anticon-environment',
+                'url' => '/lokasi',
+                'parent' => 1
+            ]
         ]);
     }
 }

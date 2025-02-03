@@ -26,6 +26,12 @@
                         <h5 class="mb-3">Master</h5>
                         <div class="form-group">
                             <div class="checkbox">
+                                <input id="lokasi" type="checkbox" name="master_lokasi">
+                                <label for="lokasi">Lokasi</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
                                 <input id="akses" type="checkbox" name="master_akses">
                                 <label for="akses">Akses</label>
                             </div>

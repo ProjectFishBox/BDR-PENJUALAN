@@ -139,6 +139,15 @@ class AksesMenuSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
+            [
+                'id_akses' => 1,
+                'id_menu' => 15,
+                'delete' => 0,
+                'create_by' => 1,
+                'last_user' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]
         ]);
     }
 }
