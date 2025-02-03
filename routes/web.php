@@ -209,6 +209,10 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(LaporanPenjualanControllers::class)->group(function () {
 
         Route::get('/laporan-penjualan', 'index')->name('laporan-penjualan');
+        Route::get('/laporan-penjualan/exportpdf', 'printData')->name('laporan-penjualan.exportpdf');
+        Route::get('/laporan-penjualan-export-excel' , 'exportExcel')->name('laporan-penjualan.exportexcel');
+
+
 
     });
 
