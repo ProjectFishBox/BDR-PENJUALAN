@@ -114,6 +114,15 @@ class SetHargaControllers extends Controller
         $harga_jual = str_replace('.', '', $request->harga_jual);
         $status = $request->status === 'on' ? 'Aktif' : 'Tidak Aktif';
 
+        $existingSetHargas = SetHarga::where('kode_barang', $request->kode_barang)
+            ->where('merek', $request->merek)
+            ->where('delete', 0)
+            ->get();
+
+        foreach ($existingSetHargas as $existingSetHarga) {
+            $existingSetHarga->update(['status' => 'Tidak Aktif']);
+        }
+
 
         SetHarga::create([
             'id_lokasi' => auth()->user()->id_lokasi,

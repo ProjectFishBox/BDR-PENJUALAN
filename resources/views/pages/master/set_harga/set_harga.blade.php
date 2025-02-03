@@ -17,7 +17,7 @@
 
 
                 <form id="filterForm" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari Pelanggan" class="form-control" style="width: 250px; margin-right: 10px;">
+                    <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-right: 10px;">
                     <select name="lokasi" class="form-control" style="width: 200px; margin-right: 10px;">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
