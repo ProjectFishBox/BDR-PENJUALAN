@@ -78,55 +78,6 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    $(document).ready(function() {
-        dataStok();
-        });
-
-    function reloadTable() {
-        $('#data-table').DataTable().clear().destroy();
-        dataStok();
-    }
-</script>
-
-<script>
-    function dataStok() {
-
-        let table = $('.data-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('stok') }}",
-            lengthMenu: [
-                10, 20
-            ],
-            columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            {data: 'kode_barang', name: 'kode_barang'},
-            {data: 'nama_barang', name: 'nama_barang'},
-            {data: 'merek', name: 'merek'},
-            {data: 'total_masuk', name: 'total_masuk'},
-            {data: 'total_terjual', name: 'total_terjual'},
-            {data: 'stok_akhir', name: 'stok_akhir'},
-            ],
-            drawCallback: function(settings) {
-                let response = settings.json;
-                let tfoot = `
-                    <tr style="background-color: #f4f4f4; font-weight: bold;">
-                        <td colspan="4" style="text-align: center;">Total</td>
-                        <td style="text-align: center;">${response.total_masuk}</td>
-                        <td style="text-align: center;">${response.total_keluar}</td>
-                        <td style="text-align: center;">${response.total_stok}</td>
-                    </tr>
-                `;
-
-                $(this).find('tfoot').remove();
-
-                $(this).append('<tfoot>' + tfoot + '</tfoot>');
-            }
-        });
-    }
-
-</script>
 
 <script>
     $('.barang').select2({
@@ -165,24 +116,52 @@
     $(document).ready(function() {
         $('#btn-preview').on('click', function(e) {
             e.preventDefault();
-            let url = "{{ route('stok.filtered') }}?" + $('#filter-form').serialize();
-            $(this).prop('disabled', true)
+
+            var lokasi = $('#lokasi').val();
+            var merek = $('#merek').val();
+            var barang = $('#barang').val();
+
             $.ajax({
-                url,
-                type: "GET",
-                dataType: "HTML",
-                success: function(data) {
-                    $('#previewstok').html(data);
-                    $('#previewstok').modal('show');
-                    $('#btn-preview').prop("disabled", false);
-                    $('#btn-preview').html('<span>Preview</span>');
+                url: '{{ route("stok") }}',
+                method: 'GET',
+                data: {
+                    barang: barang,
+                    lokasi: lokasi,
+                    merek: merek,
                 },
-                error: function(error) {
-                    console.error(error);
-                    $('#btn-preview').prop('disabled', false);
-                    $('#btn-preview').html('</i><span>Preview</span>');
+                success: function(data) {
+                    var tbody = $('#data-table tbody');
+                    tbody.empty();
+                    var totalJumlah = 0;
+                    var totalHarga = 0;
+                    var overallIndex = 1;
+
+                    $.each(data, function(index, item) {
+                        var row = '<tr>' +
+                            '<td>' + overallIndex + '</td>' +
+                            '<td>' + item.kode_barang + '</td>' +
+                            '<td>' + item.nama_barang + '</td>' +
+                            '<td>' + item.merek + '</td>' +
+                            '<td>' + item.total_masuk + '</td>' +
+                            '<td>' + item.total_terjual + '</td>' +
+                            '<td>' + item.stok_akhir + '</td>' +
+                            '</tr>';
+                        tbody.append(row);
+
+                        totalJumlah += parseInt(item.total_masuk);
+                        totalHarga += parseInt(item.total_terjual);
+                        overallIndex++;
+                    });
+
+                    var totalRow = '<tr>' +
+                        '<td colspan="4" style="text-align: right;"><strong>Total:</strong></td>' +
+                        '<td>' + totalJumlah + '</td>' +
+                        '<td>' + totalHarga + '</td>' +
+                        '<td>' + (totalJumlah - totalHarga) +'</td>' +
+                        '</tr>';
+                    tbody.append(totalRow);
                 }
-            })
+            });
         });
 
         $('#btn-export-pdf').on('click', function(e) {

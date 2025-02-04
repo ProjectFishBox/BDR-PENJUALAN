@@ -18,61 +18,6 @@ use App\Models\Penjualan;
 
 class LaporanPenjualanControllers extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $title = 'Laporan Penjualan';
-    //     $barang = Barang::all();
-    //     $lokasi = Lokasi::all();
-
-    //     if ($request->ajax()) {
-
-    //         $cacheKey = 'laporan_penjualan_data';
-    //         $cacheDuration = now()->addMinutes(2);
-
-    //         $data = Cache::remember($cacheKey, $cacheDuration, function () {
-    //             return $this->getLaporanPenjualan();
-    //         });
-
-    //         $flattenedData = collect($data)->flatMap(function ($item) {
-    //             return collect($item['detail'])->map(function ($detail) use ($item) {
-    //                 return [
-    //                     'id' => $item['id'],
-    //                     'tanggal' => $item['tanggal'],
-    //                     'no_nota' => $item['no_nota'],
-    //                     'diskon_barang' => $detail['diskon_barang'],
-    //                     'kode_barang' => $detail['kode_barang'],
-    //                     'nama_barang' => $detail['nama_barang'],
-    //                     'merek' => $detail['merek'],
-    //                     'jumlah' => $detail['jumlah'],
-    //                     'harga' => $detail['harga'],
-    //                     'nama_pelanggan' => $item['nama_pelanggan']
-    //                 ];
-    //             });
-    //         })->values();
-
-    //         $totalPenjualan = array_sum(array_column($data, 'total'));
-    //         $totalDiskon = array_sum(array_column($flattenedData->toArray(), 'diskon_barang'));
-
-    //         return DataTables::of($flattenedData)
-    //             ->addIndexColumn()
-    //             ->editColumn('harga', function($row) {
-    //                 return number_format($row['harga'], 0, ',', '.');
-    //             })
-    //             ->editColumn('jumlah', function($row) {
-    //                 return number_format($row['jumlah'], 0, ',', '.');
-    //             })
-    //             ->editColumn('diskon_barang', function($row) {
-    //                 return number_format($row['diskon_barang'], 0, ',', '.');
-    //             })
-    //             ->with([
-    //                 'total_penjualan' => number_format($totalPenjualan, 0, ',', '.'),
-    //                 'total_diskon' => number_format($totalDiskon, 0, ',', '.')
-    //             ])
-    //             ->make(true);
-    //     }
-
-    //     return view('pages.laporan.laporan_penjualan.laporan_penjualan', compact('title'));
-    // }
 
     public function index(Request $request)
     {
