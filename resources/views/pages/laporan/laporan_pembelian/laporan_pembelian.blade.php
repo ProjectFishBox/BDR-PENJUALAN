@@ -118,102 +118,54 @@
 
 <script>
     $(document).ready(function() {
-        dataLaporanPembelian();
-        });
-
-    function reloadTable() {
-        $('#data-table').DataTable().clear().destroy();
-        dataLaporanPembelian();
-    }
-</script>
-
-<script>
-    function dataLaporanPembelian() {
-        let table = $('.data-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('laporan-pembelian') }}",
-                data: function(d) {
-                    d.daterange = $('#daterange').val();
-                    d.lokasi = $('#lokasi').val();
-                    d.merek = $('#merek').val();
-                }
-            },
-            lengthMenu: [10, 20],
-            columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'no_nota', name: 'no_nota'},
-                {data: 'tanggal', name: 'tanggal'},
-                {data: 'kode_barang', name: 'kode_barang'},
-                {data: 'nama_barang', name: 'nama_barang'},
-                {data: 'merek', name: 'merek'},
-                {
-                    data: 'harga',
-                    name: 'harga',
-                    render: function(data) {
-                        return 'Rp ' + data;
-                    }
-                },
-                {data: 'jumlah', name: 'jumlah'},
-                {
-                    data: 'total',
-                    name: 'total',
-                    render: function(data) {
-                        return 'Rp ' + data;
-                    }
-                }
-            ],
-            drawCallback: function(settings) {
-                let response = settings.json;
-                if (response && response.total_penjualan) {
-                    let tfoot = `
-                        <tr style="background-color: #f4f4f4; font-weight: bold;">
-                            <td colspan="8" style="text-align: right;">Total Penjualan:</td>
-                            <td style="text-align: right;">Rp ${response.total_penjualan}</td>
-                        </tr>
-                    `;
-                    $(this).find('tfoot').remove();
-                    $(this).append('<tfoot>' + tfoot + '</tfoot>');
-                }
-            }
-        });
-    }
-
-</script>
-
-
-<script>
-    $(document).ready(function() {
         $('#btn-preview').on('click', function(e) {
             e.preventDefault();
-            let daterange = $('#daterange').val();
-            let lokasi = $('#lokasi').val();
-            let merek = $('#merek').val();
-
-            let formData = $('#filter-form').serialize();
-
-            if (daterange) {
-                formData += '&daterange=' + encodeURIComponent(daterange);
-            }
-
-            let url = "{{ route('laporan-penjualan.filtered') }}?" + formData;
-            $(this).prop('disabled', true);
+            var daterange = $('#daterange').val();
+            var merek = $('#merek').val();
+            var lokasi = $('#lokasi').val();
 
             $.ajax({
-                url: url,
-                type: "GET",
-                dataType: "HTML",
-                success: function(data) {
-                    $('#previewpembelian').html(data);
-                    $('#previewpembelian').modal('show');
-                    $('#btn-preview').prop("disabled", false);
-                    $('#btn-preview').html('<span>Preview</span>');
+                url: '{{ route("laporan-pembelian") }}',
+                method: 'GET',
+                data: {
+                    daterange: daterange,
+                    lokasi: lokasi,
+                    merek: merek,
                 },
-                error: function(error) {
-                    console.error(error);
-                    $('#btn-preview').prop('disabled', false);
-                    $('#btn-preview').html('<span>Preview</span>');
+                success: function(data) {
+                    var tbody = $('#data-table tbody');
+                    tbody.empty();
+                    var totalJumlah = 0;
+                    var totalHarga = 0;
+                    var overallIndex = 1;
+
+                    $.each(data, function(index, item) {
+                        $.each(item.detail, function(detailIndex, detail) {
+                            var row = '<tr>' +
+                                '<td>' + overallIndex + '</td>' +
+                                '<td>' + item.no_nota + '</td>' +
+                                '<td>' + item.tanggal + '</td>' +
+                                '<td>' + detail.kode_barang + '</td>' +
+                                '<td>' + detail.nama_barang + '</td>' +
+                                '<td>' + detail.merek + '</td>' +
+                                '<td>' + Math.floor(detail.harga).toLocaleString('id-ID') + '</td>' +
+                                '<td>' + detail.jumlah + '</td>' +
+                                '<td>' + (detail.harga * detail.jumlah).toLocaleString('id-ID') + '</td>' +
+                                '</tr>';
+                            tbody.append(row);
+
+                            totalJumlah += parseInt(detail.jumlah);
+                            totalHarga += detail.harga * detail.jumlah;
+                            overallIndex++;
+                        });
+                    });
+
+                    var totalRow = '<tr>' +
+                        '<td colspan="7" style="text-align: right;"><strong>Total:</strong></td>' +
+                        '<td>' + totalJumlah + '</td>' +
+                        '<td>' + totalHarga.toLocaleString('id-ID') + '</td>' +
+                        '</tr>';
+                    tbody.append(totalRow);
                 }
             });
         });
@@ -228,7 +180,7 @@
                 formData += '&daterange=' + encodeURIComponent(daterange);
             }
 
-            let url = "{{ route('laporan-penjualan.exportpdf') }}?" + formData;
+            let url = "{{ route('laporan-pembelian.exportpdf') }}?" + formData;
 
             Swal.fire({
                 title: 'Apakah kamu ingin mencetak data ini?',
@@ -260,7 +212,7 @@
                 formData += '&daterange=' + encodeURIComponent(daterange);
             }
 
-            let url = "{{ route('laporan-penjualan.exportexcel') }}?" + formData;
+            let url = "{{ route('laporan-pembelian.exportexcel') }}?" + formData;
 
             Swal.fire({
                 title: 'Apakah kamu ingin mengexport data ini?',
@@ -281,6 +233,8 @@
                 }
             })
         });
+
+
 
     });
 </script>
