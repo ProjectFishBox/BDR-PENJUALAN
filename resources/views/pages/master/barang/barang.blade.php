@@ -46,7 +46,13 @@
 @component('components.aset_datatable.aset_datatable')@endcomponent
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script>
+    function updateFileName() {
+        var input = document.getElementById('customFile');
+        var label = document.querySelector('.custom-file-label');
+        label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
+    }
+</script>
 <script>
     $(document).ready(function() {
         dataBarang();

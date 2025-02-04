@@ -186,6 +186,13 @@
 @endpush
 
 @push('js')
+<script>
+    function updateFileName() {
+        var input = document.getElementById('customFile');
+        var label = document.querySelector('.custom-file-label');
+        label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
+    }
+</script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 

@@ -9,7 +9,7 @@
                 <div class="form-row align-items-center">
                     <div class="form-group col-md-2 ">
                         <label for="kode_barang">Kode Barang</label>
-                        <input type="text" id="kode_barang" class="form-control"  placeholder="Kode Barang">
+                        <input type="text" id="kode_barang" class="form-control"  placeholder="Kode Barang" autofocus>
                     </div>
                     <div class="form-group col-md-2 ml-3 ">
                         <label for="merek">Merek</label>
@@ -96,6 +96,7 @@
             addRowToTable(itemData);
             resetForm();
             updateTotal();
+            kodeBarangInput.focus();
         });
 
         function addRowToTable(itemData) {

@@ -1,4 +1,3 @@
-
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
@@ -10,7 +9,7 @@
                 <div class="form-group">
                     <label for="formGroupExampleInput2">Import Data with file</label>
                     <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="customFile" name="customFile">
+                        <input type="file" class="custom-file-input" id="customFile" name="customFile" onchange="updateFileName()">
                         <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                     @switch($type)
