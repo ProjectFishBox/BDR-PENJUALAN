@@ -27,4 +27,9 @@ class Pembelian extends Model
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi');
     }
+
+    public function detail()
+    {
+        return $this->hasMany(PembelianDetail::class, 'id_pembelian');
+    }
 }
