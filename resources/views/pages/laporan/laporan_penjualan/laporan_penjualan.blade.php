@@ -92,6 +92,11 @@
                                 <th scope="col" style="text-align: center;">Harga</th>
                                 <th scope="col" style="text-align: center;">Diskon Produk</th>
                                 <th scope="col" style="text-align: center;">Qty</th>
+                                <th scope="col" style="text-align: center;">Jumlah</th>
+                                <th scope="col" style="text-align: center;">Total</th>
+                                <th scope="col" style="text-align: center;">Diskon Nota</th>
+                                <th scope="col" style="text-align: center;">Bayar</th>
+                                <th scope="col" style="text-align: center;">Sisa</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -205,6 +210,11 @@
                     tbody.empty();
                     var totalDiskon = 0;
                     var totalJumlah = 0;
+                    var totalHitung = 0;
+                    var total = 0;
+                    var totalDiskonNota = 0;
+                    var totalBayar = 0;
+                    var totalSisa = 0;
                     var overallIndex = 1;
 
                     $.each(data, function(index, item) {
@@ -220,11 +230,21 @@
                                 '<td>' + Math.floor(detail.harga).toLocaleString('id-ID') + '</td>' +
                                 '<td>' + Math.floor(detail.diskon_barang).toLocaleString('id-ID') + '</td>' +
                                 '<td>' + detail.jumlah + '</td>' +
+                                '<td>' + (detail.harga * detail.jumlah).toLocaleString('id-ID') + '</td>' +
+                                '<td>' + ((detail.harga * detail.jumlah) - detail.diskon_barang).toLocaleString('id-ID') + '</td>' + // Total setelah diskon
+                                '<td>' + item.diskon_nota + '</td>' +
+                                '<td>' + item.bayar + '</td>' +
+                                '<td>' + ( ((detail.harga * detail.jumlah) - detail.diskon_barang) - item.diskon_nota - item.bayar ).toLocaleString('id-ID') + '</td>' + // Menghitung sisa
                                 '</tr>';
                             tbody.append(row);
 
                             totalDiskon += parseFloat(detail.diskon_barang);
                             totalJumlah += parseInt(detail.jumlah);
+                            totalHitung +=parseFloat((detail.harga * detail.jumlah));
+                            total += parseFloat(((detail.harga * detail.jumlah) - detail.diskon_barang));
+                            totalDiskonNota += parseFloat(item.diskon_nota);
+                            totalBayar += parseFloat(item.bayar);
+                            totalSisa += parseFloat(((detail.harga * detail.jumlah) - detail.diskon_barang) - item.diskon_nota - item.bayar)
                             overallIndex++;
                         });
                     });
@@ -232,7 +252,12 @@
                     var totalRow = '<tr>' +
                         '<td colspan="8" style="text-align: right;"><strong>Total:</strong></td>' +
                         '<td>' + Math.floor(totalDiskon).toLocaleString('id-ID') + '</td>' +
-                        '<td>' + totalJumlah + '</td>' +
+                        '<td>' + Math.floor(totalJumlah).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.floor(totalHitung).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.floor(total).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.floor(totalDiskonNota).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.floor(totalBayar).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.floor(totalSisa).toLocaleString('id-ID') + '</td>' +
                         '</tr>';
                     tbody.append(totalRow);
                 }

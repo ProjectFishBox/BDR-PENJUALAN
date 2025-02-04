@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
+
 
 use App\Models\Barang;
 use App\Models\Lokasi;
@@ -51,11 +53,16 @@ class LaporanPenjualanControllers extends Controller
                 });
 
             $data = $query->get()->map(function ($item) {
+
+                // dd($item);
+
                 return [
                     'id' => $item->id,
                     'tanggal' => $item->tanggal,
                     'no_nota' => $item->no_nota,
                     'nama_pelanggan' => $item->pelanggan->nama,
+                    'diskon_nota' => $item->diskon_nota,
+                    'bayar' => $item->bayar,
                     'detail' => $item->detail->map(function ($detail) {
                         return [
                             'id_barang' => $detail->id_barang,
@@ -156,71 +163,25 @@ class LaporanPenjualanControllers extends Controller
 
     public function exportExcel(Request $request)
     {
+        Excel::store(new LaporanPenjualanExport($request), 'temp.xlsx');
+
         try {
-            $fileName = 'Laporan_Pembelian';
 
-            if ($request->filled('lokasi')) {
-                $namaLokasi = Lokasi::find($request->lokasi)->nama;
-                $fileName .= '_' . str_replace(' ', '_', $namaLokasi);
+            $filePath = session('export_file');
+
+            if (!$filePath || !Storage::exists($filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat mengexport data. File tidak ditemukan.'
+                ]);
             }
 
-            if ($request->filled('barang')) {
-                $namaBarang = Barang::find($request->barang)->nama;
-                $fileName .= '_' . str_replace(' ', '_', $namaBarang);
-            }
-
-            if ($request->filled('merek')) {
-                $fileName .= '_' . str_replace(' ', '_', $request->merek);
-            }
+            $fileName = 'Laporan_Penjualan';
 
             $fileName .= '_' . date('d-m-Y') . '.xlsx';
 
-            $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
-                ->when($request->filled('daterange'), function ($query) use ($request) {
-                    $dates = explode(' - ', $request->daterange);
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
-                })
-                ->when($request->filled('pelanggan'), function ($query) use ($request) {
-                    return $query->where('id_pelanggan', $request->pelanggan);
-                })
-                ->when($request->filled('lokasi'), function ($query) use ($request) {
-                    return $query->where('id_lokasi', $request->lokasi);
-                })
-                ->when($request->filled('barang'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('id_barang', $request->barang);
-                    });
-                })
-                ->when($request->filled('no_nota'), function ($query) use ($request) {
-                    return $query->where('no_nota', $request->no_nota);
-                });
+            return Storage::download($filePath, $fileName);
 
-            $data = $query->get()->map(function ($item) {
-                return [
-                    'tanggal' => $item->tanggal,
-                    'no_nota' => $item->no_nota,
-                    'nama_pelanggan' => $item->pelanggan->nama,
-                    'diskon_nota' => $item->diskon_nota,
-                    'bayar' => $item->bayar,
-                    'nama_lokasi' => $item->lokasi->nama,
-                    'detail' => $item->detail->map(function ($detail) {
-                        return [
-                            'kode_barang' => $detail->barang->kode_barang,
-                            'nama_barang' => $detail->nama_barang,
-                            'merek' => $detail->merek,
-                            'harga' => $detail->harga,
-                            'diskon_barang' => $detail->diskon_barang,
-                            'jumlah' => $detail->jumlah,
-                        ];
-                    }),
-                ];
-            });
-
-            return Excel::download(
-                new LaporanPenjualanExport($data),
-                $fileName,
-                \Maatwebsite\Excel\Excel::XLSX
-            );
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
