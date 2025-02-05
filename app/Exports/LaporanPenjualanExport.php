@@ -58,14 +58,22 @@ class LaporanPenjualanExport implements WithEvents
                 $currentRow = $startRow;
                 $totalAmount = 0;
                 $totalQty = 0;
+                $totalAll = 0;
+                $totalDiskon = 0;
+                $totalBayar = 0;
+                $totalSisa = 0;
 
                 foreach ($data as $item) {
+
+                    // dd($item);
+
                     foreach ($item->detail as $detail) {
                         $pelangganNama = optional($item->pelanggan)->nama ?? 'N/A';
                         $barangKode = optional($detail->barang)->kode_barang ?? 'N/A';
 
                         $sisa = ($detail->harga - $detail->diskon_barang) * $detail->jumlah - $item->bayar;
-                        $total = ($detail->harga * $detail->jumlah);
+                        $jumlah = ($detail->harga * $detail->jumlah);
+                        $total = ($detail->harga * $detail->jumlah) - $detail->diskon_barang;
 
                         $sheet->setCellValue("A$currentRow", $item->tanggal);
                         $sheet->setCellValue("B$currentRow", $pelangganNama);
@@ -74,15 +82,18 @@ class LaporanPenjualanExport implements WithEvents
                         $sheet->setCellValue("E$currentRow", $detail->harga);
                         $sheet->setCellValue("F$currentRow", $detail->diskon_barang);
                         $sheet->setCellValue("G$currentRow", $detail->jumlah);
-                        $sheet->setCellValue("H$currentRow", $detail->jumlah);
+                        $sheet->setCellValue("H$currentRow", $jumlah);
                         $sheet->setCellValue("I$currentRow", $total);
                         $sheet->setCellValue("J$currentRow", $item->diskon_nota);
                         $sheet->setCellValue("K$currentRow", $item->bayar);
                         $sheet->setCellValue("L$currentRow", $sisa);
 
-
-                        $totalAmount += $sisa;
                         $totalQty += $detail->jumlah;
+                        $totalAmount += $jumlah;
+                        $totalAll +=$total;
+                        $totalDiskon +=$item->diskon_nota;
+                        $totalBayar += $item->bayar;
+                        $totalSisa += $sisa;
 
                         $currentRow++;
                     }
@@ -94,8 +105,17 @@ class LaporanPenjualanExport implements WithEvents
                 $sheet->getStyle("G$currentRow")->getFont()->setBold(true);
                 $sheet->setCellValue("H$currentRow", $totalAmount);
                 $sheet->getStyle("H$currentRow")->getFont()->setBold(true);
+                $sheet->setCellValue("I$currentRow", $totalAll);
+                $sheet->getStyle("I$currentRow")->getFont()->setBold(true);
+                $sheet->setCellValue("J$currentRow", $totalDiskon);
+                $sheet->getStyle("J$currentRow")->getFont()->setBold(true);
+                $sheet->setCellValue("K$currentRow", $totalBayar);
+                $sheet->getStyle("K$currentRow")->getFont()->setBold(true);
+                $sheet->setCellValue("L$currentRow", $sisa);
+                $sheet->getStyle("L$currentRow")->getFont()->setBold(true);
 
-                $cellRange = "A$startRow:K$currentRow";
+
+                $cellRange = "A$startRow:L$currentRow";
                 $borderStyle = [
                     'borders' => [
                         'allBorders' => [
