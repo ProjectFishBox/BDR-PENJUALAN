@@ -35,18 +35,6 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="id_lokasi">Lokasi</label>
-                            <select id="id_lokasi" name="id_lokasi" class="lokasi form-control">
-                                @foreach ($lokasi as $l)
-                                    <option value="{{ $l->id }}" {{ $l->id == $pelanggan->id_lokasi ? 'selected' : '' }}>
-                                        {{ $l->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
                             <label for="kode_pos">Kode Pos</label>
                             <input type="text" class="form-control" name="kode_pos" id="kode_pos" placeholder="Kode Pos" value="{{ $pelanggan->kode_pos }}">
                         </div>

@@ -91,11 +91,10 @@ class PelangganControllers extends Controller
             'alamat' => 'required|string',
             'telepon' => 'required',
             'id_kota' => 'required|integer',
-            'id_lokasi' => 'required|integer',
             'fax' => 'string|max:255',
             'kode_pos' => 'string|max:255'
         ]);
-
+        $validateData['id_lokasi'] = auth()->user()->id_lokasi;
         $validateData['create_by'] = auth()->id();
         $validateData['last_user'] = auth()->id();
 
@@ -138,9 +137,9 @@ class PelangganControllers extends Controller
             'alamat' => 'required|string',
             'telepon' => 'required',
             'id_kota' => 'required|integer',
-            'id_lokasi' => 'required|integer',
         ]);
 
+        $validateData['id_lokasi'] = auth()->user()->id;
         $validateData['last_user'] = auth()->id();
 
         $pelanggan = Pelanggan::findOrFail($id);
@@ -152,7 +151,7 @@ class PelangganControllers extends Controller
             'telepon' => $request->telepon,
             'fax' => $request->fax,
             'id_kota' => $request->id_kota,
-            'id_lokasi' => $request->id_lokasi,
+            'id_lokasi' => auth()->user()->id_lokasi,
             'last_user' => auth()->id(),
         ]);
 
