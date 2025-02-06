@@ -70,7 +70,10 @@
                     data: 'akses_menu',
                     name: 'akses_menu',
                     orderable: false,
-                    searchable: false
+                    searchable: false,
+                    render: function(data) {
+                        return '<ul style="list-style-type: disc; padding-left: 20px; text-align: center;">' + data + '</ul>';
+                    }
                 },
                 {
                     data: 'action',
