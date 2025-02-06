@@ -23,21 +23,25 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="password">Password <span style="color: red">*</span></label>
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <input type="text" class="form-control" name="password" id="password" placeholder="Password" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_akses">Akses <span style="color: red">*</span></label>
-                        <select id="id_akses" name="id_akses" class="form-control" required>
-                            <option value="1">Admin</option>
+                        <select id="id_akses" name="id_akses" class="select2 form-control" required>
+                            <option value="">Pilih Akses</option>
+                            @foreach ($akses as $a)
+                                <option value="{{ $a->id}}">{{ $a->nama}}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_lokasi">Lokasi <span style="color: red">*</span></label>
-                        <select id="id_lokasi" name="id_lokasi" class="form-control" required>
+                        <select id="id_lokasi" name="id_lokasi" class="lokasi form-control" required>
+                            <option value="">Pilih Lokasi</option>
                             @foreach ($lokasi as $l)
                                 <option value="{{ $l->id}}">{{ $l->nama}}</option>
                             @endforeach
@@ -54,3 +58,22 @@
         </div>
     </div>
 @endsection
+
+@component('components.aset_datatable.aset_select2')@endcomponent
+
+@push('js')
+
+<script>
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Pilih Akses',
+    });
+
+    $('.lokasi').select2({
+        width: '100%',
+        placeholder: 'Pilih Lokasi',
+    });
+
+</script>
+
+@endpush

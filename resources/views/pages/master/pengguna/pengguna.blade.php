@@ -73,8 +73,8 @@
                     name: 'jabatan'
                 },
                 {
-                    data: 'id_akses',
-                    name: 'id_akses'
+                    data: 'akses.nama',
+                    name: 'akses.nama'
                 },
                 {
                     data: 'lokasi.nama',

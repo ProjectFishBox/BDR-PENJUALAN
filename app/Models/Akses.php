@@ -29,4 +29,9 @@ class Akses extends Model
         return $this->belongsToMany(Menu::class, 'access_menu', 'id_akses', 'id_menu');
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class, 'id_akses');
+    }
+
 }

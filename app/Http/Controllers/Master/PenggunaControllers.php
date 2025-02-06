@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
 use App\Models\Lokasi;
+use App\Models\Akses;
 
 
 class PenggunaControllers extends Controller
@@ -28,7 +29,7 @@ class PenggunaControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return User::with('lokasi')->where('delete', 0)->get();
+                return User::with('lokasi', 'akses')->where('delete', 0)->get();
             });
 
             return DataTables::of($data)
@@ -62,8 +63,9 @@ class PenggunaControllers extends Controller
         $title = 'Tambah Pengguna';
 
         $lokasi = Lokasi::all();
+        $akses = Akses::all();
 
-        return view('pages.master.pengguna.tambah_pengguna', compact('title', 'lokasi'));
+        return view('pages.master.pengguna.tambah_pengguna', compact('title', 'lokasi', 'akses'));
     }
 
     /**
@@ -86,6 +88,7 @@ class PenggunaControllers extends Controller
         $validatedData['last_user'] = auth()->id();
 
         User::create($validatedData);
+
         Cache::forget('pengguna_data');
 
         Alert::success('Berhasil Menambahkan data Pengguna.');
@@ -125,7 +128,8 @@ class PenggunaControllers extends Controller
             'username' => 'required|max:25',
             'id_lokasi' => 'required|integer',
             'id_akses' => 'required|integer',
-            'password' => 'nullable|min:3'
+            'password' => 'nullable|min:3',
+            'jabatan' => 'nullable'
         ]);
 
         $validatedData['last_user'] = auth()->id();
