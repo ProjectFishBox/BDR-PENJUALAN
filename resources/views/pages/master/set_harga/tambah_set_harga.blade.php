@@ -110,7 +110,6 @@
     }
 </script>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const untungInput = document.getElementById('untung');
@@ -121,28 +120,35 @@
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
-        function removeThousandSeparator(value) {
-            return value.replace(/\./g, '');
+        function removeNonNumeric(value) {
+            return value.replace(/[^0-9]/g, '');
+        }
+
+        function preventNonNumericInput(event) {
+            if (!/[0-9]/.test(event.key) && event.key !== 'Backspace' && event.key !== 'Delete' && event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+                event.preventDefault();
+            }
         }
 
         [hargaInput, untungInput, hargaJualInput].forEach(input => {
+            input.addEventListener('keypress', preventNonNumericInput);
             input.addEventListener('input', function () {
-                const rawValue = removeThousandSeparator(input.value);
-                const formattedValue = formatNumber(rawValue);
+                const rawValue = removeNonNumeric(input.value);
+                const formattedValue = formatNumber(parseInt(rawValue || 0));
                 input.value = formattedValue;
             });
         });
 
         function hitungHargaJual() {
-            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
-            const untung = parseFloat(removeThousandSeparator(untungInput.value)) || 0;
+            const harga = parseInt(removeNonNumeric(hargaInput.value)) || 0;
+            const untung = parseInt(removeNonNumeric(untungInput.value)) || 0;
             const hargaJual = harga + untung;
             hargaJualInput.value = formatNumber(hargaJual);
         }
 
         function hitungUntung() {
-            const hargaJual = parseFloat(removeThousandSeparator(hargaJualInput.value)) || 0;
-            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
+            const hargaJual = parseInt(removeNonNumeric(hargaJualInput.value)) || 0;
+            const harga = parseInt(removeNonNumeric(hargaInput.value)) || 0;
             let untung = hargaJual - harga;
 
             if (untung < 0) {
@@ -157,7 +163,5 @@
         hargaJualInput.addEventListener('input', hitungUntung);
     });
 </script>
-
-
 
 @endpush

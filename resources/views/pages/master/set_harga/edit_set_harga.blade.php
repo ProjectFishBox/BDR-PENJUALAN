@@ -124,27 +124,29 @@
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
-        function removeThousandSeparator(value) {
-            return value.replace(/\./g, '');
+        function removeNonNumeric(value) {
+            return value.replace(/[^0-9]/g, '');
+        }
+
+        function preventNonNumericInput(event) {
+            if (!/[0-9]/.test(event.key) && event.key !== 'Backspace' && event.key !== 'Delete' && event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+                event.preventDefault();
+            }
         }
 
         function hitungHargaJual() {
-            const harga = parseFloat(removeThousandSeparator(hargaInput.value)) || 0;
-            const untung = parseFloat(removeThousandSeparator(untungInput.value)) || 0;
+            const harga = parseInt(removeNonNumeric(hargaInput.value)) || 0;
+            const untung = parseInt(removeNonNumeric(untungInput.value)) || 0;
             const hargaJual = harga + untung;
             hargaJualInput.value = formatNumber(hargaJual);
         }
 
         function formatInputsOnLoad() {
-            if (hargaInput.value) {
-                hargaInput.value = formatNumber(removeThousandSeparator(hargaInput.value));
-            }
-            if (untungInput.value) {
-                untungInput.value = formatNumber(removeThousandSeparator(untungInput.value));
-            }
-            if (hargaJualInput.value) {
-                hargaJualInput.value = formatNumber(removeThousandSeparator(hargaJualInput.value));
-            }
+            [hargaInput, untungInput, hargaJualInput].forEach(input => {
+                if (input.value) {
+                    input.value = formatNumber(removeNonNumeric(input.value));
+                }
+            });
         }
 
         function isiMerek(kodeBarang, merekTerpilih = null) {
@@ -180,10 +182,11 @@
             isiMerek(kodeBarang);
         });
 
-        [hargaInput, untungInput].forEach(input => {
+        [hargaInput, untungInput, hargaJualInput].forEach(input => {
+            input.addEventListener('keypress', preventNonNumericInput);
             input.addEventListener('input', function () {
-                const rawValue = removeThousandSeparator(input.value);
-                const formattedValue = formatNumber(rawValue);
+                const rawValue = removeNonNumeric(input.value);
+                const formattedValue = formatNumber(parseInt(rawValue || 0));
                 input.value = formattedValue;
                 hitungHargaJual();
             });
@@ -197,7 +200,6 @@
         }
     });
 </script>
-
 
 
 @endpush

@@ -34,6 +34,7 @@
 @endsection
 
 @push('js')
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const hargaInput = document.getElementById('harga');
@@ -42,15 +43,20 @@
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
-        function removeThousandSeparator(value) {
-            return value.replace(/\./g, '');
+        function removeNonNumeric(value) {
+            return value.replace(/[^0-9]/g, '');
         }
-        [hargaInput].forEach(input => {
-            input.addEventListener('input', function () {
-                const rawValue = removeThousandSeparator(input.value);
-                const formattedValue = formatNumber(rawValue);
-                input.value = formattedValue;
-            });
+
+        hargaInput.addEventListener('keypress', function (e) {
+            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                e.preventDefault();
+            }
+        });
+
+        hargaInput.addEventListener('input', function () {
+            const rawValue = removeNonNumeric(hargaInput.value);
+            const formattedValue = formatNumber(parseInt(rawValue || 0));
+            hargaInput.value = formattedValue;
         });
     });
 </script>
