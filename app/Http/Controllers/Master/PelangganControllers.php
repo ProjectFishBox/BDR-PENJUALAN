@@ -31,25 +31,21 @@ class PelangganControllers extends Controller
 
         if ($request->ajax()) {
 
-            $search = $request->get('search')['value'];
             $lokasiId = $request->get('lokasi');
 
-            if (!$search && !$lokasiId) {
+            if (!$lokasiId) {
                 $data = Cache::remember($cacheKey, $cacheDuration, function () {
                     return Pelanggan::with('lokasi')
                         ->where('delete', 0)
                         ->get();
                 });
             } else {
-                $data = Pelanggan::when($search, function ($query, $search) {
-                        return $query->where('nama', 'like', "%$search%");
-                    })
-                    ->when($lokasiId, function ($query, $lokasiId) {
-                        return $query->where('id_lokasi', $lokasiId);
-                    })
-                    ->with('lokasi')
-                    ->where('delete', 0)
-                    ->get();
+                $data = Pelanggan::when($lokasiId, function ($query, $lokasiId) {
+                    return $query->where('id_lokasi', $lokasiId);
+                })
+                ->with('lokasi')
+                ->where('delete', 0)
+                ->get();
             }
 
             return DataTables::of($data)

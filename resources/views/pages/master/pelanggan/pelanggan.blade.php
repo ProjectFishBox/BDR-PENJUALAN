@@ -5,20 +5,18 @@
         <div class="card-body">
             <h4>{{ $title }}</h4>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <!-- Tombol Tambah -->
                 <a href="/tambah-pelanggan">
                     <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                 </a>
 
                 <form id="filterForm" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari Pelanggan" class="form-control" style="width: 250px; margin-right: 10px;">
-                    <select name="lokasi" class="form-control" style="width: 200px; margin-right: 10px;">
+                    <select name="lokasi" class="lokasi form-control" style="width: 200px; margin-right: 10px;">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
                             <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
                         @endforeach
                     </select>
-                    <button type="button" class="btn btn-secondary" onclick="$('.data-table').DataTable().ajax.reload();">Filter</button>
+                    <button type="button" style="margin-left: 15px" class="btn btn-secondary" onclick="$('.data-table').DataTable().ajax.reload();">Filter</button>
                 </form>
 
             </div>
@@ -49,9 +47,15 @@
 
 @component('components.aset_datatable.aset_datatable')@endcomponent
 
-
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $('.lokasi').select2({
+        width: '100%',
+        placeholder: 'Pilih Lokasi',
+    });
+
+</script>
 
 <script>
     $(document).ready(function() {
@@ -73,12 +77,10 @@
         let table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            searching: false,
             ajax: {
                 url: "{{ route('pelanggan') }}",
                 data: function (d) {
                     d.lokasi = $('select[name="lokasi"]').val();
-                    d.search.value = $('input[name="search"]').val();
                 }
             },
             lengthMenu: [10, 20],
@@ -95,13 +97,11 @@
             ]
         });
 
-        // Event untuk filter
         $('select[name="lokasi"], input[name="search"]').on('change keyup', function () {
-            table.ajax.reload(); // Reload data saat filter berubah
+            table.ajax.reload();
         });
     }
 
-    // Inisialisasi DataTable
     dataPelanggan();
 </script>
 
