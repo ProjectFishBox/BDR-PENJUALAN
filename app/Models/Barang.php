@@ -21,4 +21,9 @@ class Barang extends Model
         'delete'
     ];
 
+    public function setharga()
+    {
+        return $this->hasMany(SetHarga::class, 'id_barang');
+    }
+
 }

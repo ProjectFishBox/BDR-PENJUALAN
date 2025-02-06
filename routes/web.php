@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthControllers;
 use App\Http\Controllers\DashboardControllers;
 use App\Http\Controllers\Laporan\LaporanPembelianController;
+use App\Http\Controllers\Laporan\LaporanPendapatanControllers;
 use App\Http\Controllers\Laporan\LaporanPenjualanControllers;
 use App\Http\Controllers\Laporan\StokControllers;
 use App\Http\Controllers\Transaksi\GabungkanControllers;
@@ -122,7 +123,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/modal-import-setharga' , 'modalImport')->name('setharga.import');
         Route::get('/download-tamplate-setharga', 'downloadTamplate')->name('download-tamplate-setharga');
         Route::post('/import-setharga', 'importSetHarga')->name('import-setharga');
-
+        Route::post('/update-status/{id}', 'updateStatus')->name('update-status');
     });
 
     Route::controller(PembelianControllers::class)->group(function () {
@@ -212,6 +213,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/laporan-penjualan/exportpdf', 'printData')->name('laporan-penjualan.exportpdf');
         Route::get('/laporan-penjualan-export-excel' , 'exportExcel')->name('laporan-penjualan.exportexcel');
 
+    });
+
+    Route::controller(LaporanPendapatanControllers::class)->group(function () {
+
+        Route::get('/pendapatan', 'index')->name('pendapatan');
+        Route::get('/laporan-pendapatan/exportpdf', 'printData')->name('laporan-pendapatan.exportpdf');
 
 
     });
