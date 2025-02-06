@@ -47,7 +47,7 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label for="harga">Harga</label>
-                            <input type="text" class="form-control" id="harga" readonly placeholder="Harga">
+                            <input type="text" class="form-control" id="harga" placeholder="Harga">
                         </div>
                         <div class="form-group col-md-1">
                             <label for="jumlah">Jumlah</label>
@@ -186,7 +186,11 @@
     $('#merek').on('change', function() {
         var selectedMerek = $(this).find('option:selected');
         var harga = formatNumber(selectedMerek.data('harga'));
-        $('#harga').val(harga);
+    });
+
+    $('#harga').on('input', function() {
+        var value = $(this).val().replace(/[^\d]/g, '');
+        $(this).val(formatNumber(value));
     });
 
     function formatNumber(value) {
@@ -269,6 +273,7 @@
                 const parsedData = parseCSV(data);
 
                 searchInDatabase(parsedData, function(response) {
+                    $('.modal').modal('hide');
                     importToTable(response);
                 });
 
@@ -372,6 +377,7 @@
                 kode_barang: columns[0],
                 merek: columns[1],
                 jumlah: columns[2],
+                harga: columns[3],
             });
         }
         return result;

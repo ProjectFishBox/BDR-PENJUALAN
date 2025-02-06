@@ -159,7 +159,7 @@
         });
 
         $('select[name="lokasi"], input[name="search"]').on('change keyup', function () {
-            table.ajax.reload(); // Reload data saat filter berubah
+            table.ajax.reload();
         });
     }
 

@@ -5,12 +5,13 @@
         <div class="card-body">
             <h4 class="mb-4">{{ $title }}</h4>
 
-            <div class="form-group col-6">
-                <label for="merek">Periode</label>
-                <input type="text" class="form-control" id="daterange" name="daterange" placeholder="Pilih Tanggal" value="{{ request()->get('daterange') }}" />
-            </div>
 
             <form id="filter-form">
+                <div class="form-group col-6">
+                    <label for="merek">Periode</label>
+                    <input type="text" class="form-control" id="daterange" name="daterange" placeholder="Pilih Tanggal" value="{{ request()->get('daterange') }}" />
+                </div>
+
                 <div class="form-group col-6">
                     <label for="lokasi">Lokasi</label>
                     <select id="lokasi" class="lokasi" name="lokasi">

@@ -35,6 +35,11 @@ class PembelianControllers extends Controller
                 return Pembelian::with('lokasi')->where('delete', 0)->get();
             });
 
+            $data->transform(function ($item) {
+                $item->total = PembelianDetail::where('id_pembelian', $item->id)->sum('subtotal');
+                return $item;
+            });
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -304,7 +309,7 @@ class PembelianControllers extends Controller
                     'kode_barang' => $barang->kode_barang,
                     'nama_barang' => $barang->nama,
                     'merek' => $barang->merek,
-                    'harga' => $barang->harga,
+                    'harga' => $item['harga'],
                     'jumlah' => $item['jumlah'],
                     'subtotal' => $barang->harga * $item['jumlah'],
                 ];

@@ -50,7 +50,7 @@
                     </div>
                     <div class="form-group col-md-2">
                         <label for="harga">Harga</label>
-                        <input type="text" class="form-control" id="harga" readonly placeholder="Harga">
+                        <input type="text" class="form-control" id="harga" placeholder="Harga">
                     </div>
                     <div class="form-group col-md-1">
                         <label for="jumlah">Jumlah</label>
@@ -186,7 +186,11 @@
         $('#merek').on('change', function() {
             var selectedMerek = $(this).find('option:selected');
             var harga = formatNumber(selectedMerek.data('harga'));
-            $('#harga').val(harga);
+        });
+
+        $('#harga').on('input', function() {
+            var value = $(this).val().replace(/[^\d]/g, '');
+            $(this).val(formatNumber(value));
         });
 
         function formatNumber(value) {
@@ -357,7 +361,6 @@
                 const merek = merekInput.value;
                 const harga = hargaInput.value;
 
-                console.log('harga', harga)
                 const cleanHarga = parseFloat(harga.replace(/[^\d]/g, '')) || 0;
                 const jumlah = jumlahInput.value;
                 const subTotal = parseFloat(bayarInput.value.replace(/[^\d]/g, ''));
@@ -507,6 +510,7 @@
                     const parsedData = parseCSV(data);
 
                     searchInDatabase(parsedData, function(response) {
+                        $('.modal').modal('hide');
                         importToTable(response);
                     });
 
@@ -526,30 +530,28 @@
                 button.addEventListener('click', function() {
                     const row = button.closest('tr');
                     row.remove();
-                    updateRowNumbers(); // Panggil di sini
-                    updateTotalPembelian(); // Update total pembelian
+                    updateRowNumbers();
+                    updateTotalPembelian();
                 });
             });
         }
 
         function searchInDatabase(data, callback) {
             $.ajax({
-                url: '/validasi-detail-pembelian', // URL controller Anda
+                url: '/validasi-detail-pembelian',
                 type: 'POST',
                 data: {
                     items: data
                 },
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    // Jika respons berhasil, panggil callback
                     if (response.status === 'success') {
                         callback(response.data);
                     }
                 },
                 error: function(xhr) {
-                    // Jika ada error, tampilkan alert dengan pesan dari server
                     if (xhr.status === 404) {
                         const errorMessage = xhr.responseJSON.message;
                         alert(errorMessage);
@@ -571,7 +573,6 @@
                 const formattedHarga = item.harga.toString();
                 const hargaFormatThousand = formatRibuan(formattedHarga)
                 const formattedSubtotal = item.subtotal.toString();
-                // const SubtotalFormatThousand = formatRibuan(formattedSubtotal)
                 const subTotalCurrency = 'Rp ' + formattedSubtotal.replace(/\d(?=(\d{3})+(?!\d))/g, '$&.') ;
 
 
@@ -609,6 +610,7 @@
             updateRowNumbers();
             setRemoveRowEvent();
             updateTotalPembelian();
+
         }
 
 
@@ -621,6 +623,7 @@
                     kode_barang: columns[0],
                     merek: columns[1],
                     jumlah: parseInt(columns[2], 10) || 0,
+                    harga: parseInt(columns[3], 10) || 0
                 });
             }
             return result;

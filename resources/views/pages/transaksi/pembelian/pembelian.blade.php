@@ -85,8 +85,8 @@
                     name: 'kontainer'
                 },
                 {
-                    data: 'bayar',
-                    name: 'bayar',
+                    data: 'total',
+                    name: 'total',
                     render: function (data, type, row) {
                         return numberFormat(data);
                     }
