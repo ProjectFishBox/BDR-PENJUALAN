@@ -86,6 +86,7 @@ class SetHargaControllers extends Controller
         $title = 'Tambah Set Harga';
 
         $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->where('delete', 0)
         ->distinct()
         ->get();
 
@@ -153,7 +154,10 @@ class SetHargaControllers extends Controller
         $title = 'Edit Set Harga';
 
         $setharga = SetHarga::findOrFail($id);
-        $barang = Barang::all();
+        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
+        ->where('delete', 0)
+        ->distinct()
+        ->get();
 
         return view('pages.master.set_harga.edit_set_harga', compact('setharga', 'title', 'barang'));
     }
@@ -288,6 +292,37 @@ class SetHargaControllers extends Controller
 
             return response()->json(['code' => 400, 'error' => 'Terjadi kesalahan saat memproses file.']);
         }
+    }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $request->validate([
+            'status' => 'required|in:Aktif,Tidak Aktif',
+        ]);
+
+        $setharga = SetHarga::findOrFail($id);
+
+        $existingActiveSetHarga = SetHarga::where('kode_barang', $setharga->kode_barang)
+            ->where('merek', $setharga->merek)
+            ->where('status', 'Aktif')
+            ->where('id', '!=', $id)
+            ->first();
+
+        if ($existingActiveSetHarga) {
+            $existingActiveSetHarga->update([
+                'status' => 'Tidak Aktif',
+                'last_user' => auth()->id()
+            ]);
+        }
+
+        $setharga->update([
+            'status' => $request['status'],
+            'last_user' => auth()->id()
+        ]);
+
+        Cache::forget('setharga_data');
+
+        return response()->json(['success' => true, 'message' => 'Status berhasil diperbarui.']);
     }
 
 

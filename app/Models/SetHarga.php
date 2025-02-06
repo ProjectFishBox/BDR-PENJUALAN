@@ -30,4 +30,11 @@ class SetHarga extends Model
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi');
     }
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang');
+    }
+
+
 }

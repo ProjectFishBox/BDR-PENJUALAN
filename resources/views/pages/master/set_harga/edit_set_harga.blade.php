@@ -11,7 +11,7 @@
                         <label for="nama_barang">Barang <span style="color: red">*</span></label>
                         <select id="nama_barang" class="select2 form-control" name="nama_barang" required>
                             <option value="">Pilih Barang</option>
-                            @foreach ($barang as $b)
+                            @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>({{$b->kode_barang}}) {{ $b->nama}}</option>
                             @endforeach
                         </select>

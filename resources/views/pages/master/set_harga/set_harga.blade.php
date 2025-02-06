@@ -139,7 +139,7 @@
                         return `
                             <div class="form-group d-flex align-items-center" style="margin: unset">
                                 <div class="switch m-r-10">
-                                    <input type="checkbox" id="switch-${row.id}" ${checked}>
+                                    <input type="checkbox" id="switch-${row.id}" ${checked} data-id="${row.id}">
                                     <label for="switch-${row.id}"></label>
                                 </div>
                             </div>`;
@@ -324,6 +324,39 @@
         }
         })
     })
+</script>
+
+<script>
+    $(document).on('change', 'input[type="checkbox"]', function() {
+        let id = $(this).data('id');
+        let status = $(this).is(':checked') ? 'Aktif' : 'Tidak Aktif';
+        $.ajax({
+            url: `/update-status/${id}`,
+            type: "POST",
+            data: {
+                status: status,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Status telah diperbarui.',
+                    icon: 'success',
+                    timer: 2000
+                });
+                reloadTable()
+            },
+            error: function(error) {
+                console.error(error);
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: 'Terjadi kesalahan saat memperbarui status.',
+                    icon: 'error'
+                });
+                $(this).prop('checked', !$(this).is(':checked'));
+            }
+        });
+    });
 </script>
 
 @endpush
