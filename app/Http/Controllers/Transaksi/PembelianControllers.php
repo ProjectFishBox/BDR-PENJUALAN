@@ -69,11 +69,9 @@ class PembelianControllers extends Controller
     {
         $title = 'Tambah Pembelian';
 
-        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
-
-        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-            ->whereIn('id', $barangSetHarga)
-            ->distinct()
+        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
+            ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
+            ->where('set_harga.status', 'Aktif')
             ->get();
 
         return view('pages.transaksi.pembelian.tambah_pembelian', compact('title', 'barang'));
@@ -133,11 +131,9 @@ class PembelianControllers extends Controller
     {
         $title = 'Edit Pembelian';
 
-        $barangSetHarga = SetHarga::where('status', 'Aktif')->pluck('id_barang');
-
-        $barang = Barang::select('id', 'nama', 'kode_barang', 'harga', 'merek')
-            ->whereIn('id', $barangSetHarga)
-            ->distinct()
+        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
+            ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
+            ->where('set_harga.status', 'Aktif')
             ->get();
 
 
