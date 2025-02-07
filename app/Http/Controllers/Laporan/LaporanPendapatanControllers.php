@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Laporan;
 
+use App\Exports\PendapatanExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Lokasi;
 use App\Models\PembelianDetail;
@@ -119,8 +122,8 @@ class LaporanPendapatanControllers extends Controller
                     'tanggal' => $jual->tanggal,
                     'nama_lokasi' => $item->nama,
                     'total_masuk' => $item->total_masuk,
-                    'harga_pembelian' => $item->harga, 
-                    'jumlah_pembelian' => $item->jumlah, 
+                    'harga_pembelian' => $item->harga,
+                    'jumlah_pembelian' => $item->jumlah,
                     'harga_penjualan' => $jual->harga,
                     'total_terjual' => $jual->total_terjual ?? 0,
                     'stok_akhir' => $item->total_masuk - ($jual->total_terjual ?? 0),
@@ -178,7 +181,7 @@ class LaporanPendapatanControllers extends Controller
                     'lokasi.nama'
                 ])
                 ->get();
-    
+
 
             $penjualan = PenjualanDetail::query()
                 ->select([
@@ -220,14 +223,14 @@ class LaporanPendapatanControllers extends Controller
                     'lokasi.nama'
                 ])
                 ->get();
-    
+
             $data = $Pembelian->flatMap(function ($item) use ($penjualan) {
                 $terjual = $penjualan
                     ->where('id_barang', $item->id_barang)
                     ->where('nama_barang', $item->nama_barang)
                     ->where('merek', $item->merek)
                     ->where('id_lokasi', $item->id_lokasi);
-    
+
                 return $terjual->map(function ($jual) use ($item) {
                     return [
                         'id_barang' => $item->id_barang,
@@ -240,8 +243,8 @@ class LaporanPendapatanControllers extends Controller
                         'tanggal' => $jual->tanggal,
                         'nama_lokasi' => $item->nama,
                         'total_masuk' => $item->total_masuk,
-                        'harga_pembelian' => $item->harga, 
-                        'jumlah_pembelian' => $item->jumlah, 
+                        'harga_pembelian' => $item->harga,
+                        'jumlah_pembelian' => $item->jumlah,
                         'harga_penjualan' => $jual->harga,
                         'total_terjual' => $jual->total_terjual ?? 0,
                         'stok_akhir' => $item->total_masuk - ($jual->total_terjual ?? 0),
@@ -257,7 +260,7 @@ class LaporanPendapatanControllers extends Controller
             $totalPenjualan = array_sum(array_column($data, 'total_penjualan'));
             $totalDiskonProduk = array_sum(array_column($data, 'diskon_barang'));
             $totalPembelian = array_sum(array_column($data, 'total_pembelian'));
-        
+
             $uniqueDiskonNota = [];
             foreach ($data as $item) {
                 if (!isset($uniqueDiskonNota[$item['id_penjualan']])) {
@@ -266,15 +269,15 @@ class LaporanPendapatanControllers extends Controller
             }
             $totalDiskonNota = array_sum($uniqueDiskonNota);
 
-        
-            
+
+
             if (empty($data)) {
                 throw new \Exception("Data tidak ditemukan");
             }
-    
+
             $pdf = Pdf::loadView('components.pdf.pendapatan_pdf', compact('data', 'totalTerjual', 'totalPenjualan', 'totalDiskonProduk', 'totalPembelian', 'totalDiskonNota'))
                 ->setPaper('a4', 'landscape');
-    
+
             return $pdf->stream('Laporan_Pendapatan.pdf');
         } catch (\Exception $e) {
             return response()->json([
@@ -283,7 +286,38 @@ class LaporanPendapatanControllers extends Controller
             ], 500);
         }
     }
-    
+
+    public function exportExcel(Request $request)
+    {
+
+
+        Excel::store(new PendapatanExport($request), 'temp.xlsx');
+
+        try {
+
+            $filePath = session('export_file');
+
+            if (!$filePath || !Storage::exists($filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat mengexport data. File tidak ditemukan.'
+                ]);
+            }
+
+            $fileName = 'Laporan_Pendapatan';
+
+            $fileName .= '_' . date('d-m-Y') . '.xlsx';
+
+            return Storage::download($filePath, $fileName);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengexport data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
 

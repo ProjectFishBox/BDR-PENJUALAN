@@ -219,7 +219,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/pendapatan', 'index')->name('pendapatan');
         Route::get('/laporan-pendapatan/exportpdf', 'printData')->name('laporan-pendapatan.exportpdf');
-
+        Route::get('/laporan-pendapatan-export-excel' , 'exportExcel')->name('laporan-pendapatan.exportexcel');
 
     });
 

@@ -35,69 +35,71 @@
             </div>
         </form>
 
-        <div class="m-t-25">
+        <div class="container mt-4">
             <div class="table-responsive">
-                <table class="table table-bordered table-hover data-table" id="data-table">
-                    <thead>
+                <table class="table table-bordered table-hover text-center data-table" id="data-table">
+                    <thead class="table-light">
                         <tr>
-                            <th scope="col" style="text-align: center;">No</th>
-                            <th scope="col" style="text-align: center;">Kode Barang</th>
-                            <th scope="col" style="text-align: center;">Nama Barang</th>
-                            <th scope="col" style="text-align: center;">Tanggal Jual</th>
-                            <th scope="col" style="text-align: center;">Jumlah</th>
-                            <th scope="col" style="text-align: center;">Harga Beli</th>
-                            <th scope="col" style="text-align: center;">Harga Jual</th>
-                            <th scope="col" style="text-align: center;">Total Beli</th>
-                            <th scope="col" style="text-align: center;">Total Jual</th>
+                            <th>No</th>
+                            <th>Kode Barang</th>
+                            <th>Nama Barang</th>
+                            <th>Tanggal Jual</th>
+                            <th>Jumlah</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            <th>Total Beli</th>
+                            <th>Total Jual</th>
                         </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
-
-                {{-- <div id="total-penjualan" class="mt-3" style="font-weight: bold;">
-                    Total Penjualan: <span id="total-jumlah">0</span>
-                </div> --}}
-
-                <hr style="border-top: 2px solid #000; margin: 20px 0;">
-
-                <div class="total-summary" style="font-weight: bold;">
-                    <table style="width: 40%; border-collapse: collapse; border: none;">
-                        <tr>
-                            <td style="text-align: left;">Total Penjualan</td>
-                            <td id="total-penjualan" style="text-align: center;"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left;">Total Diskon Produk</td>
-                            <td id="total-diskon-produk" style="text-align: center;"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left;">Total Diskon Nota</td>
-                            <td id="total-diskon-nota" style="text-align: center;"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left;">Total Pengeluaran</td>
-                            <td id="total-pengeluaran" style="text-align: center;"></td>
-                        </tr>
-                    </table>
-                </div>
-
-                {{-- <hr style="border-top: 2px solid #000; width: 40px; margin: 10px auto;"> --}}
-
-                <div class="total-summary" style="font-weight: bold;">
-                    <table style="width: 40%; border-collapse: collapse; border: none;">
-                        <tr>
-                            <td style="text-align: right;">Total Transfer</td>
-                            <td id="total-transfer " style="text-align: center;"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left;">Modal Usaha</td>
-                            <td id="modal-usaha" style="text-align: center;"></td>
-                        </tr>
-                    </table>
-                </div>
-
             </div>
+
+            {{-- <p class="fw-bold text-center mt-3">Jumlah Penjualan: 3 Ball</p> --}}
+
+            <hr class="my-3">
+            {{-- class="text-end" --}}
+
+            <div class="total-summary">
+                <table>
+                    <tr>
+                        <td>Total Penjualan</td>
+                        <td id="total-penjualan" class="text-end"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Diskon Produk</td>
+                        <td id="total-diskon-produk" class="text-end"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Diskon Nota</td>
+                        <td id="total-diskon-nota" class="text-end"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Pengeluaran</td>
+                        <td id="total-pengeluaran" class="text-end"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="underline"></td>
+                    </tr>
+                    <tr class="bold">
+                        <td>Total Transfer</td>
+                        <td id="total-transfer"></td>
+                    </tr>
+                    <tr>
+                        <td>Modal Usaha</td>
+                        <td id="modal-usaha" class="text-end"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="underline"></td>
+                    </tr>
+                    <tr class="bold">
+                        <td>Laba Bersih</td>
+                        <td id="laba-bersih" class="text-end"></td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
     </div>
 </div>
@@ -108,6 +110,10 @@
 
 @push('css')
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<style>
+
+</style>
 @endpush
 
 @push('js')
@@ -163,13 +169,12 @@
                     var totalDiskon = 0;
                     var totalDiskonNota = 0;
                     var totalPenjualan = 0;
-                    var totalPengeluaran = 0;
                     var totalPembelian = 0;
                     var uniquePenjualan = {};
 
                     $.each(data, function(index, item) {
                         if (!uniquePenjualan[item.id_penjualan]) {
-                            uniquePenjualan[item.id_penjualan] = item.diskon_nota; 
+                            uniquePenjualan[item.id_penjualan] = item.diskon_nota;
                         }
 
                         var row = '<tr>' +
@@ -188,7 +193,6 @@
                         totalJumlah += parseInt(item.total_terjual);
                         totalDiskon += parseInt(item.diskon_barang);
                         totalPenjualan += parseInt(item.total_penjualan)
-                        totalPengeluaran += parseInt(item.total_pembelian)
                         totalPembelian += parseInt(item.total_pembelian)
 
                         overallIndex++;
@@ -204,11 +208,18 @@
                         '</tr>';
                     tbody.append(totalRow);
 
-                    $('#total-penjualan').text(totalPenjualan.toLocaleString('id-ID'));
-                    $('#total-diskon-produk').text(totalDiskon.toLocaleString('id-ID'));
-                    $('#total-diskon-nota').text(totalDiskonNota.toLocaleString('id-ID'));
-                    // $('#total-pengeluaran').text(totalPengeluaran.toLocaleString('id-ID'));
-                    $('#modal-usaha').text(totalPembelian.toLocaleString('id-ID'));
+                    var totalPengeluaran = totalDiskon + totalDiskonNota;
+                    var totalTransfer  = (totalPenjualan - (totalPengeluaran + totalDiskonNota +totalDiskon));
+                    var labaBersih = totalTransfer - totalPembelian;
+
+                    $('#total-penjualan').text('Rp ' + totalPenjualan.toLocaleString('id-ID'));
+                    $('#total-diskon-produk').text('Rp ' + totalDiskon.toLocaleString('id-ID'));
+                    $('#total-diskon-nota').text('Rp ' + totalDiskonNota.toLocaleString('id-ID'));
+                    $('#total-pengeluaran').text('Rp ' + totalPengeluaran.toLocaleString('id-ID'));
+                    $('#modal-usaha').text('Rp ' + totalPembelian.toLocaleString('id-ID'));
+                    $('#total-transfer').text('Rp ' + totalTransfer.toLocaleString('id-ID'));
+                    $('#laba-bersih').text('Rp ' + labaBersih.toLocaleString('id-ID'));
+
                 }
             });
         });
@@ -247,6 +258,40 @@
                 }
             })
         });
+
+        $('#btn-export-excel').on('click', function(e) {
+            e.preventDefault();
+            let id = $(this).data('id');
+            let daterange = $('#daterange').val();
+            var lokasi = $('#lokasi').val();
+            let formData = $('#filter-form').serialize();
+
+            if (daterange) {
+                formData += '&daterange=' + encodeURIComponent(daterange);
+            }
+
+            let url = "{{ route('laporan-pendapatan.exportexcel') }}?" + formData;
+
+            Swal.fire({
+                title: 'Apakah kamu ingin mengexport data ini?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Iya, Export sekarang!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.open(url, '_blank');
+                    Swal.fire({
+                        title: 'Sedang Mengexport!',
+                        text: 'File Excel sedang diproses...',
+                        icon: 'success',
+                        timer: 2000
+                    });
+                }
+            })
+        });
+
 
 
     });
