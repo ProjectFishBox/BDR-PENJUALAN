@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 use App\Models\Lokasi;
 use App\Models\Pelanggan;
-
+use Laravolt\Indonesia\Facade as Indonesia;
 
 class PelangganControllers extends Controller
 {
@@ -77,8 +77,9 @@ class PelangganControllers extends Controller
         $title = 'Tambah Pelanggan';
 
         $lokasi = Lokasi::all();
+        $kota = Indonesia::allCities();
 
-        return view('pages.master.pelanggan.tambah_pelanggan', compact('title', 'lokasi'));
+        return view('pages.master.pelanggan.tambah_pelanggan', compact('title', 'lokasi', 'kota'));
     }
 
     /**
@@ -115,8 +116,9 @@ class PelangganControllers extends Controller
 
         $pelanggan = Pelanggan::findOrFail($id);
         $lokasi = Lokasi::all();
+        $kota = Indonesia::allCities();
 
-        return view('pages.master.pelanggan.edit_pelanggan', compact('title', 'pelanggan', 'lokasi'));
+        return view('pages.master.pelanggan.edit_pelanggan', compact('title', 'pelanggan', 'lokasi', 'kota'));
     }
 
     /**

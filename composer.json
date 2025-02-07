@@ -12,6 +12,7 @@
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "laravolt/indonesia": "^0.35.0",
         "maatwebsite/excel": "^3.1",
         "predis/predis": "^2.3",
         "realrashid/sweet-alert": "^7.2",

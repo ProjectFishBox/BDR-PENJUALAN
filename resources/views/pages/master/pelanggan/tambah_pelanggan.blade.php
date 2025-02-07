@@ -29,8 +29,11 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_kota">Kota  <span style="color: red">*</span></label>
-                        <select id="id_kota" name="id_kota" class="form-control" required>
-                            <option value="1">Kota Makassar</option>
+                        <select id="id_kota" name="id_kota" class="id_kota form-control" required>
+                            <option value="">Pilih Kota</option>
+                            @foreach ($kota as $k)
+                                <option value="{{ $k->id }}">{{ $k->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group col-md-6">
@@ -58,6 +61,11 @@
     $('.lokasi').select2({
         width: '100%',
         placeholder: 'Pilih Lokasi',
+    });
+
+    $('.id_kota').select2({
+        width: '100%',
+        placeholder: 'Pilih Kota',
     });
 
 </script>
