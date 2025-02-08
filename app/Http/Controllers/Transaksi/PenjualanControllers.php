@@ -111,11 +111,13 @@ class PenjualanControllers extends Controller
 
         $pelanggan = Pelanggan::all();
 
-        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
+        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek', 'set_harga.harga_jual')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
             ->where('set_harga.delete', 0)
             ->get();
+
+            // dd($barang);
 
 
         return view('pages.transaksi.penjualan.tambah_penjualan', compact('title', 'pelanggan', 'barang'));
@@ -203,7 +205,7 @@ class PenjualanControllers extends Controller
 
         $penjualanDetail = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
 
-        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
+        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek', 'set_harga.harga_jual')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
             ->where('set_harga.delete', 0)

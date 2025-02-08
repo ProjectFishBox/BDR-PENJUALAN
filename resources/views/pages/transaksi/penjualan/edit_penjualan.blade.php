@@ -62,7 +62,7 @@
                         <select id="nama_barang" class="select2 form-control">
                             <option value="">Pilih Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
-                                <option value="{{ $b->id }}" data-id="{{ $b->id }}"  data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek}}">({{$b->kode_barang}}) {{ $b->nama }}</option>
+                                <option value="{{ $b->id }}" data-id="{{ $b->id }}"  data-harga="{{ $b->harga_jual }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek}}">({{$b->kode_barang}}) {{ $b->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -216,7 +216,7 @@
 
             filteredMerek.forEach(function(item) {
                 if (item.kode_barang === kodeBarang) {
-                    $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+                    $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga_jual + '">' + item.merek + '</option>');
                 }
             });
 
