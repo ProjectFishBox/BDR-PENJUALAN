@@ -184,6 +184,8 @@
                             uniquePengeluaran[item.tanggal] = parseInt(item.total_pengeluaran);
                         }
 
+                        var total_pembelian_detail_barang = item.total_jumlah * item.harga_pembelian
+
                         var row = '<tr>' +
                             '<td>' + overallIndex + '</td>' +
                             '<td>' + item.kode_barang + '</td>' +
@@ -192,7 +194,7 @@
                             '<td>' + item.total_jumlah + '</td>' +
                             '<td>' + Math.floor(item.harga_pembelian).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.floor(item.harga).toLocaleString('id-ID') + '</td>' +
-                            '<td>' + Math.floor(item.total_pembelian_detail_barang).toLocaleString('id-ID') + '</td>' +
+                            '<td>' + Math.floor(total_pembelian_detail_barang).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.floor(item.total_jual).toLocaleString('id-ID') + '</td>' +
                             '</tr>';
                         tbody.append(row);
@@ -200,7 +202,7 @@
                         jumlahPenjualan += parseInt(item.total_jumlah);
                         totalDiskon += parseInt(item.total_diskon_barang);
                         totalPenjualan += parseInt(item.total_jual);
-                        modalUsaha += parseInt(item.total_pembelian_detail_barang);
+                        modalUsaha += parseInt(total_pembelian_detail_barang);
                         overallIndex++;
                     });
 

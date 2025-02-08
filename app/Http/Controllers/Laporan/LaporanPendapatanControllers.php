@@ -74,9 +74,9 @@ class LaporanPendapatanControllers extends Controller
                     'diskon_barang' => $firstItem->diskon_barang,
                     'kode_barang' => $firstItem->kode_barang,
                     'tanggal' => $firstItem->tanggal,
-                    'total_pembelian_detail_barang' => $group->sum(function ($item) {
-                        return ($item->harga - $item->diskon_barang) * $item->jumlah;
-                    }),
+                    // 'total_pembelian_detail_barang' => $group->sum(function ($item) {
+                    //     return $item->harga  * $item->jumlah;
+                    // }),
                     'total_jual' => $group->sum(function ($item) {
                         return $item->harga * $item->jumlah;
                     }),
