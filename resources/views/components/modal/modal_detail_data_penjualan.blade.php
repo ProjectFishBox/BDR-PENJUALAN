@@ -15,7 +15,7 @@
                 <div class="ml-5">
                     <h5 style="font-weight: lighter">Pelanggan : {{ $detailPelanggan->nama}}</h5>
                     <h5 style="font-weight: lighter">Alamat : {{ $detailPelanggan->alamat}}</h5>
-                    <h5 style="font-weight: lighter">Kota : {{ $kota->nama}}</h5>
+                    <h5 style="font-weight: lighter">Kota : {{ $kota->name}}</h5>
                     <h5 style="font-weight: lighter">Telepon : {{ $detailPelanggan->telepon}}</h5>
                 </div>
             </div>

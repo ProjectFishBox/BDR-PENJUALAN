@@ -165,11 +165,12 @@
                     var tbody = $('#data-table tbody');
                     tbody.empty();
                     var overallIndex = 1;
-                    var totalJumlah = 0;
+                    // var totalJual = 0;
+                    var jumlahPenjualan = 0;
                     var totalDiskon = 0;
                     var totalDiskonNota = 0;
                     var totalPenjualan = 0;
-                    var totalPembelian = 0;
+                    var modalUsaha = 0;
                     var uniquePenjualan = {};
 
                     $.each(data, function(index, item) {
@@ -182,19 +183,18 @@
                             '<td>' + item.kode_barang + '</td>' +
                             '<td>' + item.nama_barang + '</td>' +
                             '<td>' + item.tanggal + '</td>' +
-                            '<td>' + item.total_terjual + '</td>' +
+                            '<td>' + item.total_jumlah + '</td>' +
                             '<td>' + Math.floor(item.harga_pembelian).toLocaleString('id-ID') + '</td>' +
-                            '<td>' + Math.floor(item.harga_penjualan).toLocaleString('id-ID') + '</td>' +
-                            '<td>' + Math.floor(item.total_pembelian).toLocaleString('id-ID') + '</td>' +
-                            '<td>' + Math.floor(item.total_penjualan).toLocaleString('id-ID') + '</td>' +
+                            '<td>' + Math.floor(item.harga).toLocaleString('id-ID') + '</td>' +
+                            '<td>' + Math.floor(item.total_pembelian_detail_barang).toLocaleString('id-ID') + '</td>' +
+                            '<td>' + Math.floor(item.total_jual).toLocaleString('id-ID') + '</td>' +
                             '</tr>';
                         tbody.append(row);
 
-                        totalJumlah += parseInt(item.total_terjual);
-                        totalDiskon += parseInt(item.diskon_barang);
-                        totalPenjualan += parseInt(item.total_penjualan)
-                        totalPembelian += parseInt(item.total_pembelian)
-
+                        jumlahPenjualan += parseInt(item.total_jumlah);
+                        totalDiskon += parseInt(item.total_diskon_barang);
+                        totalPenjualan += parseInt(item.total_jual)
+                        modalUsaha += parseInt(item.total_pembelian_detail_barang)
                         overallIndex++;
                     });
 
@@ -203,20 +203,20 @@
                     });
 
                     var totalRow = '<tr>' +
-                        '<td colspan="4" style="text-align: left;"><strong>Total Penjualan:</strong></td>' +
-                        '<td>' + totalJumlah + '</td>' +
+                        '<td colspan="4" style="text-align: left;"><strong>Jumlah Penjualan:</strong></td>' +
+                        '<td>' + jumlahPenjualan + '</td>' +
                         '</tr>';
                     tbody.append(totalRow);
 
                     var totalPengeluaran = totalDiskon + totalDiskonNota;
                     var totalTransfer  = (totalPenjualan - (totalPengeluaran + totalDiskonNota +totalDiskon));
-                    var labaBersih = totalTransfer - totalPembelian;
+                    var labaBersih = totalTransfer - modalUsaha;
 
                     $('#total-penjualan').text('Rp ' + totalPenjualan.toLocaleString('id-ID'));
                     $('#total-diskon-produk').text('Rp ' + totalDiskon.toLocaleString('id-ID'));
                     $('#total-diskon-nota').text('Rp ' + totalDiskonNota.toLocaleString('id-ID'));
                     $('#total-pengeluaran').text('Rp ' + totalPengeluaran.toLocaleString('id-ID'));
-                    $('#modal-usaha').text('Rp ' + totalPembelian.toLocaleString('id-ID'));
+                    $('#modal-usaha').text('Rp ' + modalUsaha.toLocaleString('id-ID'));
                     $('#total-transfer').text('Rp ' + totalTransfer.toLocaleString('id-ID'));
                     $('#laba-bersih').text('Rp ' + labaBersih.toLocaleString('id-ID'));
 

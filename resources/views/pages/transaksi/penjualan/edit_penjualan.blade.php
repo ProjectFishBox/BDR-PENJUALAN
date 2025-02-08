@@ -26,7 +26,7 @@
                             <select id="pelanggan" class="form-control" name="pelanggan">
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
-                                    <option value="{{ $p->id }}" data-alamat="{{ $p->alamat }}" data-kota="{{ $p->kota->nama }}" data-telepon="{{ $p->telepon }}"  {{ $p->id == $penjualan->id_pelanggan ? 'selected' : '' }}>{{ $p->nama }}</option>
+                                    <option value="{{ $p->id }}" data-alamat="{{ $p->alamat }}" data-kota="{{ $p->nama_kota }}" data-telepon="{{ $p->telepon }}"  {{ $p->id == $penjualan->id_pelanggan ? 'selected' : '' }}>{{ $p->nama }}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Laravolt\Indonesia\Facade as Indonesia;
 
 use App\Models\Lokasi;
 use App\Models\User;
@@ -21,6 +22,7 @@ class ProfileControllers extends Controller
 
         $lokasi = Lokasi::all();
         $user = Auth::user();
+        $kota = Indonesia::allCities();
 
         return view('pages.users.profile', compact('title', 'lokasi', 'user'));
     }

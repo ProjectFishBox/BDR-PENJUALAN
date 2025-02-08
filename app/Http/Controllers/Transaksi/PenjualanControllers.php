@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
+use Laravolt\Indonesia\Facade as Indonesia;
+
 
 use App\Models\Lokasi;
 use App\Models\Pelanggan;
@@ -204,6 +206,12 @@ class PenjualanControllers extends Controller
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
             ->get();
+
+        $cities = Indonesia::allCities();
+
+        foreach ($pelanggan as $p) {
+            $p->nama_kota = Indonesia::findCity($p->id_kota)['name'] ?? 'Tidak Diketahui';
+        }
 
         return view('pages.transaksi.penjualan.edit_penjualan', compact('title', 'barang', 'pelanggan', 'penjualan', 'penjualanDetail'));
     }
@@ -453,6 +461,9 @@ class PenjualanControllers extends Controller
 
     public function modalDetail(Request $request)
     {
+
+
+
         if (!$request->ajax()) {
             redirect('/dashboard');
         }
@@ -465,7 +476,7 @@ class PenjualanControllers extends Controller
 
         $detailPelanggan = Pelanggan::findOrFail($penjualan->id_pelanggan);
 
-        $kota = Kota::findOrFail($detailPelanggan->id_kota);
+        $kota = Indonesia::findCity($detailPelanggan->id_kota, $with = null);
 
         $detailpenjualan = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
 
@@ -479,7 +490,6 @@ class PenjualanControllers extends Controller
         }
 
         $lokasi = Lokasi::findOrFail($penjualan->id_lokasi);
-
 
         return view('components.modal.modal_detail_data_penjualan', compact('title', 'penjualan', 'detailpenjualan', 'lokasi', 'detailPelanggan', 'totalPenjualan', 'subtotalItem', 'kota'));
     }
