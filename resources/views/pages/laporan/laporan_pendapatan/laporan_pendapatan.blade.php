@@ -149,6 +149,7 @@
 
 <script>
     $(document).ready(function() {
+
         $('#btn-preview').on('click', function(e) {
             e.preventDefault();
             var daterange = $('#daterange').val()
@@ -165,17 +166,22 @@
                     var tbody = $('#data-table tbody');
                     tbody.empty();
                     var overallIndex = 1;
-                    // var totalJual = 0;
                     var jumlahPenjualan = 0;
                     var totalDiskon = 0;
                     var totalDiskonNota = 0;
                     var totalPenjualan = 0;
                     var modalUsaha = 0;
+                    var totalPengeluaran = 0;
                     var uniquePenjualan = {};
+                    var uniquePengeluaran = {};
 
                     $.each(data, function(index, item) {
                         if (!uniquePenjualan[item.id_penjualan]) {
                             uniquePenjualan[item.id_penjualan] = item.diskon_nota;
+                        }
+
+                        if (!uniquePengeluaran[item.tanggal]) {
+                            uniquePengeluaran[item.tanggal] = parseInt(item.total_pengeluaran);
                         }
 
                         var row = '<tr>' +
@@ -193,9 +199,13 @@
 
                         jumlahPenjualan += parseInt(item.total_jumlah);
                         totalDiskon += parseInt(item.total_diskon_barang);
-                        totalPenjualan += parseInt(item.total_jual)
-                        modalUsaha += parseInt(item.total_pembelian_detail_barang)
+                        totalPenjualan += parseInt(item.total_jual);
+                        modalUsaha += parseInt(item.total_pembelian_detail_barang);
                         overallIndex++;
+                    });
+
+                    $.each(uniquePengeluaran, function(tanggal, pengeluaran) {
+                        totalPengeluaran += pengeluaran;
                     });
 
                     $.each(uniquePenjualan, function(id, diskon) {
@@ -208,8 +218,7 @@
                         '</tr>';
                     tbody.append(totalRow);
 
-                    var totalPengeluaran = totalDiskon + totalDiskonNota;
-                    var totalTransfer  = (totalPenjualan - (totalPengeluaran + totalDiskonNota +totalDiskon));
+                    var totalTransfer = (totalPenjualan - (totalPengeluaran + totalDiskonNota + totalDiskon));
                     var labaBersih = totalTransfer - modalUsaha;
 
                     $('#total-penjualan').text('Rp ' + totalPenjualan.toLocaleString('id-ID'));
@@ -219,10 +228,10 @@
                     $('#modal-usaha').text('Rp ' + modalUsaha.toLocaleString('id-ID'));
                     $('#total-transfer').text('Rp ' + totalTransfer.toLocaleString('id-ID'));
                     $('#laba-bersih').text('Rp ' + labaBersih.toLocaleString('id-ID'));
-
                 }
             });
         });
+
 
 
 
