@@ -114,6 +114,7 @@ class PenjualanControllers extends Controller
         $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
+            ->where('set_harga.delete', 0)
             ->get();
 
 
@@ -205,6 +206,7 @@ class PenjualanControllers extends Controller
         $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
+            ->where('set_harga.delete', 0)
             ->get();
 
         $cities = Indonesia::allCities();
