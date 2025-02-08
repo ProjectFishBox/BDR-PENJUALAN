@@ -28,7 +28,7 @@
                         <p style="margin-top:0pt; margin-bottom:0pt; text-align:center; font-size:12pt;">Harga Jual</p>
                     </td>
                 </tr>
-                @foreach ($data as $index => $item)
+                @foreach ($penjualan as $index => $item)
                     <tr>
                         <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; padding-right:5.03pt; padding-left:5.03pt; vertical-align:top;">
                             <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $index + 1 }}</p>
@@ -43,13 +43,13 @@
                             <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['tanggal'] }} </p>
                         </td>
                         <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding-right:5.03pt; padding-left:5.03pt; vertical-align:top;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['jumlah_pembelian'] }}</p>
+                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['total_jumlah'] }}</p>
                         </td>
                         <td style="width:83.35pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding-right:5.03pt; padding-left:5.03pt; vertical-align:top;">
                             <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"> {{ $item['harga_pembelian'] }}</p>
                         </td>
                         <td style="width:83.35pt; border-top-style:solid; border-top-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding-right:5.03pt; padding-left:5.03pt; vertical-align:top;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"> {{ $item['total_penjualan']}}</p>
+                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"> {{ $item['harga']}}</p>
                         </td>
                     </tr>
                 @endforeach
@@ -64,7 +64,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Jumlah Penjualan</strong></p>
                 </td>
                 <td style="width: 19.8283%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalTerjual }}</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalPenjualan }}</p>
                 </td>
             </tr>
         </tbody>
@@ -77,7 +77,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Total Penjualan</p>
                 </td>
                 <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalPenjualan }}</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalTerjual }}</p>
                 </td>
             </tr>
             <tr>
@@ -101,7 +101,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Total Pengeluaran</p>
                 </td>
                 <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">&nbsp;</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"> {{ $totalPengeluaran }}</p>
                 </td>
             </tr>
             <tr>
@@ -109,7 +109,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; text-align:right; font-size:12pt;"><strong>Total Transfer</strong></p>
                 </td>
                 <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">&nbsp;</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalTransfer}}</p>
                 </td>
             </tr>
             <tr>
@@ -117,7 +117,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Modal Usaha</p>
                 </td>
                 <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalPembelian }}</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $modalUsaha }}</p>
                 </td>
             </tr>
             <tr>
@@ -125,7 +125,7 @@
                     <p style="margin-top:0pt; margin-bottom:0pt; text-align:right; font-size:12pt;"><strong>Laba Bersih</strong></p>
                 </td>
                 <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: top;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">&nbsp;</p>
+                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{$labaBersih}}</p>
                 </td>
             </tr>
         </tbody>
