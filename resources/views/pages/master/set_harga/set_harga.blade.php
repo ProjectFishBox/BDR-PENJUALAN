@@ -17,7 +17,6 @@
 
 
                 <form id="filterForm" style="display: flex; align-items: center;">
-                    <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-right: 10px;">
                     <select name="lokasi" class="form-control" style="width: 200px; margin-right: 10px;">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
@@ -90,12 +89,10 @@
         let table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            searching: false,
             ajax: {
                 url: "{{ route('setharga') }}",
                 data: function (d) {
                     d.lokasi = $('select[name="lokasi"]').val();
-                    d.search.value = $('input[name="search"]').val();
                 }
             },
             lengthMenu: [

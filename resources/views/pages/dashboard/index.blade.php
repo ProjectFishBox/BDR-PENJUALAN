@@ -39,7 +39,7 @@
                     </div>
                     <div class="form-group col-md-2">
                         <label for="inputPassword4">Merek</label>
-                        <select id="merek" class="form-control">
+                        <select id="merek" class="merek form-control">
                             <option value="">Pilih Merek</option>
                         </select>
                     </div>
@@ -171,9 +171,14 @@
             placeholder: 'Pilih Lokasi',
         });
 
+        $('.merek').select2({
+            width: '100%',
+            placeholder: 'Pilih Merek',
+        });
+
         $('.barang').select2({
             width: '100%',
-            placeholder: 'Pilih Lokasi',
+            placeholder: 'Pilih Barang',
         });
 
         $('#nama_barang').on('change', function() {

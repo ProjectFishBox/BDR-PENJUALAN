@@ -33,18 +33,10 @@ class PengeluaranControler extends Controller
         });
 
         if ($request->ajax()) {
-            $search = $request->query('search');
             $lokasiId = $request->query('lokasi');
             $daterange = $request->query('daterange');
 
             $query = Pengeluaran::with('lokasi')->where('delete', 0);
-
-            if ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('uraian', 'like', "%$search%")
-                        ->orWhere('total', 'like', "%$search%");
-                });
-            }
 
             if ($lokasiId) {
                 $query->where('id_lokasi', $lokasiId);

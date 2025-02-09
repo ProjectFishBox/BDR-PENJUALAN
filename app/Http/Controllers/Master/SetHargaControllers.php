@@ -34,22 +34,16 @@ class SetHargaControllers extends Controller
 
         if ($request->ajax()) {
 
-            $search = $request->get('search')['value'];
             $lokasiId = $request->get('lokasi');
 
-            if (!$search && !$lokasiId) {
+            if (!$lokasiId) {
                 $data = Cache::remember($cacheKey, $cacheDuration, function () {
                     return SetHarga::with('lokasi')
                         ->where('delete', 0)
                         ->get();
                 });
             } else {
-                $data = SetHarga::when($search, function ($query, $search) {
-                        return $query->where('nama_barang', 'like', "%$search%")
-                                        ->orWhere('merek', 'like', "%$search%")
-                                        ->orWhere('kode_barang', 'like', "%$search%");
-                    })
-                    ->when($lokasiId, function ($query, $lokasiId) {
+                $data = SetHarga::when($lokasiId, function ($query, $lokasiId) {
                         return $query->where('id_lokasi', $lokasiId);
                     })
                     ->with('lokasi')

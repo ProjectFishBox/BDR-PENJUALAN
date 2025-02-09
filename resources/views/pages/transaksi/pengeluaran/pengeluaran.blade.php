@@ -7,11 +7,6 @@
             <form action="{{ url()->current() }}" method="GET">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <a href="/tambah-pengeluaran" class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</a>
-
-                    <div style="display: flex; align-items: center;">
-                        <input type="text" name="search" placeholder="Cari" class="form-control" style="width: 250px; margin-left: 10px;" value="{{ request()->get('search') }}">
-                        <button type="submit" class="btn btn-secondary ml-2">Cari</button>
-                    </div>
                 </div>
 
                 <div class="d-flex align-items-center m-2 mt-3">
@@ -19,7 +14,7 @@
 
                     <div class="form-group col-md-6 ml-3">
                         <label for="lokasi">Lokasi</label>
-                        <select id="lokasi" class="form-control" name="lokasi">
+                        <select id="lokasi" class="lokasi form-control" name="lokasi">
                             <option value="">Pilih Lokasi</option>
                             @foreach ($lokasiList as $b)
                                 <option value="{{ $b->id }}" {{ request()->get('lokasi') == $b->id ? 'selected' : '' }}>
@@ -75,6 +70,14 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script>
+
+    $('.lokasi').select2({
+        width: '100%',
+        placeholder: 'Pilih lokasi',
+    });
+</script>
+
+<script>
     $(document).ready(function() {
         dataPengeluaran();
         });
@@ -94,12 +97,10 @@
         let table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            searching: false,
             ajax: {
                 url: "{{ route('pengeluaran') }}",
                 data: function (d) {
                     d.lokasi = $('select[name="lokasi"]').val();
-                    d.search = $('input[name="search"]').val();
                     d.daterange = $('input[name="daterange"]').val();
                 }
             },

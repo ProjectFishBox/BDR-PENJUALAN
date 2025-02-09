@@ -42,19 +42,11 @@ class PenjualanControllers extends Controller
         });
 
         if ($request->ajax()) {
-            $search = $request->query('search');
             $lokasiId = $request->query('lokasi');
             $pelangganId = $request->query('pelanggan');
             $daterange = $request->query('daterange');
 
             $query = Penjualan::with('pelanggan', 'lokasi')->where('delete', 0);
-
-            if ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('no_nota', 'like', "%$search%")
-                        ->orWhere('total_penjualan', 'like', "%$search%");
-                });
-            }
 
             if ($lokasiId) {
                 $query->where('id_lokasi', $lokasiId);

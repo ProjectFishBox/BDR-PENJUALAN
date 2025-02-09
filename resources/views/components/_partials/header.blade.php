@@ -22,9 +22,7 @@
                 </a>
             </li>
             <li>
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#search-drawer">
-                    <h5 style="margin-bottom: unset">{{ $title }}</h5>
-                </a>
+                <h5 style="margin-bottom: unset">{{ $title }}</h5>
             </li>
         </ul>
         <ul class="nav-right">
