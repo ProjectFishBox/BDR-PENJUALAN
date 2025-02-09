@@ -43,6 +43,14 @@
                             <img src="{{ asset('images/icons/angle-right-solid.svg')}}" alt="" class="icon-size">
                         </div>
                     </a>
+                    <button class="dropdown-item d-block p-h-15 p-v-10 clearcache" id="clearcache">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <i class="anticon opacity-04 font-size-16 anticon-sync"></i>
+                                <span class="m-l-10">Clear Cache</span>
+                            </div>
+                        </div>
+                    </button>
                     <form action="{{route('logout')}}" method="POST">
                         @csrf
                         <button class="dropdown-item d-block p-h-15 p-v-10">
@@ -61,6 +69,7 @@
 </div>
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const dropdown = document.getElementById('profile-dropdown');
@@ -69,6 +78,43 @@
             dropdown.querySelector('.dropdown-menu').classList.toggle('show');
         });
     });
+</script>
+
+<script>
+    document.getElementById('clearcache').addEventListener('click', function() {
+        console.log('button cache is clicked');
+        let url = "/clear-cache"
+        $.ajax({
+            url,
+            type: "GET",
+            success: function(data) {
+                if(data.code == 200)
+                {
+                    Swal.fire({
+                        title: 'Success',
+                        text: data.success,
+                        icon: "success",
+                        timer: 2000
+                    });
+                }else if(data.code == 400)
+                {
+                    Swal.fire({
+                        title: 'Failed',
+                        icon: "error",
+                        text: data.error,
+                        showConfirmButton: true,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#DD6B55",
+                    });
+                }
+            },
+            error: function(error) {
+                console.error(error);
+                $('.btn-barang-edit').prop('disabled', false);
+                $('.btn-barang-edit').html(' <i class="anticon anticon-edit"></i>');
+            }
+        })
+    })
 </script>
 
 @endpush
