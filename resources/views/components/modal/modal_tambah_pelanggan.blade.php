@@ -30,20 +30,13 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="id_kota">Kota  <span style="color: red">*</span></label>
-                        <select id="id_kota" name="id_kota" class="form-control" required>
-                            <option value="1">Kota Makassar</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="id_lokasi">Lokasi</label>
-                        <select id="id_lokasi" name="id_lokasi" class="form-control">
-                            @foreach ($lokasi as $l)
-                                <option value="{{ $l->id}}">{{ $l->nama}}</option>
+                        <select id="id_kota" name="id_kota" class="id_kota form-control" required>
+                            <option value="">Pilih Kota</option>
+                            @foreach ($kota as $k)
+                                <option value="{{ $k->id }}">{{ $k->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="kode_pos">Kode Pos</label>
                         <input type="text" class="form-control" name="kode_pos" id="kode_pos" placeholder="kode_pos">
@@ -51,7 +44,7 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <button class="btn btn-danger mr-3" data-bs-dismiss="modal">Batal</button>
+                        <button class="btn btn-danger mr-3 btn-batal" id="btn-batal">Batal</button>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
@@ -59,4 +52,3 @@
         </div>
     </div>
 </div>
-

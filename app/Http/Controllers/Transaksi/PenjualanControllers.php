@@ -331,10 +331,9 @@ class PenjualanControllers extends Controller
         }
 
         $title = "Tambah Pelanggan";
+        $kota = Indonesia::allCities();
 
-        $lokasi = Lokasi::all();
-
-        return view('components.modal.modal_tambah_pelanggan', compact('title', 'lokasi'));
+        return view('components.modal.modal_tambah_pelanggan', compact('title', 'kota'));
     }
 
     public function tambahPelangganPenjualan(Request $request)
@@ -344,11 +343,11 @@ class PenjualanControllers extends Controller
             'alamat' => 'required|string',
             'telepon' => 'required',
             'id_kota' => 'required|integer',
-            'id_lokasi' => 'required|integer',
             'fax' => 'string|max:255',
             'kode_pos' => 'string|max:255'
         ]);
 
+        $validateData['id_lokasi'] = auth()->user()->id_lokasi;
         $validateData['create_by'] = auth()->id();
         $validateData['last_user'] = auth()->id();
 

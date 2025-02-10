@@ -189,6 +189,23 @@
 @push('js')
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#pelangganmodal').on('shown.bs.modal', function () {
+            $('.id_kota').select2({
+                width: '100%',
+                placeholder: 'Pilih Kota',
+            });
+
+            $("#btn-batal").on("click", function () {
+                $('.modal').modal('hide');
+            });
+
+        });
+    });
+
+</script>
 <script>
     function updateFileName() {
         var input = document.getElementById('customFile');
