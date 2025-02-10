@@ -28,7 +28,7 @@ class BarangControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Barang::all()->where('delete', 0);
+                return Barang::where('delete', 0)->orderBy('created_at', 'desc')->get();
             });
 
             return DataTables::of($data)

@@ -29,7 +29,7 @@ class LokasiControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Lokasi::all()->where('delete', 0);
+                return Lokasi::where('delete', 0)->orderBy('created_at', 'desc')->get();
             });
 
             return DataTables::of($data)

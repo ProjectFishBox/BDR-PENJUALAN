@@ -39,7 +39,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="kode_pos">Kode Pos</label>
-                        <input type="text" class="form-control" name="kode_pos" id="kode_pos" placeholder="kode_pos">
+                        <input type="text" class="form-control" name="kode_pos" id="kode_pos" placeholder="Kode Pos">
                     </div>
                 </div>
                 <div class="form-group">

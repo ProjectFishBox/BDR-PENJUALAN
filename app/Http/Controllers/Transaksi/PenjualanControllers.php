@@ -46,7 +46,7 @@ class PenjualanControllers extends Controller
             $pelangganId = $request->query('pelanggan');
             $daterange = $request->query('daterange');
 
-            $query = Penjualan::with('pelanggan', 'lokasi')->where('delete', 0);
+            $query = Penjualan::with('pelanggan', 'lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
 
             if ($lokasiId) {
                 $query->where('id_lokasi', $lokasiId);

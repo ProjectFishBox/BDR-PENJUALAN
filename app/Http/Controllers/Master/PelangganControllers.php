@@ -37,6 +37,7 @@ class PelangganControllers extends Controller
                 $data = Cache::remember($cacheKey, $cacheDuration, function () {
                     return Pelanggan::with('lokasi')
                         ->where('delete', 0)
+                        ->orderBy('created_at', 'desc')
                         ->get();
                 });
             } else {
@@ -45,6 +46,7 @@ class PelangganControllers extends Controller
                 })
                 ->with('lokasi')
                 ->where('delete', 0)
+                ->orderBy('created_at', 'desc')
                 ->get();
             }
 

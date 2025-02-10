@@ -27,7 +27,7 @@ class AksesControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Akses::with('accessMenus')->where('delete', 0)->get();
+                return Akses::with('accessMenus')->where('delete', 0)->orderBy('created_at', 'desc')->get();
             });
 
             foreach ($data as $aksesItem) {

@@ -36,7 +36,7 @@ class PengeluaranControler extends Controller
             $lokasiId = $request->query('lokasi');
             $daterange = $request->query('daterange');
 
-            $query = Pengeluaran::with('lokasi')->where('delete', 0);
+            $query = Pengeluaran::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
 
             if ($lokasiId) {
                 $query->where('id_lokasi', $lokasiId);

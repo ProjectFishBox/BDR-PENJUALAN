@@ -40,6 +40,7 @@ class SetHargaControllers extends Controller
                 $data = Cache::remember($cacheKey, $cacheDuration, function () {
                     return SetHarga::with('lokasi')
                         ->where('delete', 0)
+                        ->orderBy('created_at', 'desc')
                         ->get();
                 });
             } else {
@@ -48,6 +49,7 @@ class SetHargaControllers extends Controller
                     })
                     ->with('lokasi')
                     ->where('delete', 0)
+                    ->orderBy('created_at', 'desc')
                     ->get();
             }
 

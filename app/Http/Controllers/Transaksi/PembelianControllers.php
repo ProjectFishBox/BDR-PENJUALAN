@@ -32,7 +32,7 @@ class PembelianControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Pembelian::with('lokasi')->where('delete', 0)->get();
+                return Pembelian::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc')->get();
             });
 
             $data->transform(function ($item) {

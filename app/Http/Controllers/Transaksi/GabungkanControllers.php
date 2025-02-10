@@ -29,7 +29,7 @@ class GabungkanControllers extends Controller
         if ($request->ajax()) {
 
             $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Gabungkan::with('lokasi', 'user')->where('delete', 0)->get();
+                return Gabungkan::with('lokasi', 'user')->where('delete', 0)->orderBy('created_at', 'desc')->get();
             });
 
             return DataTables::of($data)
