@@ -26,6 +26,11 @@
         .select2-container .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
         }
+
+        div.dt-container div.dt-length select {
+            padding-left: 25px !important;
+            padding-right: 25px !important
+        }
     </style>
 
 @endpush

@@ -4,22 +4,21 @@
     <div class="card">
         <div class="card-body">
             <h4>{{ $title }}</h4>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center;">
                 <a href="/tambah-pelanggan">
                     <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
                 </a>
 
-                <form id="filterForm" style="display: flex; align-items: center;">
-                    <select name="lokasi" class="lokasi form-control" style="width: 200px; margin-right: 10px;">
+                <form id="filterForm" style="display: flex; align-items: center; margin-left: auto; width:250px">
+                    <select name="lokasi" class="lokasi form-control">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
                             <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
                         @endforeach
                     </select>
-                    <button type="button" style="margin-left: 15px" class="btn btn-secondary" onclick="$('.data-table').DataTable().ajax.reload();">Filter</button>
                 </form>
-
             </div>
+
             <div class="m-t-25">
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover data-table" id="data-table">
