@@ -43,6 +43,10 @@ class PelangganControllers extends Controller
                 ->get();
             }
 
+            foreach ($data as $p) {
+                $p->nama_kota = Indonesia::findCity($p->id_kota)['name'] ?? 'Tidak Diketahui';
+            }
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

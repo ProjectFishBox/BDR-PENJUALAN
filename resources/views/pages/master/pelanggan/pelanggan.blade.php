@@ -87,7 +87,7 @@
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                 { data: 'nama', name: 'nama' },
                 { data: 'alamat', name: 'alamat' },
-                { data: 'id_kota', name: 'id_kota' },
+                { data: 'nama_kota', name: 'nama_kota' },
                 { data: 'kode_pos', name: 'kode_pos' },
                 { data: 'telepon', name: 'telepon' },
                 { data: 'fax', name: 'fax' },
