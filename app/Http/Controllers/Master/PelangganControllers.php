@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\Lokasi;
 use App\Models\Pelanggan;
@@ -22,24 +21,18 @@ class PelangganControllers extends Controller
     public function index(Request $request)
     {
         $title = "List Pelanggan";
-        $cacheKey = 'pelanggan_data';
-        $cacheDuration = now()->addMinutes(3);
 
-        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(3), function () {
-            return Lokasi::all();
-        });
+        $lokasiList = Lokasi::all();
 
         if ($request->ajax()) {
 
             $lokasiId = $request->get('lokasi');
 
             if (!$lokasiId) {
-                $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                    return Pelanggan::with('lokasi')
+                $data = Pelanggan::with('lokasi')
                         ->where('delete', 0)
                         ->orderBy('created_at', 'desc')
                         ->get();
-                });
             } else {
                 $data = Pelanggan::when($lokasiId, function ($query, $lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
@@ -103,8 +96,6 @@ class PelangganControllers extends Controller
 
         Pelanggan::create($validateData);
 
-        Cache::forget('pelanggan_data');
-
         Alert::success('Berhasil Menambahkan data Pelanggan.');
         return redirect('/pelanggan');
     }
@@ -159,8 +150,6 @@ class PelangganControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
-        Cache::forget('pelanggan_data');
-
         Alert::success('Berhasil Merubah data Pelanggan.');
 
         return redirect('/pelanggan');
@@ -178,8 +167,6 @@ class PelangganControllers extends Controller
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
-
-            Cache::forget('pelanggan_data');
 
             Alert::success('Data Lokasi berhasil dihapus.');
 

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
 use App\Models\Lokasi;
@@ -23,14 +22,9 @@ class PenggunaControllers extends Controller
     {
         $title = 'Pengguna';
 
-        $cacheKey = 'pengguna_data';
-        $cacheDuration = now()->addMinutes(3);
-
         if ($request->ajax()) {
 
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return User::with('lokasi', 'akses')->where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = User::with('lokasi', 'akses')->where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -88,8 +82,6 @@ class PenggunaControllers extends Controller
         $validatedData['last_user'] = auth()->id();
 
         User::create($validatedData);
-
-        Cache::forget('pengguna_data');
 
         Alert::success('Berhasil Menambahkan data Pengguna.');
 
@@ -152,8 +144,6 @@ class PenggunaControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
-        Cache::forget('pengguna_data');
-
         Alert::success('Berhasil Merubah data Pengguna.');
 
         return redirect('/pengguna');
@@ -173,8 +163,6 @@ class PenggunaControllers extends Controller
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
-
-            Cache::forget('pengguna_data');
 
             Alert::success('Data Pengguna berhasil dihapus.');
 

@@ -9,7 +9,6 @@ USE RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 
 use App\Models\Pengeluaran;
@@ -25,12 +24,7 @@ class PengeluaranControler extends Controller
     {
         $title = 'List Pengeluaran';
 
-        $cacheKey = 'pengeluaran_data';
-        $cacheDuration = now()->addMinutes(3);
-
-        $lokasiList = Cache::remember('lokasiList', $cacheDuration, function () {
-            return Lokasi::all();
-        });
+        $lokasiList = Lokasi::all();
 
         if ($request->ajax()) {
             $lokasiId = $request->query('lokasi');

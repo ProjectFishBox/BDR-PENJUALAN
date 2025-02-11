@@ -139,10 +139,4 @@ class DashboardControllers extends Controller
         return view('pages.dashboard.index', compact('title', 'lokasi', 'barang'));
     }
 
-    public function clearCache()
-    {
-        Artisan::call('cache:clear');
-
-        return response()->json(['code' => 200, 'success' => 'Cache Berhasil Dibersihkan!']);
-    }
 }

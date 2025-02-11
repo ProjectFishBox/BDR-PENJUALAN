@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Transaksi;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
@@ -23,14 +22,10 @@ class GabungkanControllers extends Controller
     {
         $title = 'List Gabungkan';
 
-        $cacheKey = 'gabungkan_data';
-        $cacheDuration = now()->addMinutes(3);
 
         if ($request->ajax()) {
 
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Gabungkan::with('lokasi', 'user')->where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = Gabungkan::with('lokasi', 'user')->where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -103,8 +98,6 @@ class GabungkanControllers extends Controller
                 'last_user' => auth()->id()
             ]);
         }
-
-        Cache::forget('gabungkan_data');
 
         Alert::success('Berhasil Menambahkan data Gabungkan.');
 
@@ -188,8 +181,6 @@ class GabungkanControllers extends Controller
             ]);
         }
 
-        Cache::forget('gabungkan_data');
-
         Alert::success('Berhasil Merubah data Gabungkan.');
 
         return redirect('/gabungkan');
@@ -212,8 +203,6 @@ class GabungkanControllers extends Controller
             'delete' => 1,
             'last_user' => auth()->id()
         ]);
-
-        Cache::forget('gabungkan_data');
 
         Alert::success('Data Gabungkan berhasil dihapus.');
 

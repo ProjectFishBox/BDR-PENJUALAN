@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\Barang;
 use App\Imports\BarangImport;
@@ -22,14 +21,9 @@ class BarangControllers extends Controller
     {
         $title = 'List Barang';
 
-        $cacheKey = 'barang_data';
-        $cacheDuration = now()->addMinutes(3);
-
         if ($request->ajax()) {
 
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Barang::where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = Barang::where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -83,7 +77,6 @@ class BarangControllers extends Controller
         $validateData['last_user'] = auth()->id();
 
         Barang::create($validateData);
-        Cache::forget('barang_data');
 
         Alert::success('Berhasil Menambahkan data barang.');
         return redirect('/barang');
@@ -131,8 +124,6 @@ class BarangControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
-        Cache::forget('barang_data');
-
         Alert::success('Berhasil Merubah data Barang.');
 
         return redirect('/barang');
@@ -150,9 +141,6 @@ class BarangControllers extends Controller
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
-
-
-            Cache::forget('barang_data');
 
             Alert::success('Data Barang berhasil dihapus.');
 
@@ -209,8 +197,6 @@ class BarangControllers extends Controller
             $filePath = $file->storeAs('files', $fileName);
 
             Excel::import(new BarangImport($userId), $filePath);
-
-            Cache::forget('barang_data');
 
             return response()->json(['code' => 200, 'success' => 'Data berhasil diimpor!']);
         } catch (\Exception $e) {

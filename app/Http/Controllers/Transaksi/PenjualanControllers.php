@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 USE Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
 use Laravolt\Indonesia\Facade as Indonesia;
@@ -31,15 +30,9 @@ class PenjualanControllers extends Controller
     {
         $title = 'List Penjualan';
 
-        $cacheDuration = now()->addMinutes(3);
+        $lokasiList = Lokasi::all();
 
-        $lokasiList = Cache::remember('lokasiList', $cacheDuration, function () {
-            return Lokasi::all();
-        });
-
-        $pelangganList = Cache::remember('pelangganList', $cacheDuration, function () {
-            return Pelanggan::all();
-        });
+        $pelangganList = Pelanggan::all();
 
         if ($request->ajax()) {
             $lokasiId = $request->query('lokasi');
@@ -175,8 +168,6 @@ class PenjualanControllers extends Controller
                 'last_user' => auth()->user()->id
             ]);
         }
-
-        // Cache::forget('pembelian_data');
 
         Alert::success('Berhasil Menambahkan data Penjualan.');
 

@@ -7,7 +7,6 @@ use App\Models\Access_menu;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\Akses;
 use App\Models\Menu;
@@ -21,14 +20,9 @@ class AksesControllers extends Controller
     {
         $title = 'List Akses';
 
-        $cacheKey = 'akses_data';
-        $cacheDuration = now()->addMinutes(3);
-
         if ($request->ajax()) {
 
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Akses::with('accessMenus')->where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = Akses::with('accessMenus')->where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             foreach ($data as $aksesItem) {
                 $totalMenus = Menu::count();
@@ -123,8 +117,6 @@ class AksesControllers extends Controller
             }
         }
 
-        Cache::forget('akses_data');
-
         Alert::success('Berhasil Menambahkan data Akses.');
 
         return redirect('/akses');
@@ -179,7 +171,6 @@ class AksesControllers extends Controller
         }
 
         $akses->menus()->sync($menuData);
-        Cache::forget('akses_data');
 
         Alert::success('Berhasil memperbarui data akses.');
 
@@ -203,8 +194,6 @@ class AksesControllers extends Controller
             ]);
 
             Alert::success('Data Akses berhasil dihapus.');
-
-            Cache::forget('akses_data');
 
             return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
 

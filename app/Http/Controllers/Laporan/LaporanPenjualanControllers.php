@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Laporan;
 use App\Exports\LaporanPenjualanExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;

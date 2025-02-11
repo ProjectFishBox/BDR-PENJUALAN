@@ -46,9 +46,6 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(DashboardControllers::class)->group(function () {
 
         Route::get('/dashboard', 'index')->name('dashboard');
-        Route::get('/clear-cache', 'clearCache')->name('clear-cache');
-
-
     });
 
     Route::controller(ProfileControllers::class)->group(function () {

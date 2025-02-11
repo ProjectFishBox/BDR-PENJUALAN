@@ -13,7 +13,6 @@ use App\Models\Lokasi;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 
 class SetHargaControllers extends Controller
@@ -25,24 +24,17 @@ class SetHargaControllers extends Controller
     {
         $title = 'List Set Harga';
 
-        $cacheKey = 'setharga_data';
-        $cacheDuration = now()->addMinutes(3);
-
-        $lokasiList = Cache::remember('lokasiList', now()->addMinutes(3), function () {
-            return Lokasi::all();
-        });
+        $lokasiList = Lokasi::all();
 
         if ($request->ajax()) {
 
             $lokasiId = $request->get('lokasi');
 
             if (!$lokasiId) {
-                $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                    return SetHarga::with('lokasi')
+                $data = SetHarga::with('lokasi')
                         ->where('delete', 0)
                         ->orderBy('created_at', 'desc')
                         ->get();
-                });
             } else {
                 $data = SetHarga::when($lokasiId, function ($query, $lokasiId) {
                         return $query->where('id_lokasi', $lokasiId);
@@ -135,8 +127,6 @@ class SetHargaControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
-        Cache::forget('setharga_data');
-
         Alert::success('Berhasil Menambahkan data Set Harga.');
         return redirect('/setharga');
     }
@@ -215,9 +205,6 @@ class SetHargaControllers extends Controller
             'last_user' => auth()->id(),
         ]);
 
-        Cache::forget('setharga_data');
-
-
         Alert::success('Berhasil Merubah data SET Harga.');
 
         return redirect('/setharga');
@@ -235,8 +222,6 @@ class SetHargaControllers extends Controller
             'delete' => 1,
             'last_user' => auth()->id()
         ]);
-
-        Cache::forget('setharga_data');
 
         Alert::success('Data Set Harga berhasil dihapus.');
 
@@ -315,8 +300,6 @@ class SetHargaControllers extends Controller
             'status' => $request['status'],
             'last_user' => auth()->id()
         ]);
-
-        Cache::forget('setharga_data');
 
         return response()->json(['success' => true, 'message' => 'Status berhasil diperbarui.']);
     }

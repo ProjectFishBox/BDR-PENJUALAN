@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\Pembelian;
 use App\Models\Barang;
@@ -26,14 +25,10 @@ class PembelianControllers extends Controller
     {
         $title = 'List Pembelian';
 
-        $cacheKey = 'pembelian_data';
-        $cacheDuration = now()->addMinutes(3);
 
         if ($request->ajax()) {
 
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Pembelian::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = Pembelian::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             $data->transform(function ($item) {
                 $item->total = PembelianDetail::where('id_pembelian', $item->id)->sum('subtotal');
@@ -115,8 +110,6 @@ class PembelianControllers extends Controller
                 'last_user' => auth()->id()
             ]);
         }
-
-        Cache::forget('pembelian_data');
 
         Alert::success('Berhasil Menambahkan data Pembelian.');
 
@@ -340,8 +333,6 @@ class PembelianControllers extends Controller
             'delete' => 1,
             'last_user' => auth()->id()
         ]);
-
-        Cache::forget('pembelian_data');
 
         Alert::success('Data Pembelian berhasil dihapus.');
 

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Cache;
 
 use App\Models\Lokasi;
 
@@ -20,32 +19,22 @@ class LokasiControllers extends Controller
      */
     public function index(Request $request)
     {
-
         $title = 'Lokasi';
 
-        $cacheKey = 'lokasi_data';
-        $cacheDuration = now()->addMinutes(3);
-
         if ($request->ajax()) {
-
-            $data = Cache::remember($cacheKey, $cacheDuration, function () {
-                return Lokasi::where('delete', 0)->orderBy('created_at', 'desc')->get();
-            });
+            $data = Lokasi::where('delete', 0)->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn =
-                        '
-                            <button class="btn btn-icon btn-primary btn-lokasi-edit" data-id="' . $row->id . '" type="button" role="button">
-                                <i class="anticon anticon-edit"></i>
-                            </button>
-
-                            <button class="btn btn-icon btn-danger btn-lokasi-delete" data-id="' . $row->id . '" type="button" role="button">
-                                <i class="anticon anticon-delete"></i>
-                            </button>
-                            ';
-                    return $btn;
+                    return '
+                        <button class="btn btn-icon btn-primary btn-lokasi-edit" data-id="' . $row->id . '" type="button" role="button">
+                            <i class="anticon anticon-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger btn-lokasi-delete" data-id="' . $row->id . '" type="button" role="button">
+                            <i class="anticon anticon-delete"></i>
+                        </button>
+                    ';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -53,6 +42,7 @@ class LokasiControllers extends Controller
 
         return view('pages.master.lokasi.lokasi', compact('title'));
     }
+
 
 
     /**
@@ -80,7 +70,6 @@ class LokasiControllers extends Controller
         $validateData['last_user'] = auth()->id();
 
         Lokasi::create($validateData);
-        Cache::forget('lokasi_data');
 
         Alert::success('Berhasil Menambahkan data lokasi.');
         return redirect('/lokasi');
@@ -117,7 +106,6 @@ class LokasiControllers extends Controller
         ]);
 
         $lokasi = Lokasi::findOrFail($id);
-        Cache::forget('lokasi_data');
 
         $lokasi->update([
             'nama' => $request->nama,
@@ -143,8 +131,6 @@ class LokasiControllers extends Controller
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
-
-            Cache::forget('lokasi_data');
 
             Alert::success('Data Lokasi berhasil dihapus.');
 
