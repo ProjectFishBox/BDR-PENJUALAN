@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <div class="d-flex justify-content-end">
-                            <a href="/pengguna" class="btn btn-danger mr-3">Batal</a>
+                            <a href="/pelanggan" class="btn btn-danger mr-3">Batal</a>
                             <button class="btn btn-success" type="submit">Simpan</button>
                         </div>
                     </div>

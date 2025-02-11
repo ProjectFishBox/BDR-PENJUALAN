@@ -16,14 +16,13 @@
                 </div>
 
 
-                <form id="filterForm" style="display: flex; align-items: center;">
-                    <select name="lokasi" class="form-control" style="width: 200px; margin-right: 10px;">
+                <form id="filterForm" style="display: flex; align-items: center; margin-left: auto; width:250px">
+                    <select name="lokasi" class="lokasi form-control" id="lokasi">
                         <option value="">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
                             <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
                         @endforeach
                     </select>
-                    <button type="button" class="btn btn-secondary" onclick="$('.data-table').DataTable().ajax.reload();">Filter</button>
                 </form>
 
             </div>
@@ -61,6 +60,12 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $('.lokasi').select2({
+        width: '100%',
+        placeholder: 'Pilih Lokasi',
+    });
+</script>
 <script>
     function updateFileName() {
         var input = document.getElementById('customFile');

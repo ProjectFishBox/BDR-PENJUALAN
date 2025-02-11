@@ -120,7 +120,7 @@
 
 
                     <div class="d-flex justify-content-end">
-                        <a href="/setharga" class="btn btn-danger mr-3">Batal</a>
+                        <a href="/pembelian" class="btn btn-danger mr-3">Batal</a>
                         <button class="btn btn-success" type="submit">Tambahkan</button>
                     </div>
             </form>
