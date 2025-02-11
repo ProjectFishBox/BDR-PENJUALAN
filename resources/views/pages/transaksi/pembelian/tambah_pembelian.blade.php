@@ -1,6 +1,7 @@
 @extends('components._partials.layout')
 
 @section('content')
+<div class="notification-toast top-right" id="notification-toast"></div>
     <div class="card">
         <div class="card-body">
             <h4 class="mb-3">{{ $title }}</h4>
@@ -100,7 +101,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="bayar_input">Bayar</label>
-                            <input type="text" class="form-control" id="bayar_input" placeholder="Bayar" name="bayar">
+                            <input type="text" class="form-control" id="bayar_input" placeholder="Bayar" name="bayar" required>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="kembali_input">Kembali</label>
@@ -122,7 +123,7 @@
 
                 <div class="d-flex justify-content-end">
                     <a href="/pembelian" class="btn btn-danger mr-3">Batal</a>
-                    <button class="btn btn-success" type="submit">Tambahkan</button>
+                    <button class="btn btn-success" type="submit" id="submitButton">Tambahkan</button>
                 </div>
             </form>
         </div>
@@ -144,6 +145,45 @@
 @component('components.aset_datatable.aset_select2')@endcomponent
 
 @push('js')
+<script>
+    document.getElementById('submitButton').addEventListener('click', function (event) {
+
+        let tableBody = document.querySelector("#table-body tbody");
+        let rows = tableBody.getElementsByTagName("tr");
+
+        if (rows.length === 1) {
+            event.preventDefault();
+            console.log("Toast Harus Muncul!");
+            showToast("Harap tambahkan data terlebih dahulu sebelum submit!");
+        }
+    });
+
+    function showToast(message) {
+
+        var toastHTML = `<div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <i class="anticon anticon-info-circle text-danger m-r-5"></i>
+                <strong class="mr-auto">Peringatan</strong>
+                <small>Baru saja</small>
+                <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">${message}</div>
+        </div>`;
+
+        $('#notification-toast').append(toastHTML);
+
+        let $toast = $('#notification-toast .toast:last-child');
+        console.log("Toast Element:", $toast);
+
+        $toast.toast('show');
+
+        setTimeout(function(){
+            $toast.remove();
+        }, 3000);
+    }
+</script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
