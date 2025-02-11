@@ -120,6 +120,7 @@ class PengeluaranControler extends Controller
         }
         $query = Pengeluaran::query();
 
+
         if ($request->filled('start') && $request->filled('end')) {
             $query->whereBetween('tanggal', [
                 Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
@@ -127,20 +128,28 @@ class PengeluaranControler extends Controller
             ]);
         }
 
+        $daterange = $request->query('daterange');
+
+        if ($daterange) {
+            $dates = explode(' - ', $daterange);
+
+            if (count($dates) === 2) {
+                $startDate = date('Y-m-d', strtotime($dates[0]));
+                $endDate = date('Y-m-d', strtotime($dates[1]));
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            }
+        }
+
         if ($request->filled('lokasi')) {
             $query->where('id_lokasi', $request->lokasi);
         }
 
-        if ($request->filled('search')) {
-            $query->where('uraian', 'like', '%' . $request->search . '%');
-        }
-
-
         $pengeluaran = $query->get();
+
 
         $title = "Detail Pengeluaran";
 
-        return view('components.modal.modal_detail_data_pengeluaran', compact('title', 'pengeluaran'));
+        return view('components.modal.modal_detail_data_pengeluaran', compact('title', 'pengeluaran', 'daterange'));
     }
 
 

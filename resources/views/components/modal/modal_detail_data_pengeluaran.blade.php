@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-center">
                 JL. Tinumbu No.20 Telp (0411) 22099
             </div>
-            <h3 class="text-center">LAPORAN PENGELUARAN MULAI TANGGAL {{ request('start') }} - {{ request('end') }}</h3>
+            <h3 class="text-center">LAPORAN PENGELUARAN MULAI TANGGAL {{ $daterange}}</h3>
 
             <div class="table-responsive mt-4">
                 <table class="table table-bordered table-hover">

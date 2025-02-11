@@ -152,15 +152,14 @@
         e.preventDefault();
         let url = "/modal-detail-pengeluaran";
 
-        const start = $('input[name="start"]').val();
-        const end = $('input[name="end"]').val();
+        const daterange = $('input[name="daterange"]').val();
         const lokasi = $('select[name="lokasi"]').val();
 
         $(this).prop('disabled', true);
 
         $.ajax({
             url: url,
-            data: { start, end, lokasi },
+            data: { daterange, lokasi },
             type: "GET",
             success: function(data) {
                 $('#detailexport').html(data);
