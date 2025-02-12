@@ -27,7 +27,7 @@ class StokExport implements WithEvents
                 $spreadsheet = IOFactory::load($templatePath);
                 $sheet = $spreadsheet->getActiveSheet();
 
-
+                $lokasiId = $this->request->lokasi;
                 $barangMasuk = PembelianDetail::query()
                     ->select([
                         'pembelian_detail.id_barang',
@@ -41,7 +41,7 @@ class StokExport implements WithEvents
                     ->join('pembelian', 'pembelian_detail.id_pembelian', '=', 'pembelian.id')
                     ->join('lokasi', 'pembelian.id_lokasi', '=', 'lokasi.id')
                     ->where('pembelian_detail.delete', 0)
-                    ->when($this->request->filled('lokasi'), fn($query) => $query->where('pembelian.id_lokasi', $this->request->lokasi))
+                    ->when($this->request->filled('lokasi') && $lokasiId !== 'all', fn($query) => $query->where('pembelian.id_lokasi', $this->request->lokasi))
                     ->when($this->request->filled('barang'), fn($query) => $query->where('pembelian_detail.id_barang', $this->request->barang))
                     ->when($this->request->filled('merek'), fn($query) => $query->where('pembelian_detail.merek', $this->request->merek))
                     ->selectRaw('SUM(pembelian_detail.jumlah) as total_masuk')
@@ -62,7 +62,7 @@ class StokExport implements WithEvents
                     ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
                     ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
                     ->where('penjualan_detail.delete', 0)
-                    ->when($this->request->filled('lokasi'), fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
+                    ->when($this->request->filled('lokasi') && $lokasiId !== 'all', fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
                     ->when($this->request->filled('barang'), fn($query) => $query->where('penjualan_detail.id_barang', $this->request->barang))
                     ->when($this->request->filled('merek'), fn($query) => $query->where('penjualan_detail.merek', $this->request->merek))
                     ->selectRaw('SUM(penjualan_detail.jumlah) as total_terjual')

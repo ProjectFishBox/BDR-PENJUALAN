@@ -28,6 +28,7 @@
                         <label for="lokasi">Lokasi</label>
                         <select id="lokasi" class="lokasi form-control" name="lokasi">
                             <option value="">Pilih Lokasi</option>
+                            <option value="all">Semua Lokasi</option>
                             @foreach ($lokasiList as $b)
                                 <option value="{{ $b->id }}" {{ request()->get('lokasi') == $b->id ? 'selected' : '' }}>
                                     {{ $b->nama }}

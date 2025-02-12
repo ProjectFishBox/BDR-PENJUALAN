@@ -29,75 +29,74 @@ class StokControllers extends Controller
         $lokasi = $this->getLokasi();
         $barang = $this->getBarang();
 
+        if ($request->ajax()) {
+            $lokasiId = $request->lokasi;
 
-        if($request->ajax()){
             $barangMasuk = PembelianDetail::query()
-            ->select([
-                'pembelian_detail.id_barang',
-                'pembelian_detail.nama_barang',
-                'pembelian_detail.merek',
-                'barang.kode_barang as kode_barang',
-                'pembelian.id_lokasi',
-                'lokasi.nama'
-            ])
-            ->join('barang', 'pembelian_detail.id_barang', '=', 'barang.id')
-            ->join('pembelian', 'pembelian_detail.id_pembelian', '=', 'pembelian.id')
-            ->join('lokasi', 'pembelian.id_lokasi', '=', 'lokasi.id')
-            ->where('pembelian_detail.delete', 0)
-            ->when($request->filled('lokasi'), function ($query) use ($request) {
-                return $query->where('pembelian.id_lokasi', $request->lokasi);
-            })
-            ->when($request->filled('barang'), function ($query) use ($request) {
-                return $query->where('pembelian_detail.id_barang', $request->barang);
-            })
-            ->when($request->filled('merek'), function ($query) use ($request) {
-                return $query->where('pembelian_detail.merek', $request->merek);
-            })
-            ->selectRaw('SUM(pembelian_detail.jumlah) as total_masuk')
-            ->groupBy([
-                'pembelian_detail.id_barang',
-                'pembelian_detail.nama_barang',
-                'pembelian_detail.merek',
-                'barang.kode_barang',
-                'pembelian.id_lokasi',
-                'lokasi.nama'
-            ])
-            ->get();
+                ->select([
+                    'pembelian_detail.id_barang',
+                    'pembelian_detail.nama_barang',
+                    'pembelian_detail.merek',
+                    'barang.kode_barang as kode_barang',
+                    'pembelian.id_lokasi',
+                    'lokasi.nama'
+                ])
+                ->join('barang', 'pembelian_detail.id_barang', '=', 'barang.id')
+                ->join('pembelian', 'pembelian_detail.id_pembelian', '=', 'pembelian.id')
+                ->join('lokasi', 'pembelian.id_lokasi', '=', 'lokasi.id')
+                ->where('pembelian_detail.delete', 0)
+                ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('pembelian.id_lokasi', $lokasiId);
+                })
+                ->when($request->filled('barang'), function ($query) use ($request) {
+                    return $query->where('pembelian_detail.id_barang', $request->barang);
+                })
+                ->when($request->filled('merek'), function ($query) use ($request) {
+                    return $query->where('pembelian_detail.merek', $request->merek);
+                })
+                ->selectRaw('SUM(pembelian_detail.jumlah) as total_masuk')
+                ->groupBy([
+                    'pembelian_detail.id_barang',
+                    'pembelian_detail.nama_barang',
+                    'pembelian_detail.merek',
+                    'barang.kode_barang',
+                    'pembelian.id_lokasi',
+                    'lokasi.nama'
+                ])
+                ->get();
 
-
-
-        $barangKeluar = PenjualanDetail::query()
-            ->select([
-                'penjualan_detail.id_barang',
-                'penjualan_detail.nama_barang',
-                'penjualan_detail.merek',
-                'barang.kode_barang as kode_barang',
-                'penjualan.id_lokasi',
-                'lokasi.nama'
-            ])
-            ->join('barang', 'penjualan_detail.id_barang', '=', 'barang.id')
-            ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
-            ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
-            ->where('penjualan_detail.delete', 0)
-            ->when($request->filled('lokasi'), function ($query) use ($request) {
-                return $query->where('penjualan.id_lokasi', $request->lokasi);
-            })
-            ->when($request->filled('barang'), function ($query) use ($request) {
-                return $query->where('penjualan_detail.id_barang', $request->barang);
-            })
-            ->when($request->filled('merek'), function ($query) use ($request) {
-                return $query->where('penjualan_detail.merek', $request->merek);
-            })
-            ->selectRaw('SUM(penjualan_detail.jumlah) as total_terjual')
-            ->groupBy([
-                'penjualan_detail.id_barang',
-                'penjualan_detail.nama_barang',
-                'penjualan_detail.merek',
-                'barang.kode_barang',
-                'penjualan.id_lokasi',
-                'lokasi.nama'
-            ])
-            ->get();
+            $barangKeluar = PenjualanDetail::query()
+                ->select([
+                    'penjualan_detail.id_barang',
+                    'penjualan_detail.nama_barang',
+                    'penjualan_detail.merek',
+                    'barang.kode_barang as kode_barang',
+                    'penjualan.id_lokasi',
+                    'lokasi.nama'
+                ])
+                ->join('barang', 'penjualan_detail.id_barang', '=', 'barang.id')
+                ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
+                ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
+                ->where('penjualan_detail.delete', 0)
+                ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('penjualan.id_lokasi', $lokasiId);
+                })
+                ->when($request->filled('barang'), function ($query) use ($request) {
+                    return $query->where('penjualan_detail.id_barang', $request->barang);
+                })
+                ->when($request->filled('merek'), function ($query) use ($request) {
+                    return $query->where('penjualan_detail.merek', $request->merek);
+                })
+                ->selectRaw('SUM(penjualan_detail.jumlah) as total_terjual')
+                ->groupBy([
+                    'penjualan_detail.id_barang',
+                    'penjualan_detail.nama_barang',
+                    'penjualan_detail.merek',
+                    'barang.kode_barang',
+                    'penjualan.id_lokasi',
+                    'lokasi.nama'
+                ])
+                ->get();
 
             $data = $barangMasuk->map(function ($item) use ($barangKeluar) {
                 $terjual = $barangKeluar
@@ -106,8 +105,6 @@ class StokControllers extends Controller
                     ->where('merek', $item->merek)
                     ->where('id_lokasi', $item->id_lokasi)
                     ->first();
-
-
 
                 return [
                     'id_barang' => $item->id_barang,
@@ -122,26 +119,21 @@ class StokControllers extends Controller
                 ];
             })->toArray();
 
-
             $totalMasuk = array_sum(array_column($data, 'total_masuk'));
             $totalKeluar = array_sum(array_column($data, 'total_terjual'));
             $totalStok = array_sum(array_column($data, 'stok_akhir'));
 
-
-
             $namaLokasi = '';
-            if ($request->filled('lokasi')) {
-                $namaLokasi = Lokasi::find($request->lokasi)->nama;
+            if ($request->filled('lokasi') && $lokasiId !== 'all') {
+                $lokasiData = Lokasi::find($lokasiId);
+                $namaLokasi = $lokasiData ? $lokasiData->nama : '';
             }
 
             return response()->json($data);
-
-
         }
 
         return view('pages.laporan.stok.stok', compact('title', 'barang', 'lokasi'));
     }
-
 
     private function getLokasi()
     {
@@ -158,6 +150,9 @@ class StokControllers extends Controller
 
     public function printData(Request $request)
     {
+
+        $lokasiId = $request->lokasi;
+
         $barangMasuk = PembelianDetail::query()
             ->select([
                 'pembelian_detail.id_barang',
@@ -171,9 +166,10 @@ class StokControllers extends Controller
             ->join('pembelian', 'pembelian_detail.id_pembelian', '=', 'pembelian.id')
             ->join('lokasi', 'pembelian.id_lokasi', '=', 'lokasi.id')
             ->where('pembelian_detail.delete', 0)
-            ->when($request->filled('lokasi'), function ($query) use ($request) {
-                return $query->where('pembelian.id_lokasi', $request->lokasi);
+            ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                return $query->where('pembelian.id_lokasi', $lokasiId);
             })
+
             ->when($request->filled('barang'), function ($query) use ($request) {
                 return $query->where('pembelian_detail.id_barang', $request->barang);
             })
@@ -206,8 +202,8 @@ class StokControllers extends Controller
             ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
             ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
             ->where('penjualan_detail.delete', 0)
-            ->when($request->filled('lokasi'), function ($query) use ($request) {
-                return $query->where('penjualan.id_lokasi', $request->lokasi);
+            ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                return $query->where('penjualan.id_lokasi', $lokasiId);
             })
             ->when($request->filled('barang'), function ($query) use ($request) {
                 return $query->where('penjualan_detail.id_barang', $request->barang);
@@ -257,8 +253,9 @@ class StokControllers extends Controller
 
 
         $namaLokasi = '';
-        if ($request->filled('lokasi')) {
-            $namaLokasi = Lokasi::find($request->lokasi)->nama;
+        if ($request->filled('lokasi') && $lokasiId !== 'all') {
+            $lokasiData = Lokasi::find($lokasiId);
+            $namaLokasi = $lokasiData ? $lokasiData->nama : '';
         }
 
         $pdf = Pdf::loadView('components.pdf.stok_pdf', compact('data', 'namaLokasi'))

@@ -41,9 +41,10 @@ class PenjualanControllers extends Controller
 
             $query = Penjualan::with('pelanggan', 'lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
 
-            if ($lokasiId) {
+            if ($lokasiId && $lokasiId !== 'all') {
                 $query->where('id_lokasi', $lokasiId);
             }
+
 
             if ($pelangganId) {
                 $query->where('id_pelanggan', $pelangganId);
