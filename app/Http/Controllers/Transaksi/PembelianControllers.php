@@ -28,7 +28,7 @@ class PembelianControllers extends Controller
 
         if ($request->ajax()) {
 
-            $data = Pembelian::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc')->get();
+            $data = Pembelian::with('lokasi')->where('delete', 0)->orderBy('id', 'desc')->get();
 
             $data->transform(function ($item) {
                 $item->total = PembelianDetail::where('id_pembelian', $item->id)->sum('subtotal');

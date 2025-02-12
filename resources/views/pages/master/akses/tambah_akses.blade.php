@@ -121,7 +121,7 @@
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
-                        <a href="/lokasi" class="btn btn-danger mr-3">Batal</a>
+                        <a href="/akses" class="btn btn-danger mr-3">Batal</a>
                         <button class="btn btn-success" type="submit">Simpan</button>
                     </div>
                 </div>
