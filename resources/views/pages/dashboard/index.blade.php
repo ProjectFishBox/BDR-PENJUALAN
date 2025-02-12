@@ -53,8 +53,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Pembelian</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="total-pembelian">Rp 0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="total-pembelian">Rp 0</h1>
                                 </div>
                             </div>
                         </div>
@@ -65,8 +65,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Pengeluaran</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="total-pengeluaran">Rp 0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="total-pengeluaran">Rp 0</h1>
                                 </div>
                             </div>
                         </div>
@@ -77,8 +77,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Penjualan</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="total-penjualan">Rp 0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="total-penjualan">Rp 0</h1>
                                 </div>
                             </div>
                         </div>
@@ -93,8 +93,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Stok Masuk</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="stok-masuk">0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="stok-masuk">0</h1>
                                 </div>
                             </div>
                         </div>
@@ -105,8 +105,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Stok Keluar</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="stok-keluar">0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="stok-keluar">0</h1>
                                 </div>
                             </div>
                         </div>
@@ -117,8 +117,8 @@
                         <div class="card-body">
                             <p class="m-b-0 ">Sisa Stok</p>
                             <div class="media align-items-center">
-                                <div class="m-l-15">
-                                    <h1 class="m-b-0" style="font-size: 40px" id="sisa-stok">0</h1>
+                                <div class="">
+                                    <h1 class="m-b-0" style="font-size: 35px" id="sisa-stok">0</h1>
                                     <small>Total Nilai Jual </small>
                                 </div>
                             </div>
@@ -126,6 +126,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -135,6 +136,16 @@
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        .card h1 {
+            font-size: clamp(20px, 2vw, 32px);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+    </style>
 @endpush
 
 
@@ -221,7 +232,7 @@
         }
     </script>
 
-<script>
+{{-- <script>
     $(document).ready(function() {
         $('#btn-filter').on('click', function(e) {
             e.preventDefault();
@@ -258,6 +269,6 @@
         });
     })
 
-</script>
+</script> --}}
 
 @endpush
