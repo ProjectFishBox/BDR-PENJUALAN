@@ -42,7 +42,11 @@ class AksesControllers extends Controller
                     return $row->akses_menus;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '
+                    if ($row->id == 1 && $row->nama == "Super Admin") {
+                        return '';
+                    }
+
+                    return '
                         <button class="btn btn-icon btn-primary btn-akses-edit" data-id="' . $row->id . '" type="button" role="button">
                             <i class="anticon anticon-edit"></i>
                         </button>
@@ -50,7 +54,6 @@ class AksesControllers extends Controller
                             <i class="anticon anticon-delete"></i>
                         </button>
                     ';
-                    return $btn;
                 })
                 ->rawColumns(['akses_menu', 'action'])
                 ->make(true);
