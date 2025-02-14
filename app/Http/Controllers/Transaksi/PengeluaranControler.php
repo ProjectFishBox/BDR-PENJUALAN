@@ -32,7 +32,7 @@ class PengeluaranControler extends Controller
 
             $query = Pengeluaran::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
 
-            if ($lokasiId) {
+            if ($lokasiId && $lokasiId !== 'all') {
                 $query->where('id_lokasi', $lokasiId);
             }
 
