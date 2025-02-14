@@ -11,7 +11,6 @@
 
                 <form id="filterForm" style="display: flex; align-items: center; margin-left: auto; width:250px">
                     <select name="lokasi" class="lokasi form-control">
-                        <option value="">Semua Lokasi</option>
                         <option value="all">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
                             <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>

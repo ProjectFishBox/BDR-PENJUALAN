@@ -36,13 +36,13 @@ class SetHargaControllers extends Controller
                         ->orderBy('created_at', 'desc')
                         ->get();
             } else {
-                $data = SetHarga::when($lokasiId, function ($query, $lokasiId) {
-                        return $query->where('id_lokasi', $lokasiId);
-                    })
-                    ->with('lokasi')
-                    ->where('delete', 0)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                $data = SetHarga::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
+
+                if ($lokasiId && $lokasiId !== 'all') {
+                    $data->where('id_lokasi', $lokasiId);
+                }
+
+                $data = $data->get();
             }
 
             return DataTables::of($data)

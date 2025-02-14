@@ -18,11 +18,12 @@
 
                 <form id="filterForm" style="display: flex; align-items: center; margin-left: auto; width:250px">
                     <select name="lokasi" class="lokasi form-control" id="lokasi">
-                        <option value="">Semua Lokasi</option>
+                        <option value="all">Semua Lokasi</option>
                         @foreach ($lokasiList as $lokasi)
                             <option value="{{ $lokasi->id }}">{{ $lokasi->nama }}</option>
                         @endforeach
                     </select>
+                    <button type="submit" class="btn btn-primary m-l-5">Filter</button>
                 </form>
 
             </div>
@@ -76,7 +77,12 @@
 <script>
     $(document).ready(function() {
         dataStHarga();
+
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            reloadTable();
         });
+    });
 
     function reloadTable() {
         $('#data-table').DataTable().clear().destroy();
@@ -158,10 +164,6 @@
                     searchable: false
                 },
             ]
-        });
-
-        $('select[name="lokasi"], input[name="search"]').on('change keyup', function () {
-            table.ajax.reload();
         });
     }
 
