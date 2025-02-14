@@ -32,25 +32,28 @@ class LaporanPenjualanControllers extends Controller
 
         if ($request->ajax()) {
             $lokasiId = $request->lokasi;
+            $pelangganId = $request->pelanggan;
+            $barangId = $request->barang;
+            $notaId = $request->no_nota;
 
             $query = Penjualan::with(['detail.barang', 'pelanggan'])
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
                 })
-                ->when($request->input('pelanggan'), function ($query) use ($request) {
-                    return $query->where('id_pelanggan', $request->input('pelanggan'));
+                ->when($request->input('pelanggan') && $pelangganId !== 'all', function ($query) use ($pelangganId) {
+                    return $query->where('id_pelanggan', $pelangganId);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
                 })
-                ->when($request->input('barang'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('id_barang', $request->input('barang'));
+                ->when($request->input('barang') && $barangId !== 'all', function ($query) use ($barangId) {
+                    return $query->whereHas('detail', function ($q) use ($barangId) {
+                        $q->where('id_barang', $barangId);
                     });
                 })
-                ->when($request->input('no_nota'), function ($query) use ($request) {
-                    return $query->where('no_nota', $request->input('no_nota'));
+                ->when($request->input('no_nota') && $notaId !== 'all', function ($query) use ($notaId) {
+                    return $query->where('no_nota', $notaId);
                 });
 
             $data = $query->get()->map(function ($item) {
@@ -88,24 +91,29 @@ class LaporanPenjualanControllers extends Controller
     {
         try {
 
+            $lokasiId = $request->lokasi;
+            $pelangganId = $request->pelanggan;
+            $barangId = $request->barang;
+            $notaId = $request->no_nota;
+
             $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
                 ->when($request->filled('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->daterange);
                     return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
                 })
-                ->when($request->filled('pelanggan'), function ($query) use ($request) {
-                    return $query->where('id_pelanggan', $request->pelanggan);
+                ->when($request->filled('pelanggan') && $pelangganId !== 'all', function ($query) use ($pelangganId) {
+                    return $query->where('id_pelanggan', $pelangganId);
                 })
-                ->when($request->filled('lokasi') && $request->lokasi !== 'all', function ($query) use ($request) {
-                    return $query->where('id_lokasi', $request->lokasi);
+                ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('id_lokasi', $lokasiId);
                 })
-                ->when($request->filled('barang'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('id_barang', $request->barang);
+                ->when($request->filled('barang') && $barangId !== 'all', function ($query) use ($barangId) {
+                    return $query->whereHas('detail', function ($q) use ($barangId) {
+                        $q->where('id_barang', $barangId);
                     });
                 })
-                ->when($request->filled('no_nota'), function ($query) use ($request) {
-                    return $query->where('no_nota', $request->no_nota);
+                ->when($request->filled('no_nota') && $notaId !== 'all', function ($query) use ($notaId) {
+                    return $query->where('no_nota', $notaId);
                 });
 
             $data = $query->get()->map(function ($item) {

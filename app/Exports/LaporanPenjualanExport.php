@@ -37,18 +37,18 @@ class LaporanPenjualanExport implements WithEvents
                         $dates = explode(' - ', $this->request->daterange);
                         return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
                     })
-                    ->when($this->request->filled('pelanggan'), function ($query) {
+                    ->when($this->request->filled('pelanggan') && $this->request->pelanggan != 'all', function ($query) {
                         return $query->where('id_pelanggan', $this->request->pelanggan);
                     })
                     ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', function ($query) {
                         return $query->where('id_lokasi', $this->request->lokasi);
                     })
-                    ->when($this->request->filled('barang'), function ($query) {
+                    ->when($this->request->filled('barang') && $this->request->barang != 'all' , function ($query) {
                         return $query->whereHas('detail', function ($q) {
                             $q->where('id_barang', $this->request->barang);
                         });
                     })
-                    ->when($this->request->filled('no_nota'), function ($query) {
+                    ->when($this->request->filled('no_nota') && $this->request->no_nota != 'all', function ($query) {
                         return $query->where('no_nota', $this->request->no_nota);
                     });
 

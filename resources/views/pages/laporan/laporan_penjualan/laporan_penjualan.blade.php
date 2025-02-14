@@ -15,6 +15,7 @@
                     <label for="pelanggan">Pelanggan</label>
                     <select id="pelanggan" class="pelanggan" name="pelanggan">
                         <option value="">Pilih Pelanggan</option>
+                        <option value="all">Semua Pelanggan</option>
                         @foreach ($pelanggan as $p)
                             <option value="{{ $p->id }}">
                                 {{ $p->nama }}
@@ -41,6 +42,7 @@
                     <label for="inputPassword4">Barang</label>
                     <select id="barang" class="barang" name="barang">
                         <option value="">Pilih Barang</option>
+                        <option value="all">Semua Barang</option>
                         @foreach ($barang->unique('kode_barang') as $b)
                             <option value="{{ $b->id }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-nama="{{ $b->nama }}">
                                 ({{$b->kode_barang}}) {{ $b->nama }}
@@ -55,6 +57,7 @@
                     <label for="inputEmail4">No Nota</label>
                     <select id="no_nota" class="no_nota" name="no_nota">
                         <option value="">Pilih Nota</option>
+                        <option value="all">Semua Nota</option>
                         @foreach ($noNota as $n)
                             <option value="{{ $n->no_nota }}">
                                 {{ $n->no_nota }}
