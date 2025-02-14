@@ -40,7 +40,7 @@ class LaporanPenjualanExport implements WithEvents
                     ->when($this->request->filled('pelanggan'), function ($query) {
                         return $query->where('id_pelanggan', $this->request->pelanggan);
                     })
-                    ->when($this->request->filled('lokasi'), function ($query) {
+                    ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', function ($query) {
                         return $query->where('id_lokasi', $this->request->lokasi);
                     })
                     ->when($this->request->filled('barang'), function ($query) {

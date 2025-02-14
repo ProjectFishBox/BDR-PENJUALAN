@@ -31,6 +31,8 @@ class LaporanPenjualanControllers extends Controller
 
 
         if ($request->ajax()) {
+            $lokasiId = $request->lokasi;
+
             $query = Penjualan::with(['detail.barang', 'pelanggan'])
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
@@ -39,8 +41,8 @@ class LaporanPenjualanControllers extends Controller
                 ->when($request->input('pelanggan'), function ($query) use ($request) {
                     return $query->where('id_pelanggan', $request->input('pelanggan'));
                 })
-                ->when($request->input('lokasi'), function ($query) use ($request) {
-                    return $query->where('id_lokasi', $request->input('lokasi'));
+                ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('id_lokasi', $lokasiId);
                 })
                 ->when($request->input('barang'), function ($query) use ($request) {
                     return $query->whereHas('detail', function ($q) use ($request) {
@@ -85,6 +87,7 @@ class LaporanPenjualanControllers extends Controller
     public function printData(Request $request)
     {
         try {
+
             $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
                 ->when($request->filled('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->daterange);
@@ -93,7 +96,7 @@ class LaporanPenjualanControllers extends Controller
                 ->when($request->filled('pelanggan'), function ($query) use ($request) {
                     return $query->where('id_pelanggan', $request->pelanggan);
                 })
-                ->when($request->filled('lokasi'), function ($query) use ($request) {
+                ->when($request->filled('lokasi') && $request->lokasi !== 'all', function ($query) use ($request) {
                     return $query->where('id_lokasi', $request->lokasi);
                 })
                 ->when($request->filled('barang'), function ($query) use ($request) {

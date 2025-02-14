@@ -59,22 +59,25 @@ class LaporanPembelianExport implements WithEvents
 
                 $data = $query->get();
                 $startRow = 6;
+                $currentRow = $startRow;
                 $totalAmount = 0;
                 $totalQty = 0;
 
                 foreach ($data as $key => $item) {
-                    $row = $startRow + $key;
-                    $sheet->setCellValue("A$row", $item->no_nota);
-                    $sheet->setCellValue("B$row", $item->tanggal);
-                    $sheet->setCellValue("C$row", $item->kode_barang);
-                    $sheet->setCellValue("D$row", $item->nama_barang);
-                    $sheet->setCellValue("E$row", $item->merek);
-                    $sheet->setCellValue("F$row", $item->harga);
-                    $sheet->setCellValue("G$row", $item->jumlah);
-                    $sheet->setCellValue("H$row", $item->total);
+                    // $row = $startRow + $key;
+                    $sheet->setCellValue("A$currentRow", $item->no_nota);
+                    $sheet->setCellValue("B$currentRow", $item->tanggal);
+                    $sheet->setCellValue("C$currentRow", $item->kode_barang);
+                    $sheet->setCellValue("D$currentRow", $item->nama_barang);
+                    $sheet->setCellValue("E$currentRow", $item->merek);
+                    $sheet->setCellValue("F$currentRow", $item->harga);
+                    $sheet->setCellValue("G$currentRow", $item->jumlah);
+                    $sheet->setCellValue("H$currentRow", $item->total);
 
                     $totalAmount += $item->total;
                     $totalQty += $item->jumlah;
+
+                    $currentRow++;
                 }
 
                 $totalRow = $startRow + count($data);
