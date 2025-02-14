@@ -39,9 +39,9 @@ class DashboardControllers extends Controller
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
                 })
-                ->when($request->input('barang'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('id_barang', $request->input('barang'));
+                ->when($request->input('barang')  && $barangNama !== 'all', function ($query) use ($barangNama) {
+                    return $query->whereHas('detail', function ($q) use ($barangNama) {
+                        $q->where('id_barang', $barangNama);
                     });
                 })
                 ->when($request->filled('merek'), function ($query) use ($request) {
@@ -61,9 +61,9 @@ class DashboardControllers extends Controller
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
                 })
-                ->when($request->input('barang'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('id_barang', $request->input('barang'));
+                ->when($request->input('barang')  && $barangNama !== 'all', function ($query) use ($barangNama) {
+                    return $query->whereHas('detail', function ($q) use ($barangNama) {
+                        $q->where('id_barang', $barangNama);
                     });
                 })
                 ->when($request->filled('merek'), function ($query) use ($request) {
@@ -91,11 +91,11 @@ class DashboardControllers extends Controller
                     $dates = explode(' - ', $request->input('daterange'));
                     return $query->whereBetween('pembelian.tanggal', [trim($dates[0]), trim($dates[1])]);
                 })
-                ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($request) {
-                    return $query->where('pembelian.id_lokasi', $request->input('lokasi'));
+                ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('pembelian.id_lokasi', $lokasiId);
                 })
-                ->when($request->input('barang'), function ($query) use ($request) {
-                    return $query->where('pembelian_detail.id_barang', $request->input('barang'));
+                ->when($request->input('barang') && $barangNama !== 'all', function ($query) use ($barangNama) {
+                    return $query->where('pembelian_detail.id_barang', $barangNama);
                 })
                 ->when($request->input('merek'), function ($query) use ($request) {
                     return $query->where('pembelian_detail.merek', $request->input('merek'));
@@ -113,8 +113,8 @@ class DashboardControllers extends Controller
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('penjualan.id_lokasi', $lokasiId);
                 })
-                ->when($request->input('barang'), function ($query) use ($request) {
-                    return $query->where('penjualan_detail.id_barang', $request->input('barang'));
+                ->when($request->input('barang')  && $barangNama !== 'all', function ($query) use ($barangNama) {
+                    return $query->where('penjualan_detail.id_barang', $barangNama);
                 })
                 ->when($request->input('merek'), function ($query) use ($request) {
                     return $query->where('penjualan_detail.merek', $request->input('merek'));

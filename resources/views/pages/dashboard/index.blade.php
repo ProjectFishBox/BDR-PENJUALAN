@@ -29,6 +29,7 @@
                         <label for="inputPassword4">Barang</label>
                         <select id="nama_barang" class="barang form-control">
                             <option value="">Pilih Barang</option>
+                            <option value="all">Semua Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
                                 <option value="{{ $b->id }}" data-id="{{ $b->id }}"
                                     data-nama="{{ $b->nama }}" data-harga="{{ $b->harga }}"
@@ -233,7 +234,7 @@
         }
     </script>
 
-{{-- <script>
+<script>
     $(document).ready(function() {
         $('#btn-filter').on('click', function(e) {
             e.preventDefault();
@@ -270,6 +271,6 @@
         });
     })
 
-</script> --}}
+</script>
 
 @endpush
