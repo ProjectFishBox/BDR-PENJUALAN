@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-body">
             <h4>{{ $title }}</h4>
-            <form action="{{ url()->current() }}" method="GET">
+            <form id="filterForm">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <a href="/tambah-penjualan" class="btn btn-primary m-r-5 mt-2 mb-2" >Tambah</a>
                 </div>
@@ -16,6 +16,7 @@
                         <label for="pelanggan">Pelanggan</label>
                         <select id="pelanggan" class="pelanggan form-control" name="pelanggan">
                             <option value="">Pilih Pelanggan</option>
+                            <option value="all">Semua Pelanggan</option>
                             @foreach ($pelangganList as $p)
                                 <option value="{{ $p->id }}" {{ request()->get('pelanggan') == $p->id ? 'selected' : '' }}>
                                     {{ $p->nama }}
@@ -95,7 +96,13 @@
 <script>
     $(document).ready(function() {
         dataPenjualan();
+
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            reloadTable();
         });
+
+    });
 
     function reloadTable() {
         $('#data-table').DataTable().clear().destroy();
@@ -141,10 +148,6 @@
                 },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
-        });
-
-        $('select[name="lokasi"],select[name="pelanggan"], input[name="daterange"]').on('change keyup', function () {
-            table.ajax.reload();
         });
     }
 

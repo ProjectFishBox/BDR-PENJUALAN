@@ -46,7 +46,7 @@ class PenjualanControllers extends Controller
             }
 
 
-            if ($pelangganId) {
+            if ($pelangganId && $lokasiId !== 'all') {
                 $query->where('id_pelanggan', $pelangganId);
 
             }
