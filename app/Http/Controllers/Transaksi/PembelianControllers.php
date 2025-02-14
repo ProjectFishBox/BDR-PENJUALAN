@@ -24,11 +24,32 @@ class PembelianControllers extends Controller
     public function index(Request $request)
     {
         $title = 'List Pembelian';
+        $lokasi = Lokasi::all();
 
 
         if ($request->ajax()) {
 
-            $data = Pembelian::with('lokasi')->where('delete', 0)->orderBy('id', 'desc')->get();
+            $lokasiId = $request->query('lokasi');
+            $daterange = $request->query('daterange');
+
+            $query = Pembelian::with('lokasi')->where('delete', 0)->orderBy('id', 'desc');
+
+            if ($lokasiId && $lokasiId !== 'all') {
+                $query->where('id_lokasi', $lokasiId);
+            }
+
+            if ($daterange) {
+                $dates = explode(' - ', $daterange);
+
+                if (count($dates) === 2) {
+                    $startDate = date('Y-m-d', strtotime($dates[0]));
+                    $endDate = date('Y-m-d', strtotime($dates[1]));
+                    $query->whereBetween('tanggal', [$startDate, $endDate]);
+                }
+            }
+
+
+            $data = $query->get();
 
             $data->transform(function ($item) {
                 $item->total = PembelianDetail::where('id_pembelian', $item->id)->sum('subtotal');
@@ -54,7 +75,7 @@ class PembelianControllers extends Controller
                 ->make(true);
         }
 
-        return view('pages.transaksi.pembelian.pembelian', compact('title'));
+        return view('pages.transaksi.pembelian.pembelian', compact('title', 'lokasi'));
     }
 
     /**

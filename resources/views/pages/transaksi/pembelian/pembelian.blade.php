@@ -4,15 +4,30 @@
     <div class="card">
         <div class="card-body">
             <h4>{{ $title}}</h4>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <!-- Tombol Tambah -->
-                <div>
-                    <a href="/tambah-pembelian">
-                        <button class="btn btn-primary m-r-5 mt-2 mb-2">Tambah</button>
-                    </a>
+            <form id="filterForm">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <a href="/tambah-pembelian" class="btn btn-primary m-r-5 mt-2 mb-2" >Tambah</a>
                 </div>
 
-            </div>
+                <div class="d-flex align-items-center m-2 mt-3">
+                    <input type="text" class="form-control" id="daterange" name="daterange" placeholder="Pilih Tanggal" value="{{ request()->get('daterange') }}" />
+
+                    <div class="form-group col-md-4 ml-3">
+                        <label for="lokasi">Lokasi</label>
+                        <select id="lokasi" class="lokasi form-control" name="lokasi">
+                            <option value="">Pilih Lokasi</option>
+                            <option value="all">Semua Lokasi</option>
+                            @foreach ($lokasi as $b)
+                                <option value="{{ $b->id }}" {{ request()->get('lokasi') == $b->id ? 'selected' : '' }}>
+                                    {{ $b->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button class="btn btn-default ml-3 mr-3" type="submit">Filter</button>
+                </div>
+            </form>
+
             <div class="m-t-25">
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover data-table" id="data-table"">
@@ -44,13 +59,51 @@
 
 @component('components.aset_datatable.aset_datatable')@endcomponent
 
+@push('css')
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+@endpush
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+    $('.lokasi').select2({
+        width: '100%',
+        placeholder: 'Pilih Lokasi',
+    });
+</script>
+
+<script>
+    $(function() {
+        $('#daterange').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            },
+            autoUpdateInput: false
+        });
+
+        $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+        });
+
+        $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
         dataPembelian();
-        });
+
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            reloadTable();
+        })
+
+    });
 
     function reloadTable() {
         $('#data-table').DataTable().clear().destroy();
@@ -64,7 +117,13 @@
         let table = $('.data-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('pembelian') }}",
+            ajax: {
+                url: "{{ route('pembelian') }}",
+                data: function (d) {
+                    d.lokasi = $('select[name="lokasi"]').val();
+                    d.daterange = $('input[name="daterange"]').val();
+                }
+            },
             lengthMenu: [
                 10, 20
             ],
