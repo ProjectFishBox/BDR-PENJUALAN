@@ -16,8 +16,6 @@ class PelangganControllers extends Controller
     /**
      * Display a listing of the resource.
      */
-
-
     public function index(Request $request)
     {
         $title = "List Pelanggan";
@@ -34,13 +32,14 @@ class PelangganControllers extends Controller
                         ->orderBy('created_at', 'desc')
                         ->get();
             } else {
-                $data = Pelanggan::when($lokasiId, function ($query, $lokasiId) {
-                    return $query->where('id_lokasi', $lokasiId);
-                })
-                ->with('lokasi')
-                ->where('delete', 0)
-                ->orderBy('created_at', 'desc')
-                ->get();
+                $query = Pelanggan::with('lokasi')->where('delete', 0)->orderBy('created_at', 'desc');
+
+                if ($lokasiId && $lokasiId !== 'all') {
+                    $query->where('id_lokasi', $lokasiId);
+                }
+
+                $data = $query->get();
+
             }
 
             foreach ($data as $p) {
