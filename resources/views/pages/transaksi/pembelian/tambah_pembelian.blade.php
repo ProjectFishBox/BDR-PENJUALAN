@@ -67,7 +67,7 @@
                         <button class="btn btn-danger m-r-5 btn-import" id="btn-import">Import</button>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <a href="/setharga" class="btn btn-danger mr-3">Batal</a>
+                        <button class="btn btn-danger mr-3"  type="button" id="resetButton">Batal</button>
                         <button class="btn btn-success" type="submit">Tambahkan</button>
                     </div>
                 </div>
@@ -145,6 +145,19 @@
 @component('components.aset_datatable.aset_select2')@endcomponent
 
 @push('js')
+
+<script>
+    document.getElementById('resetButton').addEventListener('click', function() {
+        document.getElementById('nama_barang').value = '';
+        document.getElementById('kode_barang').value = '';
+        document.getElementById('harga').value = '';
+        document.getElementById('jumlah').value = '';
+        document.getElementById('sub_total').value = '';
+        $('#nama_barang').select2().val(null).trigger('change');
+        $('#merek').select2().val(null).trigger('change');
+    });
+</script>
+
 <script>
     document.getElementById('submitButton').addEventListener('click', function (event) {
 
