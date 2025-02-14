@@ -29,6 +29,7 @@
                     <label for="merek">Merek</label>
                     <select id="merek" class="merek form-control" name="merek" required>
                         <option value="">Pilih Merek</option>
+                        <option value="all">Semua Merek</option>
                         @foreach ($barang->unique('merek') as $b)
                             <option value="{{$b->merek}}">{{ $b->merek}}</option>
                         @endforeach

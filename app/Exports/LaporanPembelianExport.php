@@ -53,7 +53,7 @@ class LaporanPembelianExport implements WithEvents
                     $query->where('p.id_lokasi', $this->request->lokasi);
                 }
 
-                if ($this->request->filled('merek')) {
+                if ($this->request->filled('merek') && $this->request->merek != 'all') {
                     $query->where('dp.merek', $this->request->merek);
                 }
 

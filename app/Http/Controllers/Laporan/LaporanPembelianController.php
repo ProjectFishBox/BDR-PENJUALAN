@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Laporan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-
-
 
 use App\Models\Barang;
 use App\Models\Lokasi;
@@ -32,19 +28,19 @@ class LaporanPembelianController extends Controller
 
         if ($request->ajax()) {
             $lokasiId = $request->lokasi;
+            $merekId = $request->merek;
 
-            $query = Pembelian::with(['detail.barang'])
+            $query = Pembelian::with(['detail' => function ($query) use ($merekId) {
+                if ($merekId !== 'all') {
+                    $query->where('merek', $merekId);
+                }
+            }, 'detail.barang'])
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
-                })
-                ->when($request->input('merek'), function ($query) use ($request) {
-                    return $query->whereHas('detail', function ($q) use ($request) {
-                        $q->where('merek', $request->input('merek'));
-                    });
                 });
 
             $data = $query->get()->map(function ($item) {
@@ -102,7 +98,7 @@ class LaporanPembelianController extends Controller
                 $query->where('p.id_lokasi', $request->lokasi);
             }
 
-            if ($request->filled('merek')) {
+            if ($request->filled('merek') && $request->merek != 'all') {
                 $query->where('dp.merek', $request->merek);
             }
 
@@ -138,7 +134,10 @@ class LaporanPembelianController extends Controller
 
             $namaLokasi = '';
             if ($request->filled('lokasi')) {
-                $namaLokasi = Lokasi::find($request->lokasi)->nama;
+                $lokasi = Lokasi::find($request->lokasi);
+                if ($lokasi) {
+                    $namaLokasi = $lokasi->nama;
+                }
             }
 
             $tanggalRequest = $request->daterange;
