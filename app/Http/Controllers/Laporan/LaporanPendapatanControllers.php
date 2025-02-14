@@ -58,6 +58,10 @@ class LaporanPendapatanControllers extends Controller
             ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                 return $query->where('penjualan.id_lokasi', $lokasiId);
             })
+            ->when($request->filled('daterange'), function ($query) use ($request) {
+                $dates = explode(' - ', $request->input('daterange'));
+                return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+            })
             ->get()
             ->groupBy(function ($item) {
                 return $item->tanggal . '-' . $item->id_barang . '-' . $item->kode_barang . '-' . $item->merek . '-' . $item->harga;
@@ -132,6 +136,10 @@ class LaporanPendapatanControllers extends Controller
             ->where('penjualan_detail.delete', 0)
             ->when($request->filled('lokasi') && $request->lokasi != 'all', function ($query) use ($request) {
                 return $query->where('penjualan.id_lokasi', $request->lokasi);
+            })
+            ->when($request->filled('daterange'), function ($query) use ($request) {
+                $dates = explode(' - ', $request->input('daterange'));
+                return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
             })
             ->get()
             ->groupBy(function ($item) {
