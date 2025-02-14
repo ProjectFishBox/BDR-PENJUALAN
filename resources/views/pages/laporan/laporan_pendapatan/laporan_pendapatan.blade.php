@@ -18,6 +18,7 @@
                 <label for="lokasi">Lokasi</label>
                 <select id="lokasi" class="select2 lokasi" name="lokasi">
                     <option value="">Pilih Lokasi</option>
+                    <option value="all">Semua Lokasi</option>
                     @foreach ($lokasi as $l)
                         <option value="{{ $l->id }}">
                             {{ $l->nama }}

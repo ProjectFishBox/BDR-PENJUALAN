@@ -65,7 +65,7 @@ class PendapatanExport implements WithEvents
                     ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
                     ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
                     ->where('penjualan_detail.delete', 0)
-                    ->when($this->request->filled('lokasi'), fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
+                    ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
                     ->get()
                     ->groupBy(function ($item) {
                         return $item->tanggal . '-' . $item->id_barang . '-' . $item->kode_barang . '-' . $item->merek . '-' . $item->harga;
