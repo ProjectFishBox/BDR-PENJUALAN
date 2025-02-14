@@ -23,6 +23,7 @@
                     <label for="barang">Barang</label>
                     <select id="barang" class="barang" name="barang">
                         <option value="">Pilih Barang</option>
+                        <option value="all">Semua Barang</option>
                         @foreach ($barang->unique('kode_barang') as $b)
                             <option value="{{ $b->id }}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-nama="{{ $b->nama }}">
                                 ({{$b->kode_barang}}) {{ $b->nama }}
