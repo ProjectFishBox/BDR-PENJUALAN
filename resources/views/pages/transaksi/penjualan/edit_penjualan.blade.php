@@ -96,7 +96,7 @@
                         <input type="text" id="sub_total" readonly class="form-control-plaintext" style="font-size: x-large;">
                     </div>
                     <div class="form-group mt-2 " style="gap: 10px;">
-                        <a href="/setharga" class="btn btn-danger">Batal</a>
+                        <button class="btn btn-danger mr-3"  type="button" id="resetButton">Batal</button>
                         <button class="btn btn-success" type="submit">Tambahkan</button>
                     </div>
                 </div>
@@ -186,6 +186,19 @@
 @endpush
 
 @push('js')
+<script>
+    document.getElementById('resetButton').addEventListener('click', function() {
+        document.getElementById('nama_barang').value = '';
+        document.getElementById('kode_barang').value = '';
+        document.getElementById('diskon').value = '';
+        document.getElementById('jumlah').value = '';
+        document.getElementById('sub_total').value = '';
+        $('#nama_barang').select2().val(null).trigger('change');
+        $('#merek').select2().val(null).trigger('change');
+        $('#harga').val('');
+    });
+</script>
+
 <script>
     function updateFileName() {
         var input = document.getElementById('customFile');
