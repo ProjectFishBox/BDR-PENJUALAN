@@ -31,13 +31,15 @@ class LaporanPembelianController extends Controller
         $lokasi = Lokasi::all();
 
         if ($request->ajax()) {
+            $lokasiId = $request->lokasi;
+
             $query = Pembelian::with(['detail.barang'])
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
                 })
-                ->when($request->input('lokasi'), function ($query) use ($request) {
-                    return $query->where('id_lokasi', $request->input('lokasi'));
+                ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('id_lokasi', $lokasiId);
                 })
                 ->when($request->input('merek'), function ($query) use ($request) {
                     return $query->whereHas('detail', function ($q) use ($request) {
@@ -96,7 +98,7 @@ class LaporanPembelianController extends Controller
                 $query->whereBetween('p.tanggal', [$startDate, $endDate]);
             }
 
-            if ($request->filled('lokasi')) {
+            if ($request->filled('lokasi') && $request->lokasi != 'all') {
                 $query->where('p.id_lokasi', $request->lokasi);
             }
 

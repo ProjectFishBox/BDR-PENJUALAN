@@ -49,7 +49,7 @@ class LaporanPembelianExport implements WithEvents
                     $query->whereBetween('p.tanggal', [$startDate, $endDate]);
                 }
 
-                if ($this->request->filled('lokasi')) {
+                if ($this->request->filled('lokasi') && $this->request->lokasi != 'all') {
                     $query->where('p.id_lokasi', $this->request->lokasi);
                 }
 
