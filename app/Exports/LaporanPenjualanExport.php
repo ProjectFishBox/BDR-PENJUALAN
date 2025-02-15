@@ -111,7 +111,7 @@ class LaporanPenjualanExport implements WithEvents
                 $sheet->getStyle("J$currentRow")->getFont()->setBold(true);
                 $sheet->setCellValue("K$currentRow", $totalBayar);
                 $sheet->getStyle("K$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("L$currentRow", $sisa);
+                $sheet->setCellValue("L$currentRow", $totalSisa);
                 $sheet->getStyle("L$currentRow")->getFont()->setBold(true);
 
 
