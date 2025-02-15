@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\DataTables;
 use Laravolt\Indonesia\Facade as Indonesia;
+use Illuminate\Support\Facades\Log;
 
 
 use App\Models\Lokasi;
@@ -46,7 +47,7 @@ class PenjualanControllers extends Controller
             }
 
 
-            if ($pelangganId && $lokasiId !== 'all') {
+            if ($pelangganId && $pelangganId !== 'all') {
                 $query->where('id_pelanggan', $pelangganId);
 
             }
@@ -328,36 +329,41 @@ class PenjualanControllers extends Controller
         return view('components.modal.modal_tambah_pelanggan', compact('title', 'kota'));
     }
 
-    public function tambahPelangganPenjualan(Request $request)
-    {
-        $validateData = $request->validate([
-            'nama' => 'required|string|max:255',
-            'alamat' => 'required|string',
-            'telepon' => 'required',
-            'id_kota' => 'required|integer',
-            'fax' => 'string|max:255',
-            'kode_pos' => 'string|max:255'
-        ]);
+   public function tambahPelangganPenjualan(Request $request)
+{
+    $validateData = $request->validate([
+        'nama' => 'required|string|max:255',
+        'alamat' => 'required|string',
+        'telepon' => 'required',
+        'id_kota' => 'required|integer',
+        'fax' => 'nullable|string|max:255',
+        'kode_pos' => 'nullable|string|max:255'
+    ]);
 
-        $validateData['id_lokasi'] = auth()->user()->id_lokasi;
-        $validateData['create_by'] = auth()->id();
-        $validateData['last_user'] = auth()->id();
-
+    $validateData['id_lokasi'] = auth()->user()->id_lokasi;
+    $validateData['create_by'] = auth()->id();
+    $validateData['last_user'] = auth()->id();
+      $validateData['fax'] = $validateData['fax'] ?? '';
+      $validateData['kode_pos'] = $validateData['kode_pos'] ?? '';
+    try {
         $pelanggan = Pelanggan::create($validateData);
-
         session()->flash('new_pelanggan', [
             'id' => $pelanggan->id,
             'nama' => $pelanggan->nama,
             'alamat' => $pelanggan->alamat,
             'kota' => $pelanggan->kota->nama ?? '',
             'telepon' => $pelanggan->telepon,
+            'fax' => $pelanggan->fax,
+            'kode_pos' => $pelanggan->kode_pos,
         ]);
 
         toast('Data Pelanggan berhasil ditambahkan', 'success');
-
-        return redirect()->route('tambah-penjualan');
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors('Gagal menambahkan pelanggan.');
     }
 
+    return redirect()->route('tambah-penjualan');
+}
     public function PelanggalDetail($id)
     {
         $pelanggan = Pelanggan::with('kota')->find($id);
