@@ -315,9 +315,12 @@
                     method: 'POST',
                     data: formData,
                     success: function (response) {
-                        $('#pelanggan').append(
-                            `<option value="${response.id}" selected>${response.nama}</option>`
-                        );
+                        if ($("#pelanggan option[value='" + response.id + "']").length === 0) {
+                            $('#pelanggan').append(
+                                `<option value="${response.id}">${response.nama}</option>`
+                            );
+                        }
+                        $('#pelanggan').val(response.id).trigger('change');
 
                         $('#alamat').val(response.alamat);
                         $('#kota').val(response.kota);
@@ -333,17 +336,16 @@
             });
         });
 
-    </script>
-
-    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const newPelanggan = @json(session('new_pelanggan'));
             if (newPelanggan) {
                 const pelangganSelect = document.getElementById('pelanggan');
-                const newOption = new Option(newPelanggan.nama, newPelanggan.id, true, true);
-                pelangganSelect.add(newOption);
+                if (!document.querySelector(`#pelanggan option[value="${newPelanggan.id}"]`)) {
+                    const newOption = new Option(newPelanggan.nama, newPelanggan.id, true, true);
+                    pelangganSelect.add(newOption);
+                }
 
-
+                $('#pelanggan').val(newPelanggan.id).trigger('change');
                 document.getElementById('alamat').value = newPelanggan.alamat;
                 document.getElementById('kota').value = newPelanggan.kota;
                 document.getElementById('telepon').value = newPelanggan.telepon;
