@@ -476,6 +476,20 @@
             const idBarang = namaBarangSelect.options[namaBarangSelect.selectedIndex].getAttribute('data-id');
 
 
+            if (!namaBarang || !kodeBarang || !merek || !harga || !jumlah || !idBarang) {
+
+            console.error("Debugging data kosong:");
+            if (!namaBarang) console.error("Nama Barang kosong.");
+            if (!kodeBarang) console.error("Kode Barang kosong.");
+            if (!merek) console.error("Merek kosong.");
+            if (!harga) console.error("Harga kosong.");
+            if (!jumlah) console.error("Jumlah kosong.");
+            if (!idBarang) console.error("ID Barang kosong.");
+
+            alert('Mohon lengkapi semua data sebelum menambahkan!');
+            return;
+            }
+
             const calculatedSubTotal = cleanHarga * jumlah;
 
             const itemData = {
