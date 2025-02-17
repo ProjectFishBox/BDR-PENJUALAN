@@ -44,7 +44,7 @@ class LaporanPenjualanExport implements WithEvents
                     ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', function ($query) {
                         return $query->where('id_lokasi', $this->request->lokasi);
                     })
-                    ->when($this->request->filled('barang') && $this->request->barang != 'all' , function ($query) {
+                    ->when($this->request->filled('barang') && $this->request->barang != 'all', function ($query) {
                         return $query->whereHas('detail', function ($q) {
                             $q->where('id_barang', $this->request->barang);
                         });
@@ -57,16 +57,11 @@ class LaporanPenjualanExport implements WithEvents
 
                 $startRow = 8;
                 $currentRow = $startRow;
-                $totalAmount = 0;
-                $totalQty = 0;
-                $totalAll = 0;
-                $totalDiskon = 0;
-                $totalBayar = 0;
-                $totalSisa = 0;
+                $totalAmount = $totalQty = $totalAll = $totalDiskon = $totalBayar = $totalSisa = 0;
+                $previousPenjualanId = null;
 
                 foreach ($data as $item) {
-
-                    // dd($item);
+                    $firstRow = true;
 
                     foreach ($item->detail as $detail) {
                         $pelangganNama = optional($item->pelanggan)->nama ?? 'N/A';
@@ -76,23 +71,30 @@ class LaporanPenjualanExport implements WithEvents
                         $jumlah = ($detail->harga * $detail->jumlah);
                         $total = ($detail->harga * $detail->jumlah) - $detail->diskon_barang;
 
-                        $sheet->setCellValue("A$currentRow", $item->tanggal);
-                        $sheet->setCellValue("B$currentRow", $pelangganNama);
-                        $sheet->setCellValue("C$currentRow", $barangKode);
-                        $sheet->setCellValue("D$currentRow", $detail->merek);
-                        $sheet->setCellValue("E$currentRow", $detail->harga);
-                        $sheet->setCellValue("F$currentRow", $detail->diskon_barang);
-                        $sheet->setCellValue("G$currentRow", $detail->jumlah);
-                        $sheet->setCellValue("H$currentRow", $jumlah);
-                        $sheet->setCellValue("I$currentRow", $total);
-                        $sheet->setCellValue("J$currentRow", $item->diskon_nota);
-                        $sheet->setCellValue("K$currentRow", $item->bayar);
-                        $sheet->setCellValue("L$currentRow", $sisa);
+                        $notaValue = ($detail->id_penjualan === $previousPenjualanId) ? '' : $item->no_nota;
+                        $tanggalValue = ($detail->id_penjualan === $previousPenjualanId) ? '' : $item->tanggal;
+                        $pelangganNamaValue = ($detail->id_penjualan === $previousPenjualanId) ? '' : $pelangganNama;
+
+                        $previousPenjualanId = $detail->id_penjualan;
+
+                        $sheet->setCellValue("A$currentRow", $notaValue);
+                        $sheet->setCellValue("B$currentRow", $tanggalValue);
+                        $sheet->setCellValue("C$currentRow", $pelangganNamaValue);
+                        $sheet->setCellValue("D$currentRow", $barangKode);
+                        $sheet->setCellValue("E$currentRow", $detail->merek);
+                        $sheet->setCellValue("F$currentRow", $detail->harga);
+                        $sheet->setCellValue("G$currentRow", $detail->diskon_barang);
+                        $sheet->setCellValue("H$currentRow", $detail->jumlah);
+                        $sheet->setCellValue("I$currentRow", $jumlah);
+                        $sheet->setCellValue("J$currentRow", $total);
+                        $sheet->setCellValue("K$currentRow", $item->diskon_nota);
+                        $sheet->setCellValue("L$currentRow", $item->bayar);
+                        $sheet->setCellValue("M$currentRow", $sisa);
 
                         $totalQty += $detail->jumlah;
                         $totalAmount += $jumlah;
-                        $totalAll +=$total;
-                        $totalDiskon +=$item->diskon_nota;
+                        $totalAll += $total;
+                        $totalDiskon += $item->diskon_nota;
                         $totalBayar += $item->bayar;
                         $totalSisa += $sisa;
 
@@ -100,20 +102,20 @@ class LaporanPenjualanExport implements WithEvents
                     }
                 }
 
-                $sheet->setCellValue("F$currentRow", "TOTAL:");
-                $sheet->getStyle("F$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("G$currentRow", $totalQty);
+                $sheet->setCellValue("G$currentRow", "TOTAL:");
                 $sheet->getStyle("G$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("H$currentRow", "Rp" . $totalAmount);
+                $sheet->setCellValue("H$currentRow", $totalQty);
                 $sheet->getStyle("H$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("I$currentRow", "Rp" . $totalAll);
+                $sheet->setCellValue("I$currentRow", "Rp" . $totalAmount);
                 $sheet->getStyle("I$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("J$currentRow", "Rp" . $totalDiskon);
+                $sheet->setCellValue("J$currentRow", "Rp" . $totalAll);
                 $sheet->getStyle("J$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("K$currentRow", "Rp" . $totalBayar);
+                $sheet->setCellValue("K$currentRow", "Rp" . $totalDiskon);
                 $sheet->getStyle("K$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("L$currentRow", "Rp" . $totalSisa);
+                $sheet->setCellValue("L$currentRow", "Rp" . $totalBayar);
                 $sheet->getStyle("L$currentRow")->getFont()->setBold(true);
+                $sheet->setCellValue("M$currentRow", "Rp" . $totalSisa);
+                $sheet->getStyle("M$currentRow")->getFont()->setBold(true);
 
                 $lokasi = 'SEMUA LOKASI';
                 if ($this->request->lokasi !== 'all') {
@@ -122,7 +124,7 @@ class LaporanPenjualanExport implements WithEvents
 
                 $sheet->setCellValue("A5", "DAFTAR PENJUALAN BARANG PADA LOKASI " . $lokasi . " TANGGAL " . $this->request->daterange);
 
-                $cellRange = "A$startRow:L$currentRow";
+                $cellRange = "A$startRow:M$currentRow";
                 $borderStyle = [
                     'borders' => [
                         'allBorders' => [
