@@ -43,9 +43,9 @@
                         <div class="form-group col-md-6">
                             <label for="id_akses">Akses <span style="color: red">*</span></label>
                             <select id="id_akses" name="id_akses" class="form-control" required>
-                                <option value="1">Admin</option>
-                                <option value="2">Super Admin</option>
-
+                                @foreach ($akses as $a)
+                                    <option value="{{ $a->id}}" {{ $a->id === $pengguna->id_akses ? 'selected' : ''}}>{{ $a->nama}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

@@ -97,9 +97,10 @@ class PenggunaControllers extends Controller
 
         $pengguna = User::findOrFail($id);
         $lokasi = Lokasi::all();
+        $akses = Akses::all();
 
 
-        return view('pages.master.pengguna.edit_pengguna', compact('pengguna', 'title', 'lokasi'));
+        return view('pages.master.pengguna.edit_pengguna', compact('pengguna', 'title', 'lokasi', 'akses'));
     }
 
     /**
