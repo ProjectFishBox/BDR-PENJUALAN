@@ -138,6 +138,10 @@ class LaporanPenjualanControllers extends Controller
             });
 
             $tanggal = $request->daterange;
+            $lokasi = 'SEMUA LOKASI';
+            if ($lokasiId !== 'all') {
+                $lokasi = Lokasi::find($lokasiId)->nama;
+            }
 
             $totalPenjualan = $data->sum(function ($item) {
                 return $item['detail']->sum(function ($detail) {
@@ -152,6 +156,14 @@ class LaporanPenjualanControllers extends Controller
                 });
             });
 
+            $totalDiskonBarang = $data->sum(function ($item) {
+                return $item['detail']->sum('diskon_barang');
+            });
+
+            $totalBayar = $data->sum(function ($item) {
+                return $item['bayar'];
+            });
+
 
             $totalHitung = $data->sum(function ($item) {
                 return $item['detail']->sum('jumlah');
@@ -159,7 +171,7 @@ class LaporanPenjualanControllers extends Controller
 
             $totalDiskon = $data->sum('diskon_nota');
 
-            $pdf = Pdf::loadView('components.pdf.laporan_penjualan_pdf', compact('data', 'totalPenjualan', 'totalDiskon', 'totalJumlah', 'tanggal'))
+            $pdf = Pdf::loadView('components.pdf.laporan_penjualan_pdf', compact('data','lokasi','totalDiskonBarang','totalBayar','totalHitung','totalPenjualan', 'totalDiskon', 'totalJumlah', 'tanggal'))
                 ->setPaper('a4', 'landscape');
 
             return $pdf->stream('Laporan_Penjualan.pdf');

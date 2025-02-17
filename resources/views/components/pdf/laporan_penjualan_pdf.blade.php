@@ -1,10 +1,8 @@
 <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">BDR BALL</p>
 <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">Jl. Tinumbu No.20 Telp. (0411) 22099</p>
 
-<p>DAFTAR PENJUALAN BARANG PADA  TANGGAL {{ $tanggal }}</p>
 
-
- {{-- <p>DAFTAR PENJUALAN BARANG PADA LOKASI {{ $data->first()->nama_lokasi }} TANGGAL {{ \Carbon\Carbon::parse($data->first()->tanggal)->format('d-m-Y') }}</p> --}}
+<p>DAFTAR PENJUALAN BARANG PADA LOKASI {{ $lokasi }} TANGGAL {{ $tanggal }}</p>
 <table cellspacing="0" cellpadding="0"
     style="border: 0.75pt solid rgb(0, 0, 0); border-collapse: collapse; width: 100%;">
     <thead>
@@ -15,7 +13,7 @@
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Kd.Barang</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Merek</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Harga</th>
-            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Diskon</th>
+            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Diskon Produk</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Qty</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Jumlah</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Total</th>
@@ -58,25 +56,25 @@
                 Total Penjualan
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalDiskon, 0, ',', '.') }}
+                Rp{{ number_format($totalDiskonBarang, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalJumlah, 0, ',', '.') }}
+                {{ number_format($totalHitung, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalPenjualan, 0, ',', '.') }}
+                Rp{{ number_format($totalPenjualan, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalJumlah, 0, ',', '.') }}
+                Rp{{ number_format($totalJumlah, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($item['diskon_nota'], 0, ',', '.') }}
+                Rp{{ number_format($totalDiskon, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($item['bayar'], 0, ',', '.') }}
+                Rp{{ number_format($totalBayar, 0, ',', '.') }}
             </td>
             <td  style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalSisa, 0, ',', '.') }}
+                Rp{{ number_format($totalSisa, 0, ',', '.') }}
             </td>
         </tr>
     </tbody>

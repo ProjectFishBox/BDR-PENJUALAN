@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Penjualan;
+use App\Models\Lokasi;
 
 class LaporanPenjualanExport implements WithEvents
 {
@@ -54,7 +55,7 @@ class LaporanPenjualanExport implements WithEvents
 
                 $data = $query->get();
 
-                $startRow = 6;
+                $startRow = 8;
                 $currentRow = $startRow;
                 $totalAmount = 0;
                 $totalQty = 0;
@@ -103,17 +104,23 @@ class LaporanPenjualanExport implements WithEvents
                 $sheet->getStyle("F$currentRow")->getFont()->setBold(true);
                 $sheet->setCellValue("G$currentRow", $totalQty);
                 $sheet->getStyle("G$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("H$currentRow", $totalAmount);
+                $sheet->setCellValue("H$currentRow", "Rp" . $totalAmount);
                 $sheet->getStyle("H$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("I$currentRow", $totalAll);
+                $sheet->setCellValue("I$currentRow", "Rp" . $totalAll);
                 $sheet->getStyle("I$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("J$currentRow", $totalDiskon);
+                $sheet->setCellValue("J$currentRow", "Rp" . $totalDiskon);
                 $sheet->getStyle("J$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("K$currentRow", $totalBayar);
+                $sheet->setCellValue("K$currentRow", "Rp" . $totalBayar);
                 $sheet->getStyle("K$currentRow")->getFont()->setBold(true);
-                $sheet->setCellValue("L$currentRow", $totalSisa);
+                $sheet->setCellValue("L$currentRow", "Rp" . $totalSisa);
                 $sheet->getStyle("L$currentRow")->getFont()->setBold(true);
 
+                $lokasi = 'SEMUA LOKASI';
+                if ($this->request->lokasi !== 'all') {
+                    $lokasi = Lokasi::find($this->request->lokasi)->nama;
+                }
+
+                $sheet->setCellValue("A5", "DAFTAR PENJUALAN BARANG PADA LOKASI " . $lokasi . " TANGGAL " . $this->request->daterange);
 
                 $cellRange = "A$startRow:L$currentRow";
                 $borderStyle = [
