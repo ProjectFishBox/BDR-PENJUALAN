@@ -9,8 +9,8 @@
         <tr>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">No.</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Tanggal</th>
-            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Nama Pelanggan</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Kd.Barang</th>
+            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Nama Barang</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Merek</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Harga</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Diskon Produk</th>
@@ -35,8 +35,8 @@
                 <tr>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $index + 1 }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $item['nama_pelanggan'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['kode_barang'] }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['nama_barang'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['merek'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['harga'], 0, ',', '.') }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['diskon_barang'], 0, ',', '.') }}</td>
