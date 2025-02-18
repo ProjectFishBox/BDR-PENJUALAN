@@ -11,7 +11,7 @@
                             <label>Tanggal <span style="color: red">*</span></label>
                             <div class="input-affix m-b-10">
                                 <i class="prefix-icon anticon anticon-calendar"></i>
-                                <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" value="{{ $pembelian->tanggal }}" required/>
+                                <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" value="{{ date('d-m-Y', strtotime($pembelian->tanggal)) }}" required/>
 
                                 {{-- <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" required  value="{{ $pembelian->tanggal }}"> --}}
                             </div>
@@ -214,7 +214,7 @@
     $(function() {
         $('input[name="tanggal"]').daterangepicker({
             locale: {
-                format: 'YYYY-MM-DD',
+                format: 'DD-MM-YYYY',
                 cancelLabel: 'Clear'
             },
             singleDatePicker: true,

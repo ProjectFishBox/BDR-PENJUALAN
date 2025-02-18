@@ -255,7 +255,7 @@
         $(function() {
             $('input[name="tanggal"]').daterangepicker({
                 locale: {
-                    format: 'YYYY-MM-DD',
+                    format: 'DD-MM-YYYY',
                     cancelLabel: 'Clear'
                 },
                 singleDatePicker: true,

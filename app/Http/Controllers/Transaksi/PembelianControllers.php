@@ -58,6 +58,9 @@ class PembelianControllers extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('tanggal', function ($row) {
+                    return date('d-m-Y', strtotime($row->tanggal));
+                })
                 ->addColumn('action', function ($row) {
                     $btn =
                         '
@@ -98,7 +101,6 @@ class PembelianControllers extends Controller
      */
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'tanggal' => 'required',
             'no_nota' => 'required',
@@ -106,8 +108,8 @@ class PembelianControllers extends Controller
             'bayar' => 'nullable',
         ]);
 
-
         $validatedData['bayar'] = preg_replace('/[^\d]/', '', $request->bayar);
+        $validatedData['tanggal'] = date('Y-m-d', strtotime($request->tanggal));
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
         $validatedData['create_by'] = auth()->id();
         $validatedData['last_user'] = auth()->id();
@@ -116,7 +118,6 @@ class PembelianControllers extends Controller
 
         $tableData = $request->input('table_data');
         foreach ($tableData as $data) {
-
             $harga = preg_replace('/[^\d]/', '', $data['harga']);
 
             DB::table('pembelian_detail')->insert([
@@ -135,7 +136,6 @@ class PembelianControllers extends Controller
         Alert::success('Berhasil Menambahkan data Pembelian.');
 
         return redirect('/pembelian');
-
     }
 
     /**
@@ -174,18 +174,15 @@ class PembelianControllers extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-
         DB::beginTransaction();
 
         try {
+            $tanggal = date('Y-m-d', strtotime($request->input('tanggal'))); // Corrected line
+            $noNota = $request->input('no_nota');
+            $kontainer = $request->input('kontainer');
+            $bayar = preg_replace('/[^\d]/', '', $request->input('bayar'));
 
-            $tanggal = $request->input('tanggal');
-            $noNota     = $request->input('no_nota');
-            $kontainer  = $request->input('kontainer');
-            $bayar      = preg_replace('/[^\d]/', '', $request->input('bayar'));
-
-            $tableData  = $request->input('table_data');
+            $tableData = $request->input('table_data');
 
             if (empty($tanggal) || empty($noNota)) {
                 return response()->json(['status' => 'error', 'message' => 'Data tidak lengkap'], 400);
@@ -194,17 +191,16 @@ class PembelianControllers extends Controller
             $pembelian = Pembelian::findOrFail($id);
 
             $pembelian->update([
-                'tanggal'    => $tanggal,
-                'no_nota'    => $noNota,
-                'kontainer'  => $kontainer,
-                'bayar'      => $bayar,
-                'last_user'  => auth()->user()->id
+                'tanggal' => $tanggal,
+                'no_nota' => $noNota,
+                'kontainer' => $kontainer,
+                'bayar' => $bayar,
+                'last_user' => auth()->user()->id
             ]);
 
             PembelianDetail::where('id_pembelian', $id)->delete();
 
             foreach ($tableData as $key => $item) {
-
                 if (!isset($item['id_barang'], $item['nama_barang'], $item['harga'], $item['jumlah'], $item['subtotal'])) {
                     return response()->json([
                         'status' => 'error',
@@ -216,14 +212,14 @@ class PembelianControllers extends Controller
 
                 PembelianDetail::create([
                     'id_pembelian' => $id,
-                    'id_barang'    => $item['id_barang'],
-                    'nama_barang'  => $item['nama_barang'],
-                    'merek'        => $item['merek'] ?? null,
-                    'harga'        => $harga,
-                    'jumlah'       => $item['jumlah'],
-                    'subtotal'     => $item['subtotal'],
-                    'create_by'    => auth()->user()->id,
-                    'last_user'    => auth()->user()->id
+                    'id_barang' => $item['id_barang'],
+                    'nama_barang' => $item['nama_barang'],
+                    'merek' => $item['merek'] ?? null,
+                    'harga' => $harga,
+                    'jumlah' => $item['jumlah'],
+                    'subtotal' => $item['subtotal'],
+                    'create_by' => auth()->user()->id,
+                    'last_user' => auth()->user()->id
                 ]);
             }
 
@@ -232,8 +228,6 @@ class PembelianControllers extends Controller
             Alert::success('Berhasil Merubah data Pembelian.');
 
             return redirect('/pembelian');
-
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -242,9 +236,7 @@ class PembelianControllers extends Controller
                 'error' => $th->getMessage()
             ], 500);
         }
-
     }
-
     /**
      * Remove the specified resource from storage.
      */
