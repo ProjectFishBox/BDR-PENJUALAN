@@ -51,7 +51,6 @@
 
 <body>
     <div class="container mt-5">
-        <h2 class="text-center">Data Gabungkan</h2>
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
@@ -62,12 +61,12 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($detailGabungkan as $index => $d)
+                @foreach ($mergedDetails as $index => $d)
                 <tr>
                     <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $d->kode_barang }}</td>
-                    <td>{{ $d->merek }}</td>
-                    <td style="text-align: right;">{{ number_format($d->jumlah, 0, ',', '.') }}</td>
+                    <td>{{ $d['kode_barang'] }}</td>
+                    <td>{{ $d['merek'] }}</td>
+                    <td style="text-align: right;">{{ number_format($d['jumlah'], 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
                 <tr class="total-row">
@@ -77,7 +76,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

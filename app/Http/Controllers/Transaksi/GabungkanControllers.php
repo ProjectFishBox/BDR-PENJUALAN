@@ -125,9 +125,19 @@ class GabungkanControllers extends Controller
         }
 
         $detailGabungkan = GabungkanDetail::where('id_gabungkan', $id)->get();
+        $mergedDetails = $detailGabungkan->groupBy(function($item) {
+            return $item['kode_barang'] . '-' . $item['merek'];
+        })->map(function($group) {
+            return [
+                'kode_barang' => $group->first()->kode_barang,
+                'merek' => $group->first()->merek,
+                'jumlah' => $group->sum('jumlah')
+            ];
+        })->values();
 
-        return view('components.modal.modal_detail_data_gabungkan', compact('title', 'gabungkan', 'detailGabungkan'));
+        return view('components.modal.modal_detail_data_gabungkan', compact('title', 'gabungkan', 'mergedDetails'));
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -243,7 +253,22 @@ class GabungkanControllers extends Controller
 
         $detailGabungkan = GabungkanDetail::where('id_gabungkan', $id)->get();
 
-        $pdf = Pdf::loadView('components.pdf.gabungkan_pdf', compact('gabungkan', 'detailGabungkan'));
+        if (is_null($gabungkan)) {
+            $gabungkan = new Gabungkan();
+        }
+
+        $detailGabungkan = GabungkanDetail::where('id_gabungkan', $id)->get();
+        $mergedDetails = $detailGabungkan->groupBy(function($item) {
+            return $item['kode_barang'] . '-' . $item['merek'];
+        })->map(function($group) {
+            return [
+                'kode_barang' => $group->first()->kode_barang,
+                'merek' => $group->first()->merek,
+                'jumlah' => $group->sum('jumlah')
+            ];
+        })->values();
+
+        $pdf = Pdf::loadView('components.pdf.gabungkan_pdf', compact('gabungkan', 'mergedDetails'));
 
         return $pdf->stream('gabungkan-'.$id.'.pdf');
     }
