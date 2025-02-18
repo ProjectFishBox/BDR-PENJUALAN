@@ -119,7 +119,8 @@ class LaporanPenjualanExport implements WithEvents
 
                 $lokasi = 'SEMUA LOKASI';
                 if ($this->request->lokasi !== 'all') {
-                    $lokasi = Lokasi::find($this->request->lokasi)->nama;
+                    $lokasiObj = Lokasi::find($this->request->lokasi);
+                    $lokasi = $lokasiObj ? $lokasiObj->nama : 'SEMUA LOKASI';
                 }
 
                 $sheet->setCellValue("A5", "DAFTAR PENJUALAN BARANG PADA LOKASI " . $lokasi . " TANGGAL " . $this->request->daterange);
