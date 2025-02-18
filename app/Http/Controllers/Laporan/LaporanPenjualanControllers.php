@@ -123,7 +123,7 @@ class LaporanPenjualanControllers extends Controller
                     'nama_pelanggan' => $item->pelanggan->nama,
                     'diskon_nota' => $item->diskon_nota,
                     'bayar' => $item->bayar,
-                    'nama_lokasi' => $item->lokasi->nama,
+                    'nama_lokasi' => $item->lokasi ? $item->lokasi->nama : 'SEMUA LOKASI',
                     'detail' => $item->detail->map(function ($detail) {
                         return [
                             'kode_barang' => $detail->barang->kode_barang,
@@ -140,7 +140,8 @@ class LaporanPenjualanControllers extends Controller
             $tanggal = $request->daterange;
             $lokasi = 'SEMUA LOKASI';
             if ($lokasiId !== 'all') {
-                $lokasi = Lokasi::find($lokasiId)->nama;
+                $lokasiObj = Lokasi::find($lokasiId);
+                $lokasi = $lokasiObj ? $lokasiObj->nama : 'SEMUA LOKASI';
             }
 
             $totalPenjualan = $data->sum(function ($item) {
