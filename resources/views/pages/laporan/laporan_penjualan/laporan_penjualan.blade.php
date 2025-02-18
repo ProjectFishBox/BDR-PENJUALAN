@@ -225,7 +225,7 @@
                     $.each(data, function(index, item) {
                         $.each(item.detail, function(detailIndex, detail) {
                             var noNotaCell = item.no_nota;
-                            var tanggalCell = item.tanggal;
+                            var tanggalCell = moment(item.tanggal, 'YYYY-MM-DD').format('DD-MM-YYYY');
                             var namaPelangganCell = item.nama_pelanggan;
 
                             if (previousNoNota === item.no_nota) {
