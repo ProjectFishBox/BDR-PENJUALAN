@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\PembelianDetail;
 use App\Models\PenjualanDetail;
+USE App\Models\Lokasi;
 
 class PendapatanExport implements WithEvents
 {
@@ -134,10 +135,16 @@ class PendapatanExport implements WithEvents
 
                     $sheet->setCellValue("B$currentRow", $item['kode_barang']);
                     $sheet->setCellValue("C$currentRow", $item['nama_barang']);
-                    $sheet->setCellValue("D$currentRow", $item['tanggal']);
+
+                    $date = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel(\Carbon\Carbon::createFromFormat('Y-m-d', $item['tanggal']));
+                    $sheet->setCellValue("D$currentRow", $date);
+                    $sheet->getStyle("D$currentRow")->getNumberFormat()->setFormatCode('DD-MM-YYYY');
+
                     $sheet->setCellValue("E$currentRow", $item['total_jumlah']);
                     $sheet->setCellValue("F$currentRow", $item['harga_pembelian']);
+                    $sheet->getStyle("F$currentRow")->getNumberFormat()->setFormatCode('"Rp"#,##0');
                     $sheet->setCellValue("G$currentRow", $item['harga']);
+                    $sheet->getStyle("G$currentRow")->getNumberFormat()->setFormatCode('"Rp"#,##0');
 
                     $sheet->getStyle("B$currentRow:G$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
@@ -145,35 +152,48 @@ class PendapatanExport implements WithEvents
 
                 }
 
+                $tanggal = $this->request->daterange;
+                $lokasi = 'SEMUA LOKASI';
+                if ($this->request->lokasi !== 'all') {
+                    $lokasiObj = Lokasi::find($this->request->lokasi);
+                    $lokasi = $lokasiObj ? $lokasiObj->nama : 'SEMUA LOKASI';
+                }
 
+                $sheet->setCellValue("B4", "DAFTAR LABA/RUGI PADA LOKASI $lokasi TANGGAL $tanggal");
 
                 $sheet->setCellValue("B$currentRow", "Jumlah Penjualan");
                 $sheet->getStyle("B$currentRow")->getFont()->setBold(true);
 
                 $sheet->setCellValue("E$currentRow", $totalPenjualan);
-                $sheet->getStyle("E$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("E$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 2), $totalTerjual);
-                $sheet->getStyle("C" . ($currentRow + 2))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 3), $totalTerjual);
+                $sheet->getStyle("C" . ($currentRow + 3))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 3))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 3), $totalDiskonProduk);
-                $sheet->getStyle("C" . ($currentRow + 3))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 4), $totalDiskonProduk);
+                $sheet->getStyle("C" . ($currentRow + 4))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 4))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 4), $totalDiskonNota);
-                $sheet->getStyle("C" . ($currentRow + 4))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 5), $totalDiskonNota);
+                $sheet->getStyle("C" . ($currentRow + 5))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 5))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("C" . ($currentRow + 6), $totalPengeluaran);
+                $sheet->getStyle("C" . ($currentRow + 6))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 6))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 5), $totalPengeluaran);
-                $sheet->getStyle("C" . ($currentRow + 5))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 7), $totalTransfer);
+                $sheet->getStyle("C" . ($currentRow + 7))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 6), $totalTransfer);
-                $sheet->getStyle("C" . ($currentRow + 6))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 8), $modalUsaha);
+                $sheet->getStyle("C" . ($currentRow + 8))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 8))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-                $sheet->setCellValue("C" . ($currentRow + 7), $modalUsaha);
-                $sheet->getStyle("C" . ($currentRow + 7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-                $sheet->setCellValue("C" . ($currentRow + 8), $labaBersih);
-                $sheet->getStyle("C" . ($currentRow + 8))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                $sheet->setCellValue("C" . ($currentRow + 9), $labaBersih);
+                $sheet->getStyle("C" . ($currentRow + 9))->getNumberFormat()->setFormatCode('"Rp"#,##0');
+                $sheet->getStyle("C" . ($currentRow + 9))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
                 $cellRange = "B$startRow:G$currentRow";
 

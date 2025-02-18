@@ -199,16 +199,22 @@ class LaporanPendapatanControllers extends Controller
             $totalTransfer = ($totalTerjual - ($totalPengeluaran + $totalDiskonNota + $totalDiskonProduk));
             $labaBersih = $totalTransfer - $modalUsaha;
 
+            $tanggal = $request->daterange;
+            $lokasi = 'SEMUA LOKASI';
+            if ($request->lokasi !== 'all') {
+                $lokasiObj = Lokasi::find($request->lokasi);
+                $lokasi = $lokasiObj ? $lokasiObj->nama : 'SEMUA LOKASI';
+            }
+
 
             if (empty($penjualan)) {
                 throw new \Exception("Data tidak ditemukan");
             }
 
-            $pdf = Pdf::loadView('components.pdf.pendapatan_pdf', compact('penjualan','modalUsaha', 'labaBersih', 'totalTransfer', 'totalPengeluaran','totalTerjual', 'totalPenjualan', 'totalDiskonProduk', 'totalPembelian', 'totalDiskonNota'))
+
+
+            $pdf = Pdf::loadView('components.pdf.pendapatan_pdf', compact('penjualan','lokasi','tanggal','modalUsaha', 'labaBersih', 'totalTransfer', 'totalPengeluaran','totalTerjual', 'totalPenjualan', 'totalDiskonProduk', 'totalPembelian', 'totalDiskonNota'))
                 ->setPaper('a4', 'landscape');
-
-
-
             return $pdf->stream('Laporan_Pendapatan.pdf');
         } catch (\Exception $e) {
             return response()->json([
