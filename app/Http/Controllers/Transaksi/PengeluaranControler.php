@@ -9,6 +9,7 @@ USE RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Storage;
 
 
 use App\Models\Pengeluaran;
@@ -55,6 +56,9 @@ class PengeluaranControler extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('tanggal', function ($row) {
+                    return date('d-m-Y', strtotime($row->tanggal));
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '
                         <button class="btn btn-icon btn-primary btn-pengeluaran-edit" data-id="' . $row->id . '" type="button">
@@ -96,8 +100,10 @@ class PengeluaranControler extends Controller
             'total' => 'nullable',
         ]);
 
+
         $total = str_replace('.', '', $request->total);
         $validateData['total'] = $total;
+        $validateData['tanggal'] = date('Y-m-d', strtotime($request->tanggal));
         $validateData['id_lokasi'] = auth()->user()->id_lokasi;
         $validateData['create_by'] = auth()->id();
         $validateData['last_user'] = auth()->id();
@@ -115,18 +121,12 @@ class PengeluaranControler extends Controller
      */
     public function show(Request $request)
     {
+
         if (!$request->ajax()) {
             return redirect('/dashboard');
         }
         $query = Pengeluaran::query();
 
-
-        if ($request->filled('start') && $request->filled('end')) {
-            $query->whereBetween('tanggal', [
-                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
-                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
-            ]);
-        }
 
         $daterange = $request->query('daterange');
 
@@ -140,11 +140,13 @@ class PengeluaranControler extends Controller
             }
         }
 
-        if ($request->filled('lokasi')) {
+
+        if ($request->filled('lokasi') && $request->lokasi != 'all') {
             $query->where('id_lokasi', $request->lokasi);
         }
 
         $pengeluaran = $query->get();
+
 
 
         $title = "Detail Pengeluaran";
@@ -170,9 +172,6 @@ class PengeluaranControler extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->tanggal);
-
-
         $validateData = $request->validate([
             'tanggal' => 'required',
             'uraian' => 'required',
@@ -180,10 +179,7 @@ class PengeluaranControler extends Controller
         ]);
 
         $validateData['total'] = str_replace('.', '', $request->total);
-
-        $validateData['tanggal'] = $request->tanggal;
-
-
+        $validateData['tanggal'] = date('Y-m-d', strtotime($request->tanggal));
         $pengeluaran = Pengeluaran::findOrFail($id);
         $pengeluaran->update($validateData);
 
@@ -210,26 +206,56 @@ class PengeluaranControler extends Controller
         return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
     }
 
-    public function export(Request $request)
+    public function getData(Request $request)
     {
         $query = Pengeluaran::query();
 
-        if ($request->filled('start') && $request->filled('end')) {
-            $query->whereBetween('tanggal', [
-                Carbon::createFromFormat('d/m/Y', $request->start)->format('Y-m-d'),
-                Carbon::createFromFormat('d/m/Y', $request->end)->format('Y-m-d')
-            ]);
+        $daterange = $request->query('daterange');
+
+        if ($daterange) {
+            $dates = explode(' - ', $daterange);
+
+            if (count($dates) === 2) {
+                $startDate = date('Y-m-d', strtotime($dates[0]));
+                $endDate = date('Y-m-d', strtotime($dates[1]));
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            }
         }
 
-        if ($request->filled('lokasi')) {
+
+        if ($request->filled('lokasi') && $request->lokasi !== 'all') {
             $query->where('id_lokasi', $request->lokasi);
-        }
-        if ($request->filled('search')) {
-            $query->where('uraian', 'like', '%' . $request->search . '%');
         }
 
         $pengeluaran = $query->get();
 
-        return Excel::download(new PengeluaranExport($pengeluaran), 'pengeluaran.xlsx');
+        return $pengeluaran->toArray();
+    }
+
+    public function export(Request $request)
+    {
+
+        Excel::store(new PengeluaranExport($request), 'temp.xlsx');
+
+        try {
+            $filePath = session('export_file');
+
+            if (!$filePath || !Storage::exists($filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat mengexport data. File tidak ditemukan.'
+                ]);
+            }
+
+            $fileName = 'Pengeluaran_' . date('d-m-Y') . '.xlsx';
+
+            return Storage::download($filePath, $fileName);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengexport data: ' . $e->getMessage()
+            ], 500);
+        }
+        // return Excel::download(new PengeluaranExport($pengeluaran), 'pengeluaran.xlsx');
     }
 }

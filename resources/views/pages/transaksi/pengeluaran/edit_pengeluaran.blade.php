@@ -8,7 +8,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="tanggal">Tanggal <span style="color: red">*</span></label>
-                    <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" required  value="{{ $pengeluaran->tanggal}}"/>
+                    <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" required value="{{ date('d-m-Y', strtotime($pengeluaran->tanggal)) }}"/>
                 </div>
                 <div class="form-group">
                     <label for="uraian">Uraian <span style="color: red">*</span></label>
@@ -50,7 +50,7 @@
     $(function() {
         $('input[name="tanggal"]').daterangepicker({
             locale: {
-                format: 'YYYY-MM-DD',
+                format: 'DD-MM-YYYY',
                 cancelLabel: 'Clear'
             },
             singleDatePicker: true,

@@ -12,11 +12,11 @@
                 </div>
                 <div class="form-group">
                     <label for="uraian">Uraian <span style="color: red">*</span></label>
-                    <input type="text" class="form-control" id="uraian" placeholder="uraian Barang" name="uraian" >
+                    <input type="text" class="form-control" id="uraian" placeholder="uraian Barang" name="uraian" required>
                 </div>
                 <div class="form-group">
                     <label for="total">Total <span style="color: red">*</span></label>
-                    <input type="text" class="form-control" id="total" placeholder="Total" name="total" >
+                    <input type="text" class="form-control" id="total" placeholder="Total" name="total" required >
                 </div>
                 <div class="form-group">
                     <div class="d-flex justify-content-end">
@@ -40,7 +40,7 @@
     $(function() {
         $('input[name="tanggal"]').daterangepicker({
             locale: {
-                format: 'YYYY-MM-DD',
+                format: 'DD-MM-YYYY',
                 cancelLabel: 'Clear'
             },
             singleDatePicker: true,
