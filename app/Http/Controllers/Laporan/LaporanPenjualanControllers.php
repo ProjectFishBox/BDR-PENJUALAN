@@ -39,7 +39,9 @@ class LaporanPenjualanControllers extends Controller
             $query = Penjualan::with(['detail.barang', 'pelanggan'])
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->input('pelanggan') && $pelangganId !== 'all', function ($query) use ($pelangganId) {
                     return $query->where('id_pelanggan', $pelangganId);
@@ -97,9 +99,11 @@ class LaporanPenjualanControllers extends Controller
             $notaId = $request->no_nota;
 
             $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
-                ->when($request->filled('daterange'), function ($query) use ($request) {
-                    $dates = explode(' - ', $request->daterange);
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                ->when($request->input('daterange'), function ($query) use ($request) {
+                    $dates = explode(' - ', $request->input('daterange'));
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->filled('pelanggan') && $pelangganId !== 'all', function ($query) use ($pelangganId) {
                     return $query->where('id_pelanggan', $pelangganId);

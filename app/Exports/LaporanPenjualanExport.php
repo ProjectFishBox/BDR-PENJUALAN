@@ -36,7 +36,9 @@ class LaporanPenjualanExport implements WithEvents
                 $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
                     ->when($this->request->filled('daterange'), function ($query) {
                         $dates = explode(' - ', $this->request->daterange);
-                        return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                        $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                        $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                        return $query->whereBetween('tanggal', [$startDate, $endDate]);
                     })
                     ->when($this->request->filled('pelanggan') && $this->request->pelanggan != 'all', function ($query) {
                         return $query->where('id_pelanggan', $this->request->pelanggan);
