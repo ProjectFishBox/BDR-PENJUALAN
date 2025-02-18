@@ -42,11 +42,12 @@
                     @php
                         $total_penjualan += $detail['total_item'];
                         $total_jumlah += $detail['jumlah'];
+                        $formattedDate = \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y');
                     @endphp
                         <tr>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $index + 1 }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $item['no_nota'] }}</td>
-                            <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $item['tanggal'] }}</td>
+                            <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $formattedDate }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['kode_barang'] }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['nama_barang'] }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['merek'] }}</td>

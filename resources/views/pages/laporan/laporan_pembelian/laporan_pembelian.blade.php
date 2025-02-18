@@ -144,10 +144,11 @@
 
                     $.each(data, function(index, item) {
                         $.each(item.detail, function(detailIndex, detail) {
+                            var formattedDate = moment(item.tanggal).format('DD-MM-YYYY');
                             var row = '<tr>' +
                                 '<td>' + overallIndex + '</td>' +
                                 '<td>' + item.no_nota + '</td>' +
-                                '<td>' + item.tanggal + '</td>' +
+                                '<td>' + formattedDate + '</td>' +
                                 '<td>' + detail.kode_barang + '</td>' +
                                 '<td>' + detail.nama_barang + '</td>' +
                                 '<td>' + detail.merek + '</td>' +

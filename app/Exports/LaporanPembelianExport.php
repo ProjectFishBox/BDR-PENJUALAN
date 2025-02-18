@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class LaporanPembelianExport implements WithEvents
 {
@@ -65,14 +66,15 @@ class LaporanPembelianExport implements WithEvents
 
                 foreach ($data as $key => $item) {
                     // $row = $startRow + $key;
+                    $formattedDate = Carbon::parse($item->tanggal)->format('d-m-Y');
                     $sheet->setCellValue("A$currentRow", $item->no_nota);
-                    $sheet->setCellValue("B$currentRow", $item->tanggal);
+                    $sheet->setCellValue("B$currentRow", $formattedDate);
                     $sheet->setCellValue("C$currentRow", $item->kode_barang);
                     $sheet->setCellValue("D$currentRow", $item->nama_barang);
                     $sheet->setCellValue("E$currentRow", $item->merek);
-                    $sheet->setCellValue("F$currentRow", $item->harga);
+                    $sheet->setCellValue("F$currentRow", 'Rp ' . number_format((float) $item->harga, 0, ',', '.'));
                     $sheet->setCellValue("G$currentRow", $item->jumlah);
-                    $sheet->setCellValue("H$currentRow", $item->total);
+                    $sheet->setCellValue("H$currentRow",  'Rp ' . number_format((float) $item->total, 0, ',', '.'));
 
                     $totalAmount += $item->total;
                     $totalQty += $item->jumlah;
@@ -85,7 +87,7 @@ class LaporanPembelianExport implements WithEvents
                 $sheet->getStyle("F$totalRow")->getFont()->setBold(true);
                 $sheet->setCellValue("G$totalRow", $totalQty);
                 $sheet->getStyle("G$totalRow")->getFont()->setBold(true);
-                $sheet->setCellValue("H$totalRow", $totalAmount);
+                $sheet->setCellValue("H$totalRow", 'Rp ' . number_format((float) $totalAmount, 0, ',', '.'));
                 $sheet->getStyle("H$totalRow")->getFont()->setBold(true);
 
                 $endRow = $totalRow;
