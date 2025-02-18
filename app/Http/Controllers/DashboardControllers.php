@@ -34,7 +34,9 @@ class DashboardControllers extends Controller
                 ->selectRaw('SUM(pembelian_detail.subtotal) as total_pembelian')
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
@@ -53,10 +55,11 @@ class DashboardControllers extends Controller
             $totalPenjualan = Penjualan::query()
                 ->join('penjualan_detail', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
                 ->selectRaw('SUM(penjualan_detail.harga * penjualan_detail.jumlah - (penjualan_detail.diskon_barang * penjualan_detail.jumlah)) as total_penjualan')
-
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('id_lokasi', $lokasiId);
@@ -80,7 +83,9 @@ class DashboardControllers extends Controller
                 })
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('tanggal', [$startDate, $endDate]);
                 })
                 ->first();
 
@@ -89,7 +94,9 @@ class DashboardControllers extends Controller
                 ->join('pembelian', 'pembelian.id', '=', 'pembelian_detail.id_pembelian')
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('pembelian.tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('pembelian.tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('pembelian.id_lokasi', $lokasiId);
@@ -108,7 +115,9 @@ class DashboardControllers extends Controller
                 ->join('penjualan', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
-                    return $query->whereBetween('penjualan.tanggal', [trim($dates[0]), trim($dates[1])]);
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('penjualan.tanggal', [$startDate, $endDate]);
                 })
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('penjualan.id_lokasi', $lokasiId);
