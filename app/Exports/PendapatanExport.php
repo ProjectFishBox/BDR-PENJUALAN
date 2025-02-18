@@ -36,7 +36,6 @@ class PendapatanExport implements WithEvents
                 $spreadsheet = IOFactory::load($templatePath);
                 $sheet = $spreadsheet->getActiveSheet();
 
-
                 $penjualan = PenjualanDetail::query()
                     ->select([
                         'penjualan_detail.id_barang',
@@ -67,7 +66,12 @@ class PendapatanExport implements WithEvents
                     ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
                     ->where('penjualan_detail.delete', 0)
                     ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
-                    ->when($this->request->filled('daterange'), fn($query) => $query->whereBetween('penjualan.tanggal', explode(' - ', $this->request->daterange)))
+                    ->when($this->request->filled('daterange'), function ($query) {
+                        $dates = explode(' - ', $this->request->daterange);
+                        $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                        $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                        return $query->whereBetween('penjualan.tanggal', [$startDate, $endDate]);
+                    })
                     ->get()
                     ->groupBy(function ($item) {
                         return $item->tanggal . '-' . $item->id_barang . '-' . $item->kode_barang . '-' . $item->merek . '-' . $item->harga;
@@ -77,7 +81,6 @@ class PendapatanExport implements WithEvents
 
                         $totalPenjualanItem = $group->sum('jumlah');
                         $totalPembelianItem = $firstItem->harga_pembelian ?? DB::table('barang')->where('id', $firstItem->id_barang)->value('harga');
-
 
                         return [
                             'id_penjualan' => $firstItem->id_penjualan,
@@ -99,40 +102,33 @@ class PendapatanExport implements WithEvents
                             'harga_pembelian' => $firstItem->harga_pembelian ?? DB::table('barang')->where('id', $firstItem->id_barang)->value('harga'),
                             'total_pengeluaran' => $firstItem->total_pengeluaran ?? 0,
                             'modal_usaha' => $totalPenjualanItem * $totalPembelianItem,
-
                         ];
                     })
                     ->values();
 
-                    $totalPenjualan = $penjualan->sum('total_jumlah');
-                    $totalTerjual = $penjualan->sum('total_jual');
-                    $totalDiskonProduk = $penjualan->sum('total_diskon_barang');
-                    $totalPembelian = $penjualan->sum('harga_pembelian');
-                    $totalPengeluaran = $penjualan->sum('total_pengeluaran');
-                    $modalUsaha = $penjualan->sum('modal_usaha');
+                $totalPenjualan = $penjualan->sum('total_jumlah');
+                $totalTerjual = $penjualan->sum('total_jual');
+                $totalDiskonProduk = $penjualan->sum('total_diskon_barang');
+                $totalPembelian = $penjualan->sum('harga_pembelian');
+                $totalPengeluaran = $penjualan->sum('total_pengeluaran');
+                $modalUsaha = $penjualan->sum('modal_usaha');
 
+                $uniqueDiskonNota = [];
 
-
-                    $uniqueDiskonNota = [];
-
-                    foreach ($penjualan as $item) {
-                        if (!isset($uniqueDiskonNota[$item['id_penjualan']])) {
-                            $uniqueDiskonNota[$item['id_penjualan']] = $item['diskon_nota'];
-                        }
-
+                foreach ($penjualan as $item) {
+                    if (!isset($uniqueDiskonNota[$item['id_penjualan']])) {
+                        $uniqueDiskonNota[$item['id_penjualan']] = $item['diskon_nota'];
                     }
-                    $totalDiskonNota = array_sum($uniqueDiskonNota);
+                }
+                $totalDiskonNota = array_sum($uniqueDiskonNota);
 
-                    $totalTransfer = ($totalTerjual - ($totalPengeluaran + $totalDiskonNota + $totalDiskonProduk));
-                    $labaBersih = $totalTransfer - $modalUsaha;
-
-
+                $totalTransfer = ($totalTerjual - ($totalPengeluaran + $totalDiskonNota + $totalDiskonProduk));
+                $labaBersih = $totalTransfer - $modalUsaha;
 
                 $startRow = 6;
                 $currentRow = $startRow;
 
                 foreach ($penjualan as $key => $item) {
-
                     $sheet->setCellValue("B$currentRow", $item['kode_barang']);
                     $sheet->setCellValue("C$currentRow", $item['nama_barang']);
 
@@ -149,7 +145,6 @@ class PendapatanExport implements WithEvents
                     $sheet->getStyle("B$currentRow:G$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
                     $currentRow++;
-
                 }
 
                 $tanggal = $this->request->daterange;
@@ -215,7 +210,6 @@ class PendapatanExport implements WithEvents
                 $writer->save($filePath);
 
                 session(['export_file' => $exportFileName]);
-
             },
         ];
     }

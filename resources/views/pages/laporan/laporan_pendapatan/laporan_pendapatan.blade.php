@@ -126,13 +126,13 @@
     $(function() {
         $('#daterange').daterangepicker({
             locale: {
-                format: 'YYYY-MM-DD'
+                format: 'DD-MM-YYYY'
             },
             autoUpdateInput: false
         });
 
         $('#daterange').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
         });
 
         $('#daterange').on('cancel.daterangepicker', function(ev, picker) {
@@ -186,12 +186,13 @@
                         }
 
                         var total_pembelian_detail_barang = item.total_jumlah * item.harga_pembelian
+                        var formattedDate = moment(item.tanggal).format('DD-MM-YYYY');
 
                         var row = '<tr>' +
                             '<td>' + overallIndex + '</td>' +
                             '<td>' + item.kode_barang + '</td>' +
                             '<td>' + item.nama_barang + '</td>' +
-                            '<td>' + item.tanggal + '</td>' +
+                            '<td>' + formattedDate + '</td>' +
                             '<td>' + item.total_jumlah + '</td>' +
                             '<td>' + Math.floor(item.harga_pembelian).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.floor(item.harga).toLocaleString('id-ID') + '</td>' +

@@ -60,7 +60,9 @@ class LaporanPendapatanControllers extends Controller
             })
             ->when($request->filled('daterange'), function ($query) use ($request) {
                 $dates = explode(' - ', $request->input('daterange'));
-                return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                return $query->whereBetween('tanggal', [$startDate, $endDate]);
             })
             ->get()
             ->groupBy(function ($item) {
@@ -139,7 +141,9 @@ class LaporanPendapatanControllers extends Controller
             })
             ->when($request->filled('daterange'), function ($query) use ($request) {
                 $dates = explode(' - ', $request->input('daterange'));
-                return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
+                $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                return $query->whereBetween('tanggal', [$startDate, $endDate]);
             })
             ->get()
             ->groupBy(function ($item) {
