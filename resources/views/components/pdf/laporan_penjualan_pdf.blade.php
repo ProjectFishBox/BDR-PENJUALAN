@@ -1,16 +1,14 @@
 <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">BDR BALL</p>
 <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">Jl. Tinumbu No.20 Telp. (0411) 22099</p>
 
-
 <p>DAFTAR PENJUALAN BARANG PADA LOKASI {{ $lokasi }} TANGGAL {{ $tanggal }}</p>
-<table cellspacing="0" cellpadding="0"
-    style="border: 0.75pt solid rgb(0, 0, 0); border-collapse: collapse; width: 100%;">
+<table cellspacing="0" cellpadding="0" style="border: 0.75pt solid rgb(0, 0, 0); border-collapse: collapse; width: 100%;">
     <thead>
         <tr>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">No.</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Tanggal</th>
+            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Nama Pelanggan</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Kd.Barang</th>
-            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Nama Barang</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Merek</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Harga</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Diskon Produk</th>
@@ -25,30 +23,61 @@
     <tbody>
         @php
             $totalSisa = 0;
+            $index = 1;
+            $noNotaUsed = [];
+            $pelangganUsed = [];
         @endphp
-        @foreach ($data as $index => $item)
+        @foreach ($data as $item)
             @foreach ($item['detail'] as $detail)
                 @php
-                    $sisa = (($detail['harga'] * $detail['jumlah']) - $detail['diskon_barang']) - $item['diskon_nota'] - $item['bayar'];
+                    $tanggal = !in_array($item['no_nota'], $noNotaUsed) ? $item['tanggal'] : '';
+                    $pelanggan = !in_array($item['no_nota'], $noNotaUsed) ? $item['nama_pelanggan'] : '';
+
+                    if (!in_array($item['no_nota'], $noNotaUsed)) {
+                        $noNotaUsed[] = $item['no_nota'];
+                    }
+
+                    $sisa =
+                        $detail['harga'] * $detail['jumlah'] -
+                        $detail['diskon_barang'] -
+                        $item['diskon_nota'] -
+                        $item['bayar'];
                     $totalSisa += $sisa;
                 @endphp
                 <tr>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $index + 1 }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['kode_barang'] }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ $index }}
+                    </td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ $tanggal ? \Carbon\Carbon::parse($tanggal)->format('d-m-Y') : '' }}
+                    </td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $pelanggan ? $pelanggan : '' }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['nama_barang'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['merek'] }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['harga'], 0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['diskon_barang'], 0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['jumlah'], 0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($detail['harga'] * $detail['jumlah'], 0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format(($detail['harga'] * $detail['jumlah']) - $detail['diskon_barang'], 0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($item['diskon_nota'],0, ',', '.') }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($item['bayar'],0, ',', '.') }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ number_format($detail['harga'], 0, ',', '.') }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ number_format($detail['diskon_barang'], 0, ',', '.') }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ number_format($detail['jumlah'], 0, ',', '.') }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ number_format($detail['harga'] * $detail['jumlah'], 0, ',', '.') }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ number_format($detail['harga'] * $detail['jumlah'] - $detail['diskon_barang'], 0, ',', '.') }}
+                    </td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ $item['diskon_nota'] !== null ? number_format($item['diskon_nota'], 0, ',', '.') : '' }}
+                    </td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                        {{ $item['bayar'] !== null ? number_format($item['bayar'], 0, ',', '.') : '' }}
+                    </td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
                         {{ number_format($sisa, 0, ',', '.') }}
                     </td>
                 </tr>
+                @php
+                    $index++;
+                @endphp
             @endforeach
         @endforeach
         <tr>
@@ -73,10 +102,9 @@
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
                 Rp{{ number_format($totalBayar, 0, ',', '.') }}
             </td>
-            <td  style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
+            <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
                 Rp{{ number_format($totalSisa, 0, ',', '.') }}
             </td>
         </tr>
     </tbody>
 </table>
-
