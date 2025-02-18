@@ -220,14 +220,27 @@
                     var totalBayar = 0;
                     var totalSisa = 0;
                     var overallIndex = 1;
+                    var previousNoNota = null;
 
                     $.each(data, function(index, item) {
                         $.each(item.detail, function(detailIndex, detail) {
+                            var noNotaCell = item.no_nota;
+                            var tanggalCell = item.tanggal;
+                            var namaPelangganCell = item.nama_pelanggan;
+
+                            if (previousNoNota === item.no_nota) {
+                                noNotaCell = '';
+                                tanggalCell = '';
+                                namaPelangganCell = '';
+                            } else {
+                                previousNoNota = item.no_nota;
+                            }
+
                             var row = '<tr>' +
                                 '<td>' + overallIndex + '</td>' +
-                                '<td>' + item.no_nota + '</td>' +
-                                '<td>' + item.tanggal + '</td>' +
-                                '<td>' + item.nama_pelanggan + '</td>' +
+                                '<td>' + noNotaCell + '</td>' +
+                                '<td>' + tanggalCell + '</td>' +
+                                '<td>' + namaPelangganCell + '</td>' +
                                 '<td>' + detail.kode_barang + '</td>' +
                                 '<td>' + detail.nama_barang + '</td>' +
                                 '<td>' + detail.merek + '</td>' +
@@ -244,7 +257,7 @@
 
                             totalDiskon += parseFloat(detail.diskon_barang);
                             totalJumlah += parseInt(detail.jumlah);
-                            totalHitung +=parseFloat((detail.harga * detail.jumlah));
+                            totalHitung += parseFloat((detail.harga * detail.jumlah));
                             total += parseFloat(((detail.harga * detail.jumlah) - detail.diskon_barang));
                             totalDiskonNota += parseFloat(item.diskon_nota);
                             totalBayar += parseFloat(item.bayar);
