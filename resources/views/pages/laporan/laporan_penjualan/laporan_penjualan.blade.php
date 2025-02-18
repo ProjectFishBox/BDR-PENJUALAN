@@ -223,17 +223,26 @@
                     var previousNoNota = null;
 
                     $.each(data, function(index, item) {
-                        $.each(item.detail, function(detailIndex, detail) {
-                            var noNotaCell = item.no_nota;
-                            var tanggalCell = moment(item.tanggal, 'YYYY-MM-DD').format('DD-MM-YYYY');
-                            var namaPelangganCell = item.nama_pelanggan;
+                        var headerRow = '<tr>' +
+                            '<td>' + overallIndex + '</td>' +
+                            '<td>' + item.no_nota + '</td>' +
+                            '<td>' + moment(item.tanggal, 'YYYY-MM-DD').format('DD-MM-YYYY') + '</td>' +
+                            '<td>' + item.nama_pelanggan + '</td>' +
+                            '<td colspan="11"></td>' +
+                            '</tr>';
+                        tbody.append(headerRow);
 
-                            if (previousNoNota === item.no_nota) {
+                        $.each(item.detail, function(detailIndex, detail) {
+                            var noNotaCell = '';
+                            var tanggalCell = '';
+                            var namaPelangganCell = '';
+
+                            if (previousNoNota !== item.no_nota) {
+                                previousNoNota = item.no_nota;
+                            } else {
                                 noNotaCell = '';
                                 tanggalCell = '';
                                 namaPelangganCell = '';
-                            } else {
-                                previousNoNota = item.no_nota;
                             }
 
                             var row = '<tr>' +
