@@ -177,7 +177,7 @@ class PembelianControllers extends Controller
         DB::beginTransaction();
 
         try {
-            $tanggal = date('Y-m-d', strtotime($request->input('tanggal'))); // Corrected line
+            $tanggal = date('Y-m-d', strtotime($request->input('tanggal')));
             $noNota = $request->input('no_nota');
             $kontainer = $request->input('kontainer');
             $bayar = preg_replace('/[^\d]/', '', $request->input('bayar'));

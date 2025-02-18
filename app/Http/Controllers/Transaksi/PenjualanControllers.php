@@ -71,6 +71,9 @@ class PenjualanControllers extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('tanggal', function ($row) {
+                    return date('d-m-Y', strtotime($row->tanggal));
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '
                         <button class="btn btn-icon btn-primary btn-penjualan-edit" data-id="' . $row->id . '" type="button">
@@ -128,6 +131,7 @@ class PenjualanControllers extends Controller
             'sisa' => 'nullable'
         ]);
 
+        $validatedData['tanggal'] = date('Y-m-d', strtotime($request->tanggal));
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
         $validatedData['create_by'] = auth()->id();
         $validatedData['last_user'] = auth()->id();
@@ -224,7 +228,7 @@ class PenjualanControllers extends Controller
 
         try {
 
-            $tanggal = $request->input('tanggal');
+            $tanggal = date('Y-m-d', strtotime($request->input('tanggal')));
             $noNota     = $request->input('no_nota');
             $pelanggan  = $request->input('pelanggan');
             $diskonnota = preg_replace('/[^\d]/', '', $request->input('diskon_nota'));
