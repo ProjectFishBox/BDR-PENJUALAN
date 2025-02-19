@@ -79,9 +79,14 @@ class LaporanPenjualanExport implements WithEvents
 
                         $previousPenjualanId = $detail->id_penjualan;
 
-                        $sheet->setCellValue("A$currentRow", $notaValue);
-                        $sheet->setCellValue("B$currentRow", $tanggalValue);
-                        $sheet->setCellValue("C$currentRow", $pelangganNamaValue);
+                        if ($notaValue) {
+                            $sheet->setCellValue("A$currentRow", $notaValue);
+                            $sheet->setCellValue("B$currentRow", $tanggalValue);
+                            $sheet->setCellValue("C$currentRow", $pelangganNamaValue);
+                            $sheet->mergeCells("D$currentRow:M$currentRow");
+                            $currentRow++;
+                        }
+
                         $sheet->setCellValue("D$currentRow", $barangKode);
                         $sheet->setCellValue("E$currentRow", $detail->merek);
                         $sheet->setCellValue("F$currentRow", $detail->harga);
