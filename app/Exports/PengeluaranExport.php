@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use Illuminate\Support\Carbon;
 
 class PengeluaranExport implements WithEvents
 {
@@ -42,9 +43,10 @@ class PengeluaranExport implements WithEvents
                 foreach ($data as $key => $item) {
 
                     $total_pengeluaran = $item['total'];
+                    $formattedDate = Carbon::parse($item['tanggal'])->format('d-m-Y');
 
                     $sheet->setCellValue("A$currentRow", $item['uraian']);
-                    $sheet->setCellValue("B$currentRow", $item['tanggal']);
+                    $sheet->setCellValue("B$currentRow", $formattedDate);
                     $sheet->setCellValue("C$currentRow", 'Rp ' . number_format((float) $item['total'], 0, ',', '.'));
 
                     $sheet->getStyle("A$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
