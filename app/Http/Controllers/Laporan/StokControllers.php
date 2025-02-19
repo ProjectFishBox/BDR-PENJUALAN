@@ -56,7 +56,7 @@ class StokControllers extends Controller
 
     private function getBarang()
     {
-        return Barang::all();
+        return Barang::where('delete', 0)->get();
     }
 
 

@@ -33,7 +33,7 @@ class PenjualanControllers extends Controller
 
         $lokasiList = Lokasi::where('delete', 0)->get();
 
-        $pelangganList = Pelanggan::all();
+        $pelangganList = Pelanggan::where('delete', 0)->get();
 
         if ($request->ajax()) {
             $lokasiId = $request->query('lokasi');
@@ -99,7 +99,7 @@ class PenjualanControllers extends Controller
     {
         $title = 'Tambah Penjualan';
 
-        $pelanggan = Pelanggan::all();
+        $pelanggan = Pelanggan::where('delete', 0)->get();
 
         $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek', 'set_harga.harga_jual')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
@@ -188,7 +188,7 @@ class PenjualanControllers extends Controller
     {
         $title = 'Edit Penjualan';
 
-        $pelanggan = Pelanggan::all();
+        $pelanggan = Pelanggan::where('delete', 0)->get();
 
         $penjualan = Penjualan::findOrFail($id);
 

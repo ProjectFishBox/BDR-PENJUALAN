@@ -24,9 +24,9 @@ class LaporanPenjualanControllers extends Controller
     {
         $title = 'Laporan Penjualan';
 
-        $pelanggan = Pelanggan::all();
+        $pelanggan = Pelanggan::where('delete', 0)->get();
         $lokasi = Lokasi::where('delete', 0)->get();
-        $barang = Barang::all();
+        $barang = Barang::where('delete', 0)->get();
         $noNota = Penjualan::select('no_nota')->distinct()->get();
 
 

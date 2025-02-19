@@ -24,7 +24,7 @@
                     <div class="col-auto">
                         <div class="form-group">
                             <label for="pelanggan">Pelanggan</label>
-                            <select id="pelanggan" class="form-control" name="pelanggan" required>
+                            <select id="pelanggan" class="pelanggan form-control" name="pelanggan" required>
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
                                     <option value="{{ $p->id }}">{{ $p->nama }}</option>
@@ -353,7 +353,7 @@
         });
     </script>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function () {
             const pelangganData = @json($pelanggan);
             const pelangganSelect = document.getElementById('pelanggan');
@@ -361,7 +361,12 @@
             const kotaField = document.getElementById('kota');
             const teleponField = document.getElementById('telepon');
 
-            pelangganSelect.addEventListener('change', function () {
+            $(pelangganSelect).select2({
+                width: '100%',
+                placeholder: 'Pilih Pelanggan'
+            });
+
+            $(pelangganSelect).on('change', function () {
                 const selectedId = this.value;
 
                 if (!selectedId) {
@@ -380,7 +385,6 @@
                     })
                     .catch(error => console.error('Error fetching pelanggan:', error));
             });
-
         });
     </script>
 

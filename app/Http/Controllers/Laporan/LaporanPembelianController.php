@@ -23,7 +23,7 @@ class LaporanPembelianController extends Controller
     public function index(Request $request)
     {
         $title = 'Laporan Pembelian';
-        $barang = Barang::all();
+        $barang = Barang::where('delete', 0)->get();
         $lokasi = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
