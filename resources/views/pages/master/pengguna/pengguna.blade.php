@@ -16,13 +16,13 @@
                     <table class="table table-bordered table-hover data-table" id="data-table">
                         <thead>
                             <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Jabatan</th>
-                                <th scope="col">Akses</th>
-                                <th scope="col">Lokasi</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 5%;">No</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Nama</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Jabatan</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Akses</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Lokasi</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Username</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,8 +122,9 @@
                             text: 'Data Lokasi Telah berhasil dihapus.',
                             icon: 'success',
                             timer: 2000
+                        });
+                        $('#data-table').DataTable().columns.adjust().draw();
 
-                        })
                     }
                 })
             }

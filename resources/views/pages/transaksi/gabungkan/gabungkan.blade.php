@@ -16,13 +16,13 @@
                     <table class="table table-bordered table-hover data-table" id="data-table">
                         <thead>
                             <tr>
-                                <th scope="col" style="text-align: center;">No</th>
-                                <th scope="col" style="text-align: center;">Tanggal</th>
-                                <th scope="col" style="text-align: center;">Dibuat Oleh</th>
-                                <th scope="col" style="text-align: center;">Total Ball</th>
-                                <th scope="col" style="text-align: center;">Lokasi</th>
-                                <th scope="col" style="text-align: center;">Detail</th>
-                                <th scope="col" style="text-align: center;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 5%;">No</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Tanggal</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Dibuat Oleh</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Total Ball</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Lokasi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Detail</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,7 +146,7 @@
             type: "GET",
             dataType: "HTML",
             success: function(data) {
-                window.location.href = url;
+                reloadTable();
                 $('.btn-gabungkan-edit').prop('disabled', false);
                 $('.btn-gabungkan-edit').html('<i class="anticon anticon-edit"></i>');
             },
@@ -187,7 +187,8 @@
                             icon: 'success',
                             timer: 2000
 
-                        })
+                        });
+                        $('#data-table').DataTable().columns.adjust().draw();
                     }
                 })
             }
