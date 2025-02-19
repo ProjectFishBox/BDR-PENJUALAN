@@ -24,7 +24,7 @@ class SetHargaControllers extends Controller
     {
         $title = 'List Set Harga';
 
-        $lokasiList = Lokasi::all();
+        $lokasiList = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
 

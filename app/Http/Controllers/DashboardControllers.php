@@ -20,7 +20,7 @@ class DashboardControllers extends Controller
     public function index(Request $request)
     {
         $title = "Dashboard";
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
         $barang = Barang::all();
 
         if ($request->ajax()) {

@@ -50,7 +50,7 @@ class StokControllers extends Controller
 
     private function getLokasi()
     {
-        return Lokasi::all();
+        return Lokasi::where('delete', 0)->get();
     }
 
 

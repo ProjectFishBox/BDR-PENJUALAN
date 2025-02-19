@@ -21,7 +21,7 @@ class LaporanPendapatanControllers extends Controller
     {
         $title = 'Laporan Pendapatan';
 
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
         $lokasiId = $request->lokasi;

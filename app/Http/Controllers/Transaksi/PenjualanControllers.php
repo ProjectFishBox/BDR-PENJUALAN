@@ -31,7 +31,7 @@ class PenjualanControllers extends Controller
     {
         $title = 'List Penjualan';
 
-        $lokasiList = Lokasi::all();
+        $lokasiList = Lokasi::where('delete', 0)->get();
 
         $pelangganList = Pelanggan::all();
 

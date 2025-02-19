@@ -25,7 +25,7 @@ class PengeluaranControler extends Controller
     {
         $title = 'List Pengeluaran';
 
-        $lokasiList = Lokasi::all();
+        $lokasiList = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
             $lokasiId = $request->query('lokasi');

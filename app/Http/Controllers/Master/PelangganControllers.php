@@ -20,7 +20,7 @@ class PelangganControllers extends Controller
     {
         $title = "List Pelanggan";
 
-        $lokasiList = Lokasi::all();
+        $lokasiList = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
 
@@ -74,7 +74,7 @@ class PelangganControllers extends Controller
     {
         $title = 'Tambah Pelanggan';
 
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
         $kota = Indonesia::allCities();
 
         return view('pages.master.pelanggan.tambah_pelanggan', compact('title', 'lokasi', 'kota'));
@@ -111,7 +111,7 @@ class PelangganControllers extends Controller
         $title = 'Edit Pelanggan';
 
         $pelanggan = Pelanggan::findOrFail($id);
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
         $kota = Indonesia::allCities();
 
         return view('pages.master.pelanggan.edit_pelanggan', compact('title', 'pelanggan', 'lokasi', 'kota'));

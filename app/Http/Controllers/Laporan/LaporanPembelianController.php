@@ -24,7 +24,7 @@ class LaporanPembelianController extends Controller
     {
         $title = 'Laporan Pembelian';
         $barang = Barang::all();
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
 
         if ($request->ajax()) {
             $lokasiId = $request->lokasi;

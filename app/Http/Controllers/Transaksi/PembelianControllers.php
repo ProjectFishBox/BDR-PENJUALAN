@@ -24,7 +24,7 @@ class PembelianControllers extends Controller
     public function index(Request $request)
     {
         $title = 'List Pembelian';
-        $lokasi = Lokasi::all();
+        $lokasi = Lokasi::where('delete', 0)->get();
 
 
         if ($request->ajax()) {
