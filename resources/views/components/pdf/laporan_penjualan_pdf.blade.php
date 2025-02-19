@@ -8,7 +8,7 @@
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">No.</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Tanggal</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Nama Pelanggan</th>
-            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Kd.Barang</th>
+            <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Kode Barang</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Merek</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Harga</th>
             <th style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-size:12pt;">Diskon Produk</th>
@@ -22,21 +22,22 @@
     </thead>
     <tbody>
         @php
-            $totalSisa = 0;
-            $index = 1;
-            $noNotaUsed = [];
-            $pelangganUsed = [];
+        $totalSisa = 0;
+        $index = 1;
         @endphp
         @foreach ($data as $item)
+            <tr>
+                <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                    {{ $index }}
+                </td>
+                <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
+                    {{ \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y') }}
+                </td>
+                <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $item['nama_pelanggan'] }}</td>
+                <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;" colspan="10"></td>
+            </tr>
             @foreach ($item['detail'] as $detail)
                 @php
-                    $tanggal = !in_array($item['no_nota'], $noNotaUsed) ? $item['tanggal'] : '';
-                    $pelanggan = !in_array($item['no_nota'], $noNotaUsed) ? $item['nama_pelanggan'] : '';
-
-                    if (!in_array($item['no_nota'], $noNotaUsed)) {
-                        $noNotaUsed[] = $item['no_nota'];
-                    }
-
                     $sisa =
                         $detail['harga'] * $detail['jumlah'] -
                         $detail['diskon_barang'] -
@@ -45,14 +46,10 @@
                     $totalSisa += $sisa;
                 @endphp
                 <tr>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
-                        {{ $index }}
-                    </td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
-                        {{ $tanggal ? \Carbon\Carbon::parse($tanggal)->format('d-m-Y') : '' }}
-                    </td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $pelanggan ? $pelanggan : '' }}</td>
-                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['nama_barang'] }}</td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
+                    <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['kode_barang'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['merek'] }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
                         {{ number_format($detail['harga'], 0, ',', '.') }}</td>
@@ -75,10 +72,10 @@
                         {{ number_format($sisa, 0, ',', '.') }}
                     </td>
                 </tr>
-                @php
-                    $index++;
-                @endphp
             @endforeach
+            @php
+                $index++;
+            @endphp
         @endforeach
         <tr>
             <td colspan="6" style="border: 0.75pt solid rgb(0, 0, 0); text-align:right; font-weight:bold;">
