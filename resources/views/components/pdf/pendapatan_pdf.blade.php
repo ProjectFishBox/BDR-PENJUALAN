@@ -1,142 +1,145 @@
-
-<div>
-    <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;"><strong>BDR BALL</strong></p>
-    <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">Jl. Tinumbu No.20 Telp. (0411) 22099</p>
-    <p style="margin-top:0pt; margin-bottom:8pt;">&nbsp;</p>
-    <p style="margin-top:0pt; margin-bottom:8pt;">DAFTAR LABA/RUGI PADA LOKASI {{ $lokasi}} TANGGAL {{$tanggal}}</p>
-    <div style="text-align:center;">
-        <table cellspacing="0" cellpadding="0" style="margin-right: auto; margin-left: auto; border: 0.75pt solid rgb(0, 0, 0); border-collapse: collapse; width: 100%;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Pendapatan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .bold-text {
+            font-weight: bold;
+        }
+        .table {
+            margin: 0 auto;
+            border: 0.75pt solid rgb(0, 0, 0);
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .table td, .table th {
+            border: 0.75pt solid rgb(0, 0, 0);
+            padding: 5.03pt;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table th {
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        .table td {
+            font-size: 12pt;
+        }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .summary-table td {
+            padding: 5.4pt;
+            vertical-align: middle;
+        }
+        .summary-table .left-text {
+            text-align: left;
+        }
+        .summary-table .right-text {
+            text-align: right;
+        }
+        .summary-table .center-text {
+            text-align: center;
+        }
+        .summary-table .bold-text {
+            font-weight: bold;
+        }
+        .hr {
+            border: 1px solid black;
+            width: 100%;
+            margin: 8pt 0;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <p class="center-text bold-text" style="margin: 0 0 8pt 0;">BDR BALL</p>
+        <p class="center-text" style="margin: 0 0 8pt 0;">Jl. Tinumbu No.20 Telp. (0411) 22099</p>
+        <p style="margin: 0 0 8pt 0;">&nbsp;</p>
+        <p class="bold-text" style="margin: 0 0 8pt 0;">DAFTAR LABA/RUGI PADA LOKASI {{ $lokasi }} TANGGAL {{ $tanggal }}</p>
+        <div class="center-text">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:50pt;">No</th>
+                        <th style="width:100pt;">Kode Barang</th>
+                        <th style="width:150pt;">Nama Barang</th>
+                        <th style="width:100pt;">Tanggal Jual</th>
+                        <th style="width:50pt;">Jumlah</th>
+                        <th style="width:100pt;">Harga Beli</th>
+                        <th style="width:100pt;">Harga Jual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        use Carbon\Carbon;
+                    @endphp
+                    @foreach ($penjualan as $index => $item)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $item['kode_barang'] }}</td>
+                            <td>{{ $item['nama_barang'] }}</td>
+                            <td>{{ Carbon::parse($item['tanggal'])->format('d-m-Y') }}</td>
+                            <td>{{ $item['total_jumlah'] }}</td>
+                            <td>Rp {{ number_format($item['harga_pembelian'], 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($item['harga'], 0, ',', '.') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <p style="margin: 0 0 8pt 0;">&nbsp;</p>
+        <table class="summary-table" style="width: 100%;">
             <tbody>
                 <tr>
-                    <td style="width:83.3pt; border-right-style:solid; border-right-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">No</p>
-                    </td>
-                    <td style="width:83.3pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Kode Barang</p>
-                    </td>
-                    <td style="width:83.3pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Nama Barang</p>
-                    </td>
-                    <td style="width:83.3pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Tanggal Jual</p>
-                    </td>
-                    <td style="width:83.3pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Jumlah</p>
-                    </td>
-                    <td style="width:83.35pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Harga Beli</p>
-                    </td>
-                    <td style="width:83.35pt; border-left-style:solid; border-left-width:0.75pt; border-bottom-style:solid; border-bottom-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                        <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Harga Jual</p>
-                    </td>
+                    <td class="left-text" style="width: 25%;"><p class="bold-text" style="margin: 0;">Jumlah Penjualan</p></td>
+                    <td class="center-text" style="width: 50%; font-weight: bold"><p style="margin: 0;">{{ $totalPenjualan }}  Ball</p></td>
                 </tr>
-                @php
-                    use Carbon\Carbon;
-                @endphp
-                @foreach ($penjualan as $index => $item)
-                    <tr>
-                        <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $index + 1 }}</p>
-                        </td>
-                        <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['kode_barang'] }}</p>
-                        </td>
-                        <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['nama_barang'] }}</p>
-                        </td>
-                        <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y') }}</p>
-                        </td>
-                        <td style="width:83.3pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $item['total_jumlah'] }}</p>
-                        </td>
-                        <td style="width:83.35pt; border-top-style:solid; border-top-width:0.75pt; border-right-style:solid; border-right-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"> Rp {{ number_format($item['harga_pembelian'], 0, ',', '.') }}</p>
-                        </td>
-                        <td style="width:83.35pt; border-top-style:solid; border-top-width:0.75pt; border-left-style:solid; border-left-width:0.75pt; padding:5.03pt; vertical-align:middle; text-align:center;">
-                            <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Rp {{ number_format($item['harga'], 0, ',', '.') }}</p>
-                        </td>
-                    </tr>
-                @endforeach
             </tbody>
         </table>
+        <hr class="hr">
+        <p style="margin: 0 0 8pt 0;">&nbsp;</p>
+        <table class="summary-table" style="width: 50%;">
+            <tbody>
+                <tr>
+                    <td class="left-text" style="width: 50%;"><p style="margin: 0;">Total Penjualan</p></td>
+                    <td class="right-text" style="width: 50%;"><p style="margin: 0;">Rp {{ number_format($totalTerjual, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="left-text"><p style="margin: 0;">Total Diskon Produk</p></td>
+                    <td class="right-text"><p style="margin: 0;">Rp {{ number_format($totalDiskonProduk, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="left-text"><p style="margin: 0;">Total Diskon Nota</p></td>
+                    <td class="right-text"><p style="margin: 0;">Rp {{ number_format($totalDiskonNota, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="left-text"><p style="margin: 0;">Total Pengeluaran</p></td>
+                    <td class="right-text"><p style="margin: 0;">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="right-text"><p class="bold-text" style="margin: 0;">Total Transfer</p></td>
+                    <td class="right-text"><p class="bold-text" style="margin: 0;">Rp {{ number_format($totalTransfer, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="left-text"><p style="margin: 0;">Modal Usaha</p></td>
+                    <td class="right-text"><p style="margin: 0;">Rp {{ number_format($modalUsaha, 0, ',', '.') }}</p></td>
+                </tr>
+                <tr>
+                    <td class="right-text"><p class="bold-text" style="margin: 0;">Laba Bersih</p></td>
+                    <td class="right-text"><p class="bold-text" style="margin: 0;">Rp {{ number_format($labaBersih, 0, ',', '.') }}</p></td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin: 0 0 8pt 0;">&nbsp;</p>
     </div>
-    <p style="margin-top:0pt; margin-bottom:8pt;">&nbsp;</p>
-    <table cellspacing="0" cellpadding="0" style="border-collapse: collapse; width: 71%; margin-right: calc(29%);">
-        <tbody>
-            <tr>
-                <td style="width: 79.8664%; padding-right: 5.4pt; padding-left: 9.4pt; vertical-align: middle; text-align:center;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Jumlah Penjualan</strong></p>
-                </td>
-                <td style="width: 19.8283%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:center;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">{{ $totalPenjualan }}</p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <hr style="border: 1px solid black; width: 100%; margin-top: 8pt; margin-bottom: 8pt;">
-    <p style="margin-top:0pt; margin-bottom:8pt;">&nbsp;</p>
-    <table cellspacing="0" cellpadding="0" style="border-collapse: collapse; width: 47%;">
-        <tbody>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Total Penjualan</p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; text-align:right;">Rp {{ number_format($totalTerjual, 0, ',', '.') }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Total Diskon Produk</p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; text-align:right;">Rp {{ number_format($totalDiskonProduk, 0, ',', '.') }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Total Diskon Nota</p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; text-align:right;">Rp {{ number_format($totalDiskonNota, 0, ',', '.') }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; ">Total Pengeluaran</p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; text-align:right;">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p>
-                    <hr style="border: 1px solid black; width: 100%; margin-top: 2pt; margin-bottom: 2pt;">
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:right;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Total Transfer</strong></p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:right;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Rp {{ number_format($totalTransfer, 0, ',', '.') }}</strong></p>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;">Modal Usaha</p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:left;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt; text-align:right;">Rp {{ number_format($modalUsaha, 0, ',', '.') }}</p>
-                    <hr style="border: 1px solid black; width: 100%; margin-top: 2pt; margin-bottom: 2pt;">
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 38.7813%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:right;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Laba Bersih</strong></p>
-                </td>
-                <td style="width: 61.0142%; padding-right: 5.4pt; padding-left: 5.4pt; vertical-align: middle; text-align:right;">
-                    <p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt;"><strong>Rp {{ number_format($labaBersih, 0, ',', '.') }}</strong></p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <p style="margin-top:0pt; margin-bottom:8pt;">&nbsp;</p>
-</div>
+</body>
+</html>
