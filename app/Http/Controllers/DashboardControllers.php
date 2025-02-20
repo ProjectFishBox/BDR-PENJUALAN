@@ -132,6 +132,28 @@ class DashboardControllers extends Controller
                 ->where('penjualan_detail.delete', 0)
                 ->sum('penjualan_detail.jumlah');
 
+            $totalPenjualanNominal = PenjualanDetail::query()
+                ->join('penjualan', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
+                ->selectRaw('SUM(penjualan_detail.harga * penjualan_detail.jumlah - penjualan_detail.diskon_barang * penjualan_detail.jumlah) as total_penjualan_nominal')
+                ->when($request->input('daterange'), function ($query) use ($request) {
+                    $dates = explode(' - ', $request->input('daterange'));
+                    $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
+                    $endDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[1]))->endOfDay();
+                    return $query->whereBetween('penjualan.tanggal', [$startDate, $endDate]);
+                })
+                ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
+                    return $query->where('penjualan.id_lokasi', $lokasiId);
+                })
+                ->when($request->input('barang')  && $barangNama !== 'all', function ($query) use ($barangNama) {
+                    return $query->where('penjualan_detail.id_barang', $barangNama);
+                })
+                ->when($request->input('merek'), function ($query) use ($request) {
+                    return $query->where('penjualan_detail.merek', $request->input('merek'));
+                })
+                ->where('penjualan.delete', 0)
+                ->where('penjualan_detail.delete', 0)
+                ->first();
+
             $sisaStok = $stokMasuk - $stokKeluar;
 
             return response()->json([
@@ -140,8 +162,8 @@ class DashboardControllers extends Controller
                 'total_pengeluaran' => (float) ($totalPengeluaran->total_pengeluaran ?? 0),
                 'stok_masuk' => (float) ($stokMasuk) ?? 0,
                 'stok_keluar' => (float) ($stokKeluar) ?? 0,
-                'sisa_stok' => (float) ($sisaStok) ?? 0
-
+                'sisa_stok' => (float) ($sisaStok) ?? 0,
+                'total_nilai_jual' => (float) ($totalPenjualanNominal->total_penjualan_nominal ?? 0),
             ]);
         }
 

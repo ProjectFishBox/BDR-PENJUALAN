@@ -121,7 +121,7 @@
                             <div class="media align-items-center">
                                 <div class="">
                                     <h1 class="m-b-0" style="font-size: 35px" id="sisa-stok">0</h1>
-                                    <small>Total Nilai Jual </small>
+                                    <small>Total Nilai Jual: <span id="total-nilai-jual"></small>
                                 </div>
                             </div>
                         </div>
@@ -266,6 +266,7 @@
                     $('#stok-masuk').text(response.stok_masuk.toLocaleString('id-ID'));
                     $('#stok-keluar').text(response.stok_keluar.toLocaleString('id-ID'));
                     $('#sisa-stok').text(response.sisa_stok);
+                    $('#total-nilai-jual').text('Rp ' + response.total_nilai_jual.toLocaleString('id-ID'));
                 }
             });
         });
