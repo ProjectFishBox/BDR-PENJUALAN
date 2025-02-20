@@ -145,6 +145,8 @@ class PendapatanExport implements WithEvents
 
                     $sheet->getStyle("B$currentRow:H$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
+                    $sheet->getStyle("B$currentRow:H$currentRow")->getFont()->setBold(false);
+
                     $currentRow++;
                 }
 
@@ -166,33 +168,53 @@ class PendapatanExport implements WithEvents
                 $sheet->getStyle("F$currentRow")->getFont()->setBold(true);
 
 
+                $sheet->setCellValue("B" . ($currentRow + 3), "Total Penjualan");
+                $sheet->mergeCells("B" . ($currentRow + 3) . ":C" . ($currentRow + 3));
                 $sheet->setCellValue("D" . ($currentRow + 3), $totalTerjual);
                 $sheet->getStyle("D" . ($currentRow + 3))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 3))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("B" . ($currentRow + 4), "Total Diskon Produk");
+                $sheet->mergeCells("B" . ($currentRow + 4) . ":C" . ($currentRow + 4));
                 $sheet->setCellValue("D" . ($currentRow + 4), $totalDiskonProduk);
                 $sheet->getStyle("D" . ($currentRow + 4))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 4))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("B" . ($currentRow + 5), "Total Diskon Nota");
+                $sheet->mergeCells("B" . ($currentRow + 5) . ":C" . ($currentRow + 5));
                 $sheet->setCellValue("D" . ($currentRow + 5), $totalDiskonNota);
                 $sheet->getStyle("D" . ($currentRow + 5))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 5))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("B" . ($currentRow + 6), "Total Pengeluaran");
+                $sheet->mergeCells("B" . ($currentRow + 6) . ":C" . ($currentRow + 6));
                 $sheet->setCellValue("D" . ($currentRow + 6), $totalPengeluaran);
                 $sheet->getStyle("D" . ($currentRow + 6))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 6))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("B" . ($currentRow + 7), "Total Transfer");
+                $sheet->getStyle("B" . ($currentRow + 7))->getFont()->setBold(true);
+                $sheet->mergeCells("B" . ($currentRow + 7) . ":C" . ($currentRow + 7));
+                $sheet->getStyle("B" . ($currentRow + 7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $sheet->setCellValue("D" . ($currentRow + 7), $totalTransfer);
                 $sheet->getStyle("D" . ($currentRow + 7))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle("D" . ($currentRow + 7))->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
+                $sheet->setCellValue("B" . ($currentRow + 8), "Modal Usaha");
+                $sheet->mergeCells("B" . ($currentRow + 8) . ":C" . ($currentRow + 8));
                 $sheet->setCellValue("D" . ($currentRow + 8), $modalUsaha);
                 $sheet->getStyle("D" . ($currentRow + 8))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 8))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+                $sheet->setCellValue("B" . ($currentRow + 9), "Laba Bersih");
+                $sheet->getStyle("B" . ($currentRow + 9))->getFont()->setBold(true);
+                $sheet->mergeCells("B" . ($currentRow + 9) . ":C" . ($currentRow + 9));
+                $sheet->getStyle("B" . ($currentRow + 9))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
                 $sheet->setCellValue("D" . ($currentRow + 9), $labaBersih);
                 $sheet->getStyle("D" . ($currentRow + 9))->getNumberFormat()->setFormatCode('"Rp"#,##0');
                 $sheet->getStyle("D" . ($currentRow + 9))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle("D" . ($currentRow + 9))->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
                 $cellRange = "B$startRow:H$currentRow";
 
