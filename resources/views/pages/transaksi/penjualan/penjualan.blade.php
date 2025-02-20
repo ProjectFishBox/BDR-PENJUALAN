@@ -49,12 +49,12 @@
                             <tr>
                                 <th scope="col" style="text-align: center; width: 5%;">No</th>
                                 <th scope="col" style="text-align: center; width: 15%;">Tanggal</th>
-                                <th scope="col" style="text-align: center; width: 40%;">No. Nota</th>
-                                <th scope="col" style="text-align: center; width: 40%;">Pelanggan</th>
-                                <th scope="col" style="text-align: center; width: 20%;">Total</th>
-                                <th scope="col" style="text-align: center; width: 15%;">Lokasi</th>
-                                <th scope="col" style="text-align: center; width: 15%;">Detail</th>
-                                <th scope="col" style="text-align: center; width: 5%;">Aksi</th>
+                                <th scope="col" style="text-align: center; width: 15%;">No. Nota</th>
+                                <th scope="col" style="text-align: center; width: 20%;">Pelanggan</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Total</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Lokasi</th>
+                                <th scope="col" style="text-align: center; width: 10%;">Detail</th>
+                                <th scope="col" style="text-align: center; width: 15%;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>

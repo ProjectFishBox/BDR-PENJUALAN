@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="form-row align-items-center" style="gap: 15px;">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-2">
                         <label for="nama_barang">Barang</label>
                         <select id="nama_barang" class="select2 form-control">
                             <option value="">Pilih Barang</option>
@@ -67,42 +67,44 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-1">
                         <label for="kode_barang">Kode</label>
                         <input type="text" class="form-control" id="kode_barang" placeholder="Kode" readonly>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label for="merek">Merek</label>
                         <select id="merek" class="form-control" name="merek">
                             <option value="">Pilih Merek</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-row align-items-center">
-                    <div class="form-group col-md-2 ">
+                    <div class="form-group col-md-2">
                         <label for="harga">Harga</label>
                         <input type="text" id="harga" readonly class="form-control-plaintext" style="font-size: x-large;">
                     </div>
-                    <div class="form-group col-md-2 ">
+                    <div class="form-group col-md-1">
                         <label for="diskon">Diskon</label>
                         <input type="text" class="form-control" id="diskon" placeholder="Diskon">
                     </div>
-                    <div class="form-group ">
+                    <div class="form-group col-md-1">
                         <label for="jumlah">Jumlah</label>
                         <input type="text" class="form-control" id="jumlah" placeholder="Jumlah">
                     </div>
-                    <div class="form-group col-md-3 ">
+                    <div class="form-group col-md-2">
                         <label for="sub_total">Sub Total</label>
                         <input type="text" id="sub_total" readonly class="form-control-plaintext" style="font-size: x-large;">
                     </div>
-                    <div class="form-group mt-2 " style="gap: 10px;">
+                </div>
+
+                <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <button class="btn btn-danger btn-import mb-3 btn-import" id="btn-import">Import</button>
+                    </div>
+                    <div class="d-flex justify-content-end">
                         <button class="btn btn-danger mr-3"  type="button" id="resetButton">Batal</button>
                         <button class="btn btn-success" type="submit">Tambahkan</button>
                     </div>
                 </div>
 
-                <button class="btn btn-danger btn-import mb-3 btn-import" id="btn-import">Import</button>
 
                 <div class="table-responsive">
                     <table class="table table-bordered">
