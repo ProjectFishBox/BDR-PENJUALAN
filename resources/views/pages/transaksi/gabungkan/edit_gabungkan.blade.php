@@ -87,6 +87,11 @@
             const merek = merekInput.value;
             const jumlah = jumlahInput.value;
 
+            if (!kodeBarang || !merek || !jumlah) {
+                alert('Kode Barang, Merek, dan Jumlah harus diisi.');
+                return;
+            }
+
             const itemData = {
                 kode_barang: kodeBarang,
                 merek: merek,

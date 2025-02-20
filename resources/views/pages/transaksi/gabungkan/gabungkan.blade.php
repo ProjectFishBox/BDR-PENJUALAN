@@ -146,7 +146,7 @@
             type: "GET",
             dataType: "HTML",
             success: function(data) {
-                reloadTable();
+                window.location.href = url;
                 $('.btn-gabungkan-edit').prop('disabled', false);
                 $('.btn-gabungkan-edit').html('<i class="anticon anticon-edit"></i>');
             },
