@@ -59,6 +59,10 @@ class PengeluaranExport implements WithEvents
 
                 $totalRow = $startRow + count($data);
 
+                $tanggal = $this->request->daterange;
+                $sheet->setCellValue("A4", "LAPORAN PENGELUARAN MULAI TANGGAL $tanggal");
+                $sheet->getStyle("A4")->getFont()->setBold(true);
+
 
                 $cellRange = "A$startRow:C$currentRow";
                 $sheet->setCellValue("B$totalRow", "TOTAL PENGELUARAN:");
