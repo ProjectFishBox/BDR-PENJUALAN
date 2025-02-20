@@ -138,6 +138,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('pembelian/{id}/update', 'update')->name('update-pembelian');
         Route::get('/delete-pembelian/{id}' , 'destroy')->name('delete-pembelian');
         Route::get('/download-tamplate-detail-pembelian', 'downloadTamplate')->name('download-tamplate-detail-pembelian');
+        Route::get('/api/barang/{kode}','searchBarang')->name('penjualan.search-kode');
 
 
     });
