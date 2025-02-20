@@ -57,7 +57,7 @@ class PenggunaControllers extends Controller
         $title = 'Tambah Pengguna';
 
         $lokasi = Lokasi::where('delete', 0)->get();
-        $akses = Akses::all();
+        $akses = Akses::where('delete', '0')->get();
 
         return view('pages.master.pengguna.tambah_pengguna', compact('title', 'lokasi', 'akses'));
     }
@@ -97,7 +97,7 @@ class PenggunaControllers extends Controller
 
         $pengguna = User::findOrFail($id);
         $lokasi = Lokasi::where('delete', 0)->get();
-        $akses = Akses::all();
+        $akses = Akses::where('delete', '0')->get();
 
 
         return view('pages.master.pengguna.edit_pengguna', compact('pengguna', 'title', 'lokasi', 'akses'));
