@@ -24,7 +24,7 @@ class PenggunaControllers extends Controller
 
         if ($request->ajax()) {
 
-            $data = User::with('lokasi', 'akses')->where('delete', 0)->orderBy('created_at', 'desc')->get();
+            $data = User::with('lokasi', 'akses')->where('delete', '0')->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -161,7 +161,7 @@ class PenggunaControllers extends Controller
             $pengguna = User::findOrFail($id);
 
             $pengguna->update([
-                'delete' => 1,
+                'delete' => '1',
                 'last_user' => auth()->id()
             ]);
 
