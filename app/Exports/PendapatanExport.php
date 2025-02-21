@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PembelianDetail;
 use App\Models\PenjualanDetail;
 USE App\Models\Lokasi;
+use App\Models\Penjualan;
 
 class PendapatanExport implements WithEvents
 {
@@ -65,6 +66,7 @@ class PendapatanExport implements WithEvents
                     ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
                     ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
                     ->where('penjualan_detail.delete', 0)
+                    ->where('penjualan.delete', 0)
                     ->when($this->request->filled('lokasi') && $this->request->lokasi != 'all', fn($query) => $query->where('penjualan.id_lokasi', $this->request->lokasi))
                     ->when($this->request->filled('daterange'), function ($query) {
                         $dates = explode(' - ', $this->request->daterange);

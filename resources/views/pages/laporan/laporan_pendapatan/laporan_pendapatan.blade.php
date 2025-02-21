@@ -36,9 +36,9 @@
             </div>
         </form>
 
-        <div class="container mt-4">
+        <div class="mt-4">
             <div class="table-responsive">
-                <table class="table table-bordered table-hover text-center data-table" id="data-table">
+                <table class="w-100 table table-bordered table-hover text-center data-table" id="data-table">
                     <thead class="table-light">
                         <tr>
                             <th>No</th>

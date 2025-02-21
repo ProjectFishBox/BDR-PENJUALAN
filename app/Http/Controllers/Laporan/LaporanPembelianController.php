@@ -31,10 +31,11 @@ class LaporanPembelianController extends Controller
             $merekId = $request->merek;
 
             $query = Pembelian::with(['detail' => function ($query) use ($merekId) {
-                if ($merekId !== 'all') {
+                if ($merekId !== 'all' && !empty($merekId)) {
                     $query->where('merek', $merekId);
                 }
             }, 'detail.barang'])
+                ->where('delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     return $query->whereBetween('tanggal', [trim($dates[0]), trim($dates[1])]);
@@ -85,7 +86,9 @@ class LaporanPembelianController extends Controller
                     'dp.harga',
                     'dp.merek',
                     'b.kode_barang',
-                );
+                )
+                ->where('p.delete', 0)
+                ->where('dp.delete', 0);
 
             if ($request->filled('daterange')) {
                 $dates = explode(' - ', $request->daterange);

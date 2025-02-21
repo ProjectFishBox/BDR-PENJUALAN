@@ -55,6 +55,7 @@ class LaporanPendapatanControllers extends Controller
             ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
             ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
             ->where('penjualan_detail.delete', 0)
+            ->where('penjualan.delete', 0)
             ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                 return $query->where('penjualan.id_lokasi', $lokasiId);
             })
@@ -136,6 +137,7 @@ class LaporanPendapatanControllers extends Controller
             ->join('penjualan', 'penjualan_detail.id_penjualan', '=', 'penjualan.id')
             ->join('lokasi', 'penjualan.id_lokasi', '=', 'lokasi.id')
             ->where('penjualan_detail.delete', 0)
+            ->where('penjualan.delete', 0)
             ->when($request->filled('lokasi') && $request->lokasi != 'all', function ($query) use ($request) {
                 return $query->where('penjualan.id_lokasi', $request->lokasi);
             })

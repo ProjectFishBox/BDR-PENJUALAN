@@ -41,7 +41,9 @@ class LaporanPembelianExport implements WithEvents
                         'dp.harga',
                         'dp.jumlah',
                         DB::raw('(dp.jumlah * dp.harga) as total')
-                    );
+                    )
+                    ->where('p.delete', 0)
+                    ->where('dp.delete', 0);
 
                 if ($this->request->filled('daterange')) {
                     $dates = explode(' - ', $this->request->daterange);

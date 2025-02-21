@@ -11,7 +11,6 @@
         <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">BDR BALL</p>
         <p style="margin-top:0pt; margin-bottom:8pt; text-align:center;">Jl. Tinumbu No.20 Telp. (0411) 22099</p>
 
-
         @if($namaLokasi)
             <p class="text-start mt-5">DAFTAR PEMBELIAN BARANG PADA LOKASI {{ $namaLokasi}} TANGGAL {{ $tanggalRequest }}</p>
         @else
@@ -36,8 +35,9 @@
                 @php
                     $total_penjualan = 0;
                     $total_jumlah = 0;
+                    $index = 1;
                 @endphp
-                @foreach ($data as $index => $item)
+                @foreach ($data as $item)
                     @foreach ($item['detail'] as $detail)
                     @php
                         $total_penjualan += $detail['total_item'];
@@ -45,7 +45,7 @@
                         $formattedDate = \Carbon\Carbon::parse($item['tanggal'])->format('d-m-Y');
                     @endphp
                         <tr>
-                            <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $index + 1 }}</td>
+                            <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $index++ }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $item['no_nota'] }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $formattedDate }}</td>
                             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ $detail['kode_barang'] }}</td>
