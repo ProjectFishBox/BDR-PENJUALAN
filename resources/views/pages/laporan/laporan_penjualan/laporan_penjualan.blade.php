@@ -223,12 +223,25 @@
                     var previousNoNota = null;
 
                     $.each(data, function(index, item) {
+                        var totalHarga = item.detail.reduce((sum, detail) => sum + (detail.harga * detail.jumlah), 0);
+                        var sisa = totalHarga - item.diskon_nota - item.bayar;
+                            sisa = Math.abs(sisa)
                         var headerRow = '<tr>' +
                             '<td>' + overallIndex + '</td>' +
                             '<td>' + item.no_nota + '</td>' +
                             '<td>' + moment(item.tanggal, 'YYYY-MM-DD').format('DD-MM-YYYY') + '</td>' +
                             '<td>' + item.nama_pelanggan + '</td>' +
-                            '<td colspan="11"></td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' + ''  + '</td>' +
+                            '<td>' +  '' + '</td>' +
+                            '<td>' +  (item.detail.reduce((sum, detail) => sum + (detail.harga * detail.jumlah), 0)).toLocaleString('id-ID') + '</td>' +
+                            '<td>' + item.diskon_nota.toLocaleString('id-ID') + '</td>' +
+                            '<td>' + item.bayar.toLocaleString('id-ID') + '</td>' +
+                            '<td>' + sisa.toLocaleString('id-ID') + '</td>' +
                             '</tr>';
                         tbody.append(headerRow);
 
@@ -236,6 +249,7 @@
                             var noNotaCell = '';
                             var tanggalCell = '';
                             var namaPelangganCell = '';
+
 
                             if (previousNoNota !== item.no_nota) {
                                 previousNoNota = item.no_nota;
@@ -257,10 +271,10 @@
                                 '<td>' + Math.floor(detail.diskon_barang).toLocaleString('id-ID') + '</td>' +
                                 '<td>' + detail.jumlah + '</td>' +
                                 '<td>' + (detail.harga * detail.jumlah).toLocaleString('id-ID') + '</td>' +
-                                '<td>' + ((detail.harga * detail.jumlah) - detail.diskon_barang).toLocaleString('id-ID') + '</td>' + // Total setelah diskon
-                                '<td>' + item.diskon_nota + '</td>' +
-                                '<td>' + item.bayar + '</td>' +
-                                '<td>' + ( ((detail.harga * detail.jumlah) - detail.diskon_barang) - item.diskon_nota - item.bayar ).toLocaleString('id-ID') + '</td>' + // Menghitung sisa
+                                '<td>' + '' + '</td>' +
+                                '<td>' + '' + '</td>' +
+                                '<td>' + '' + '</td>' +
+                                '<td>' + '' + '</td>' +
                                 '</tr>';
                             tbody.append(row);
 
@@ -283,7 +297,8 @@
                         '<td>' + Math.floor(total).toLocaleString('id-ID') + '</td>' +
                         '<td>' + Math.floor(totalDiskonNota).toLocaleString('id-ID') + '</td>' +
                         '<td>' + Math.floor(totalBayar).toLocaleString('id-ID') + '</td>' +
-                        '<td>' + Math.floor(totalSisa).toLocaleString('id-ID') + '</td>' +
+                        '<td>' + Math.abs(Math.floor(totalSisa)).toLocaleString('id-ID') + '</td>' +
+
                         '</tr>';
                     tbody.append(totalRow);
                 }
