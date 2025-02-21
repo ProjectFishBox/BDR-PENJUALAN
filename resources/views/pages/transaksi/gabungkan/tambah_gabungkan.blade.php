@@ -40,7 +40,7 @@
                         <tbody id="table-body">
                             <tr>
                                 <td colspan="3" style="text-align: end">Total</td>
-                                <td id="total-cell">0</td>
+                                <td id="total-cell" style="text-align: center">0</td>
                                 <td></td>
                             </tr>
 
@@ -94,10 +94,10 @@
 
             const newRow = `
             <tr>
-                <td></td>
-                <td>${kodeBarang}</td>
-                <td>${merek}</td>
-                <td>${jumlah}</td>
+                <td class="text-center"></td>
+                <td class="text-center">${kodeBarang}</td>
+                <td class="text-center">${merek}</td>
+                <td class="text-center">${jumlah}</td>
                 <td style="text-align: center">
                     <button class="btn btn-icon btn-danger btn-rounded remove-row">
                         <i class="anticon anticon-close"></i>
@@ -229,10 +229,10 @@
         data.forEach(item => {
             const newRow = `
             <tr>
-                <td></td>
-                <td>${item.kode_barang}</td>
-                <td>${item.merek}</td>
-                <td>${item.jumlah}</td>
+                <td class="text-center"></td>
+                <td class="text-center">${item.kode_barang}</td>
+                <td class="text-center">${item.merek}</td>
+                <td class="text-center">${item.jumlah}</td>
                 <td style="text-align: center">
                     <button class="btn btn-icon btn-danger btn-rounded remove-row">
                         <i class="anticon anticon-close"></i>
