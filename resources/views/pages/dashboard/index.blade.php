@@ -91,39 +91,41 @@
 
             <div class="row" style="padding: 25px">
                 <div class="col-md-4 col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="m-b-0 ">Stok Masuk</p>
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <p class="m-b-0">Stok Masuk</p>
                             <div class="media align-items-center">
-                                <div class="">
+                                <div>
                                     <h1 class="m-b-0" style="font-size: 35px" id="stok-masuk">0</h1>
                                 </div>
                             </div>
+                            <small class="text-muted">&nbsp;</small> <!-- Spacer untuk keseimbangan -->
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="m-b-0 ">Stok Keluar</p>
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <p class="m-b-0">Stok Keluar</p>
                             <div class="media align-items-center">
-                                <div class="">
+                                <div>
                                     <h1 class="m-b-0" style="font-size: 35px" id="stok-keluar">0</h1>
                                 </div>
                             </div>
+                            <small class="text-muted">&nbsp;</small> <!-- Spacer untuk keseimbangan -->
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 col-lg-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="m-b-0 ">Sisa Stok</p>
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <p class="m-b-0">Sisa Stok</p>
                             <div class="media align-items-center">
-                                <div class="">
+                                <div>
                                     <h1 class="m-b-0" style="font-size: 35px" id="sisa-stok">0</h1>
-                                    <small>Total Nilai Jual: <span id="total-nilai-jual"></small>
                                 </div>
                             </div>
+                            <small class="text-muted">Total Nilai Jual: <span id="total-nilai-jual"></span></small>
                         </div>
                     </div>
                 </div>
