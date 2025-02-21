@@ -503,4 +503,15 @@ class PenjualanControllers extends Controller
         return response()->download($filePath, $fileName);
     }
 
+    public function searchBarang($kode)
+    {
+        $barang = Barang::where('kode_barang', $kode)->get();
+
+        if ($barang) {
+            return response()->json(['success' => true, 'barang' => $barang]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
 }

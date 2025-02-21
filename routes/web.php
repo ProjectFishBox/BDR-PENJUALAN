@@ -138,7 +138,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('pembelian/{id}/update', 'update')->name('update-pembelian');
         Route::get('/delete-pembelian/{id}' , 'destroy')->name('delete-pembelian');
         Route::get('/download-tamplate-detail-pembelian', 'downloadTamplate')->name('download-tamplate-detail-pembelian');
-        Route::get('/api/barang/{kode}','searchBarang')->name('penjualan.search-kode');
+        Route::get('/tambah-pembelian/barang/{kode}','searchBarang')->name('pembelian.search-kode');
 
 
     });
@@ -172,6 +172,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/penjualan-edit/{id}', 'show')->name('penjualan-edit');
         Route::post('penjualan/{id}/update', 'update')->name('update-penjualan');
         Route::get('/delete-penjualan/{id}' , 'destroy')->name('delete-penjualan');
+        Route::get('/tambah-penjualan/barang/{kode}','searchBarang')->name('penjualan.search-kode');
     });
 
     Route::controller(GabungkanControllers::class)->group(function () {

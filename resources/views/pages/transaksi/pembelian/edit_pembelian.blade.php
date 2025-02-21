@@ -161,7 +161,7 @@
                 const kodeBarang = kodeBarangInput.value.trim();
 
                 if (kodeBarang) {
-                    fetch(`/api/barang/${kodeBarang}`)
+                    fetch(`/tambah-pembelian/barang/${kodeBarang}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {

@@ -188,6 +188,103 @@
 @endpush
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const kodeBarangInput = document.getElementById('kode_barang');
+        const namaBarangSelect = document.getElementById('nama_barang');
+        const merekSelect = document.getElementById('merek');
+        const hargaInput = document.getElementById('harga');
+
+        var filteredMerek = @json($barang);
+
+        kodeBarangInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const kodeBarang = kodeBarangInput.value.trim();
+
+                if (kodeBarang) {
+                    fetch(`/tambah-penjualan/barang/${kodeBarang}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                const barangList = data.barang;
+
+                                console.log(barangList);
+
+                                const option = document.createElement('option');
+                                option.value = barangList[0].id;
+                                option.text = `(${barangList[0].kode_barang}) ${barangList[0].nama}`;
+                                option.setAttribute('data-id', barangList[0].id);
+                                option.setAttribute('data-nama', barangList[0].nama);
+                                option.setAttribute('data-harga', barangList[0].harga);
+                                option.setAttribute('data-kode', barangList[0].kode_barang);
+                                option.setAttribute('data-merek', barangList[0].merek);
+                                namaBarangSelect.innerHTML = '';
+                                namaBarangSelect.appendChild(option);
+                                $('#nama_barang').val(barangList[0].id).trigger('change');
+
+                                merekSelect.innerHTML = '';
+                                barangList.forEach(barang => {
+                                    const merekOption = document.createElement('option');
+                                    merekOption.value = barang.merek;
+                                    merekOption.text = barang.merek;
+                                    merekOption.setAttribute('data-harga', barang.harga);
+                                    merekSelect.appendChild(merekOption);
+                                });
+                                $('#merek').val('').trigger('change');
+
+                                hargaInput.value = '';
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Kode barang tidak ditemukan!',
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching barang:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Kode barang tidak ditemukan!',
+                            });
+                        });
+                }
+            }
+        });
+
+        merekSelect.addEventListener('change', function() {
+            const selectedMerek = merekSelect.options[merekSelect.selectedIndex];
+            const harga = selectedMerek.getAttribute('data-harga');
+            hargaInput.value = harga;
+        });
+
+        kodeBarangInput.addEventListener('input', function() {
+            if (kodeBarangInput.value.trim() === '') {
+                namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+                filteredMerek.forEach(barang => {
+                    const option = document.createElement('option');
+                    option.value = barang.id;
+                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                    option.setAttribute('data-id', barang.id);
+                    option.setAttribute('data-nama', barang.nama);
+                    option.setAttribute('data-harga', barang.harga);
+                    option.setAttribute('data-kode', barang.kode_barang);
+                    option.setAttribute('data-merek', barang.merek);
+                    namaBarangSelect.appendChild(option);
+                });
+
+                $('#nama_barang').val('').trigger('change');
+                merekSelect.innerHTML = '<option value="">Pilih Barang</option>';
+                hargaInput.value = '';
+            }
+        });
+    });
+</script>
+
 <script>
     document.getElementById('resetButton').addEventListener('click', function() {
         document.getElementById('nama_barang').value = '';
