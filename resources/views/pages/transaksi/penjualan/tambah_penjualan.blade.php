@@ -27,7 +27,7 @@
                             <select id="pelanggan" class="pelanggan form-control" name="pelanggan" required>
                                 <option value="">Pilih Pelanggan</option>
                                 @foreach ($pelanggan as $p)
-                                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                                    <option value="{{ $p->id }}" data-kota="{{ $p->nama_kota }}">{{ $p->nama }}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -107,8 +107,9 @@ class PenjualanControllers extends Controller
             ->where('set_harga.delete', 0)
             ->get();
 
-            // dd($barang);
-
+        foreach ($pelanggan as $p) {
+            $p->nama_kota = Indonesia::findCity($p->id_kota)['name'] ?? 'Tidak Diketahui';
+        }
 
         return view('pages.transaksi.penjualan.tambah_penjualan', compact('title', 'pelanggan', 'barang'));
     }
@@ -373,9 +374,11 @@ class PenjualanControllers extends Controller
         $pelanggan = Pelanggan::with('kota')->find($id);
 
         if ($pelanggan) {
+            $kota = Indonesia::findCity($pelanggan->id_kota);
+
             return response()->json([
                 'alamat' => $pelanggan->alamat,
-                'kota' => $pelanggan->kota->nama ?? '',
+                'kota' => $kota['name'] ?? 'Tidak Diketahui',
                 'telepon' => $pelanggan->telepon,
             ]);
         }
