@@ -37,6 +37,7 @@ class LaporanPenjualanControllers extends Controller
             $notaId = $request->no_nota;
 
             $query = Penjualan::with(['detail.barang', 'pelanggan'])
+                ->where('delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
@@ -99,6 +100,7 @@ class LaporanPenjualanControllers extends Controller
             $notaId = $request->no_nota;
 
             $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
+                ->where('delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();

@@ -34,6 +34,7 @@ class LaporanPenjualanExport implements WithEvents
                 $sheet = $spreadsheet->getActiveSheet();
 
                 $query = Penjualan::with(['detail.barang', 'pelanggan', 'lokasi'])
+                    ->where('delete', 0)
                     ->when($this->request->filled('daterange'), function ($query) {
                         $dates = explode(' - ', $this->request->daterange);
                         $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
