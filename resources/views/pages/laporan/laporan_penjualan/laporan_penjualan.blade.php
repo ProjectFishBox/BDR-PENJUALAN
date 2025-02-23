@@ -230,10 +230,14 @@
                         var previousNoNota = null;
 
                         $.each(data, function(index, item) {
-                            var totalHarga = item.detail.reduce((sum, detail) => sum + (
-                                detail.harga * detail.jumlah), 0);
+                            var totalHarga = item.detail.reduce((sum, detail) => sum + (detail.harga * detail.jumlah), 0);
                             var sisa = totalHarga - item.diskon_nota - item.bayar;
                             sisa = Math.abs(sisa)
+
+                            total += totalHarga;
+                            totalSisa +=sisa
+                            totalBayar += parseFloat(item.bayar);
+
                             var headerRow = '<tr>' +
                                 '<td>' + overallIndex + '</td>' +
                                 '<td>' + item.no_nota + '</td>' +
@@ -297,14 +301,7 @@
                                 totalJumlah += parseInt(detail.jumlah);
                                 totalHitung += parseFloat((detail.harga * detail
                                     .jumlah));
-                                total += parseFloat(((detail.harga * detail
-                                    .jumlah) - detail.diskon_barang));
                                 totalDiskonNota += parseFloat(item.diskon_nota);
-                                totalBayar += parseFloat(item.bayar);
-                                totalSisa += parseFloat(((detail.harga * detail
-                                        .jumlah) - detail.diskon_barang) -
-                                    item.diskon_nota - item.bayar)
-
                             });
                             overallIndex++;
                         });
@@ -315,8 +312,7 @@
                             '<td>' + Math.floor(totalJumlah).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.floor(totalHitung).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.floor(total).toLocaleString('id-ID') + '</td>' +
-                            '<td>' + Math.floor(totalDiskonNota).toLocaleString('id-ID') +
-                            '</td>' +
+                            '<td>' + Math.floor(totalDiskonNota).toLocaleString('id-ID') +'</td>' +
                             '<td>' + Math.floor(totalBayar).toLocaleString('id-ID') + '</td>' +
                             '<td>' + Math.abs(Math.floor(totalSisa)).toLocaleString('id-ID') +
                             '</td>' +
