@@ -32,6 +32,8 @@ class DashboardControllers extends Controller
             $totalPembelian = Pembelian::query()
                 ->join('pembelian_detail', 'pembelian.id', '=', 'pembelian_detail.id_pembelian')
                 ->selectRaw('SUM(pembelian_detail.subtotal) as total_pembelian')
+                ->where('pembelian.delete', 0)
+                ->where('pembelian_detail.delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
@@ -55,6 +57,8 @@ class DashboardControllers extends Controller
             $totalPenjualan = Penjualan::query()
                 ->join('penjualan_detail', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
                 ->selectRaw('SUM(penjualan_detail.harga * penjualan_detail.jumlah - (penjualan_detail.diskon_barang * penjualan_detail.jumlah)) as total_penjualan')
+                ->where('penjualan.delete', 0)
+                ->where('penjualan_detail.delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
@@ -77,7 +81,7 @@ class DashboardControllers extends Controller
 
             $totalPengeluaran = Pengeluaran::query()
                 ->selectRaw('SUM(total) as total_pengeluaran')
-
+                ->where('pengeluaran.delete', 0)
                 ->when($request->input('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                     return $query->where('pengeluaran.id_lokasi', $lokasiId);
                 })
@@ -92,6 +96,8 @@ class DashboardControllers extends Controller
 
             $stokMasuk = PembelianDetail::query()
                 ->join('pembelian', 'pembelian.id', '=', 'pembelian_detail.id_pembelian')
+                ->where('pembelian_detail.delete', 0)
+                ->where('pembelian.delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
@@ -113,6 +119,8 @@ class DashboardControllers extends Controller
 
             $stokKeluar = PenjualanDetail::query()
                 ->join('penjualan', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
+                ->where('penjualan_detail.delete', 0)
+                ->where('penjualan.delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
@@ -135,6 +143,8 @@ class DashboardControllers extends Controller
             $totalPenjualanNominal = PenjualanDetail::query()
                 ->join('penjualan', 'penjualan.id', '=', 'penjualan_detail.id_penjualan')
                 ->selectRaw('SUM(penjualan_detail.harga * penjualan_detail.jumlah - penjualan_detail.diskon_barang * penjualan_detail.jumlah) as total_penjualan_nominal')
+                ->where('penjualan_detail.delete', 0)
+                ->where('penjualan.delete', 0)
                 ->when($request->input('daterange'), function ($query) use ($request) {
                     $dates = explode(' - ', $request->input('daterange'));
                     $startDate = \Carbon\Carbon::createFromFormat('d-m-Y', trim($dates[0]))->startOfDay();
