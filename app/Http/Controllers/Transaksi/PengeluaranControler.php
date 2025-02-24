@@ -125,7 +125,7 @@ class PengeluaranControler extends Controller
         if (!$request->ajax()) {
             return redirect('/dashboard');
         }
-        $query = Pengeluaran::query();
+        $query = Pengeluaran::where('delete',0)->orderBy('created_at', 'desc');
 
 
         $daterange = $request->query('daterange');
