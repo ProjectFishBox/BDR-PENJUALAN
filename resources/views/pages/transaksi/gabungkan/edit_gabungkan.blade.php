@@ -63,8 +63,13 @@
 @endsection
 
 @push('js')
-
-
+<script>
+    function updateFileName() {
+        var input = document.getElementById('customFile');
+        var label = document.querySelector('.custom-file-label');
+        label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
+    }
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const kodeBarangInput = document.getElementById('kode_barang');
