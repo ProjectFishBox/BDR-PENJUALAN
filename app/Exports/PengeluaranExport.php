@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -16,7 +15,6 @@ use Illuminate\Support\Carbon;
 
 class PengeluaranExport implements WithEvents
 {
-
     protected $request;
 
     public function __construct(Request $request)
@@ -39,9 +37,14 @@ class PengeluaranExport implements WithEvents
                 $currentRow = $startRow;
                 $totalKeluar = 0;
 
+                $filteredData = array_filter($data, function ($item) {
+                    return $item['delete'] == 0;
+                });
 
-                foreach ($data as $key => $item) {
-
+                usort($filteredData, function ($a, $b) {
+                    return strtotime($b['created_at']) - strtotime($a['created_at']);
+                });
+                foreach ($filteredData as $key => $item) {
                     $total_pengeluaran = $item['total'];
                     $formattedDate = Carbon::parse($item['tanggal'])->format('d-m-Y');
 
@@ -49,9 +52,18 @@ class PengeluaranExport implements WithEvents
                     $sheet->setCellValue("B$currentRow", $formattedDate);
                     $sheet->setCellValue("C$currentRow", 'Rp ' . number_format((float) $item['total'], 0, ',', '.'));
 
-                    $sheet->getStyle("A$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                    $sheet->getStyle("B$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                    $sheet->getStyle("C$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet
+                        ->getStyle("A$currentRow")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet
+                        ->getStyle("B$currentRow")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    $sheet
+                        ->getStyle("C$currentRow")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                     $totalKeluar += $total_pengeluaran;
                     $currentRow++;
@@ -60,18 +72,20 @@ class PengeluaranExport implements WithEvents
                 $totalRow = $startRow + count($data);
 
                 $tanggal = $this->request->daterange;
-                $sheet->setCellValue("A4", "LAPORAN PENGELUARAN MULAI TANGGAL $tanggal");
-                $sheet->getStyle("A4")->getFont()->setBold(true);
-
+                $sheet->setCellValue('A4', "LAPORAN PENGELUARAN MULAI TANGGAL $tanggal");
+                $sheet->getStyle('A4')->getFont()->setBold(true);
 
                 $cellRange = "A$startRow:C$currentRow";
-                $sheet->setCellValue("B$totalRow", "TOTAL PENGELUARAN:");
-                $sheet->getStyle("B$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                $sheet->setCellValue("B$totalRow", 'TOTAL PENGELUARAN:');
+                $sheet
+                    ->getStyle("B$currentRow")
+                    ->getAlignment()
+                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                 $sheet->setCellValue("C$totalRow", 'Rp ' . number_format((float) $totalKeluar, 0, ',', '.'));
-                $sheet->getStyle("C$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-
-
+                $sheet
+                    ->getStyle("C$currentRow")
+                    ->getAlignment()
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 $borderStyle = [
                     'borders' => [
@@ -91,7 +105,7 @@ class PengeluaranExport implements WithEvents
                 $writer->save($filePath);
 
                 session(['export_file' => $exportFileName]);
-            }
+            },
         ];
     }
 }
