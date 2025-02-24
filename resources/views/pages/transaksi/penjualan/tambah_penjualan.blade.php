@@ -214,8 +214,6 @@
                             if (data.success) {
                                 const barangList = data.barang;
 
-                                console.log(barangList);
-
                                 const option = document.createElement('option');
                                 option.value = barangList[0].id;
                                 option.text = `(${barangList[0].kode_barang}) ${barangList[0].nama}`;
@@ -317,13 +315,15 @@
     });
 
 </script>
-<script>
-    function updateFileName() {
-        var input = document.getElementById('customFile');
-        var label = document.querySelector('.custom-file-label');
-        label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
-    }
-</script>
+
+    <script>
+        function updateFileName() {
+            var input = document.getElementById('customFile');
+            var label = document.querySelector('.custom-file-label');
+            label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
+        }
+    </script>
+
     <script>
         $('.select2').select2({
             width: '100%',
@@ -382,7 +382,6 @@
     <script>
         $(document).on('click', '.btn-add-pelanggan', function(e) {
             e.preventDefault();
-            console.log('test modal add');
             let url = "/modal-tambah-pelanggan";
             $(this).prop('disabled', true)
             $.ajax({
@@ -451,7 +450,7 @@
         });
     </script>
 
-<script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const pelangganData = @json($pelanggan);
             const pelangganSelect = document.getElementById('pelanggan');
@@ -523,6 +522,7 @@
             const tableBody = document.querySelector('table tbody');
 
             const addButton = document.querySelector('button[type="submit"]');
+            var filteredMerek = @json($barang);
 
             function formatNumber(value) {
                 return new Intl.NumberFormat('id-ID').format(value);
@@ -671,6 +671,8 @@
 
             function resetForm() {
                 namaBarangSelect.value = '';
+                $('#nama_barang').val(null).trigger('change');
+
                 kodeBarangInput.value = '';
                 merek.value = '';
                 hargaInput.value = '';
@@ -678,7 +680,21 @@
                 diskonInput.value = '';
                 subTotalInput.value = '';
 
+                merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
+                namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+                filteredMerek.forEach(barang => {
+                    const option = document.createElement('option');
+                    option.value = barang.id;
+                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                    option.setAttribute('data-id', barang.id);
+                    option.setAttribute('data-nama', barang.nama);
+                    option.setAttribute('data-harga', barang.harga);
+                    option.setAttribute('data-kode', barang.kode_barang);
+                    option.setAttribute('data-merek', barang.merek);
+                    namaBarangSelect.appendChild(option);
+                });
             }
+
 
             function setRemoveRowEvent() {
                 const removeButtons = document.querySelectorAll('.remove-row');
@@ -713,8 +729,6 @@
 
                 subtotals.forEach(function(subtotalCell) {
                     const subtotalValue = subtotalCell.textContent.replace(/[^\d]/g, '');
-
-                    console.log('jumlah subtotal',subtotalValue)
 
                     if (!isNaN(subtotalValue) && subtotalValue.trim() !== '') {
                         total += parseFloat(subtotalValue);

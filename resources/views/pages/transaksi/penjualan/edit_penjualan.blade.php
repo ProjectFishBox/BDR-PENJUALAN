@@ -68,7 +68,7 @@
                     </div>
                     <div class="form-group col-md-1">
                         <label for="kode_barang">Kode</label>
-                        <input type="text" class="form-control" id="kode_barang" placeholder="Kode" readonly>
+                        <input type="text" class="form-control" id="kode_barang" placeholder="Kode">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="merek">Merek</label>
@@ -554,23 +554,6 @@
             function formatNumber(value) {
                 return new Intl.NumberFormat('id-ID').format(value);
             }
-            // namaBarangSelect.addEventListener('change', function () {
-            //     const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            //     if (!selectedOption) return;
-
-            //     const harga = selectedOption.getAttribute('data-harga');
-            //     const kodeBarang = selectedOption.getAttribute('data-kode');
-
-            //     const merek = selectedOption.getAttribute('data-merek');
-
-            //     function formatRibuan(value) {
-            //             return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            //     }
-
-            //     hargaInput.value = harga ? formatRibuan(harga) : '';
-            //     kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-            //     merekInput.value = merek ? merek : '';
-            // });
 
             addButton.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -621,33 +604,35 @@
 
                 const kodeBarang = itemData.barang ? itemData.barang.kode_barang : itemData.kode_barang;
 
-                const newRow = `
-                    <tr>
-                        <td>${++rowCount}</td>
-                        <td>${kodeBarang}</td> <!-- Gunakan kode_barang dari itemData -->
-                        <td>${itemData.nama_barang}</td>
-                        <td>${itemData.merek}</td>
-                        <td>${formattedHarga}</td> <!-- Format harga -->
-                        <td>${formattedDiskon}</td> <!-- Format diskon -->
-                        <td>${itemData.jumlah}</td>
-                        <td class="subtotal">${formattedSubtotal}</td> <!-- Format subtotal -->
-                        <td>
-                            <button class="btn btn-icon btn-danger btn-rounded remove-row">
-                                <i class="anticon anticon-close"></i>
-                            </button>
-                        </td>
-                        <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${itemData.id_barang}">
-                        <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${itemData.kode_barang}">
-                        <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${itemData.nama_barang}">
-                        <input type="hidden" name="table_data[${rowCount}][merek]" value="${itemData.merek}">
-                        <input type="hidden" name="table_data[${rowCount}][harga]" value="${itemData.harga}">
-                        <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${itemData.jumlah}">
-                        <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${subtotal}">
-                        <input type="hidden" name="table_data[${rowCount}][diskon]" value="${formattedDiskon}">
-                    </tr>
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${++rowCount}</td>
+                    <td>${kodeBarang}</td>
+                    <td>${itemData.nama_barang}</td>
+                    <td>${itemData.merek}</td>
+                    <td>${formattedHarga}</td>
+                    <td>${formattedDiskon}</td>
+                    <td>${itemData.jumlah}</td>
+                    <td class="subtotal">${formattedSubtotal}</td>
+                    <td>
+                        <button class="btn btn-icon btn-danger btn-rounded remove-row">
+                            <i class="anticon anticon-close"></i>
+                        </button>
+                    </td>
+                    <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${itemData.id_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${itemData.kode_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${itemData.nama_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][merek]" value="${itemData.merek}">
+                    <input type="hidden" name="table_data[${rowCount}][harga]" value="${itemData.harga}">
+                    <input type="hidden" name="table_data[${rowCount}][jumlah]" value="${itemData.jumlah}">
+                    <input type="hidden" name="table_data[${rowCount}][subtotal]" value="${subtotal}">
+                    <input type="hidden" name="table_data[${rowCount}][diskon]" value="${formattedDiskon}">
                 `;
-                // tableBody.insertAdjacentHTML('beforeend', newRow);
-                tableBody.insertAdjacentHTML('afterbegin', newRow);
+
+                const totalPenjualanRow = document.getElementById('total-penjualan').parentElement;
+
+                tableBody.insertBefore(newRow, totalPenjualanRow);
+
                 updateTotalPembelian();
             }
 
@@ -672,7 +657,7 @@
 
             function updateRowNumbers() {
                 const rows = tableBody.querySelectorAll('tr');
-                rowCount = 0;
+                rowCount = 1;
                 rows.forEach((row, index) => {
                     row.querySelector('td:first-child').innerText = index + 1;
                     rowCount++;
@@ -715,6 +700,7 @@
             const tableBody = document.querySelector('table tbody');
 
             const addButton = document.querySelector('button[type="submit"]');
+            var filteredMerek = @json($barang);
 
             function formatNumber(value) {
                 return new Intl.NumberFormat('id-ID').format(value);
@@ -869,6 +855,20 @@
                 jumlahInput.value = '';
                 diskonInput.value = '';
                 subTotalInput.value = '';
+
+                merekSelect.innerHTML = '<option value="">Pilih Merek</option>'; // Menghapus pilihan merek
+                namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+                filteredMerek.forEach(barang => {
+                    const option = document.createElement('option');
+                    option.value = barang.id;
+                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                    option.setAttribute('data-id', barang.id);
+                    option.setAttribute('data-nama', barang.nama);
+                    option.setAttribute('data-harga', barang.harga);
+                    option.setAttribute('data-kode', barang.kode_barang);
+                    option.setAttribute('data-merek', barang.merek);
+                    namaBarangSelect.appendChild(option);
+                });
 
             }
 
