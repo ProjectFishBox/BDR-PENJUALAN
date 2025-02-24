@@ -38,6 +38,9 @@
                             </thead>
                             <tbody>
                                 @foreach ($detailpenjualan as $index => $d)
+                                @php
+                                    $subTotal = (($d->harga * $d->jumlah) - ($d->diskon_barang * $d->jumlah));
+                                @endphp
                                 <tr>
                                     <td style="text-align: center;">{{ $index + 1 }}</td>
                                     <td style="text-align: center;">
@@ -59,7 +62,7 @@
                                         {{ $d->jumlah }}
                                     </td>
                                     <td style="text-align: center;">
-                                        Rp{{ number_format($subtotalItem, 0, ',', '.') }}
+                                        Rp{{ number_format($subTotal, 0, ',', '.') }}
                                     </td>
                                 </tr>
                                 @endforeach
