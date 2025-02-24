@@ -230,13 +230,14 @@
                         var previousNoNota = null;
 
                         $.each(data, function(index, item) {
-                            var totalHarga = item.detail.reduce((sum, detail) => sum + (detail.harga * detail.jumlah), 0);
+                            var totalHarga = item.detail.reduce((sum, detail) => sum + ((detail.harga * detail.jumlah) - (detail.diskon_barang * detail.jumlah)), 0);
                             var sisa = totalHarga - item.diskon_nota - item.bayar;
                             sisa = Math.abs(sisa)
 
                             total += totalHarga;
                             totalSisa +=sisa
                             totalBayar += parseFloat(item.bayar);
+                            totalDiskonNota += parseFloat(item.diskon_nota);
 
                             var headerRow = '<tr>' +
                                 '<td>' + overallIndex + '</td>' +
@@ -251,8 +252,7 @@
                                 '<td>' + '' + '</td>' +
                                 '<td>' + '' + '</td>' +
                                 '<td>' + '' + '</td>' +
-                                '<td>' + (item.detail.reduce((sum, detail) => sum + (
-                                    detail.harga * detail.jumlah), 0)).toLocaleString(
+                                '<td>' + (item.detail.reduce((sum, detail) => sum + ((detail.harga * detail.jumlah) - (detail.diskon_barang * detail.jumlah)), 0)).toLocaleString(
                                     'id-ID') + '</td>' +
                                 '<td>' + item.diskon_nota.toLocaleString('id-ID') +
                                 '</td>' +
@@ -288,9 +288,7 @@
                                     '<td>' + Math.floor(detail.diskon_barang)
                                     .toLocaleString('id-ID') + '</td>' +
                                     '<td>' + detail.jumlah + '</td>' +
-                                    '<td>' + (detail.harga * detail.jumlah)
-                                    .toLocaleString('id-ID') + '</td>' +
-                                    '<td>' + '' + '</td>' +
+                                    '<td>' + (((detail.harga * detail.jumlah) - (detail.diskon_barang * detail.jumlah))).toLocaleString('id-ID') + '</td>' +
                                     '<td>' + '' + '</td>' +
                                     '<td>' + '' + '</td>' +
                                     '<td>' + '' + '</td>' +
@@ -299,9 +297,8 @@
 
                                 totalDiskon += parseFloat(detail.diskon_barang);
                                 totalJumlah += parseInt(detail.jumlah);
-                                totalHitung += parseFloat((detail.harga * detail
-                                    .jumlah));
-                                totalDiskonNota += parseFloat(item.diskon_nota);
+                                totalHitung += parseFloat(((detail.harga * detail.jumlah) - (detail.diskon_barang * detail.jumlah)));
+                                // totalDiskonNota += parseFloat(item.diskon_nota);
                             });
                             overallIndex++;
                         });
