@@ -12,8 +12,6 @@
                             <div class="input-affix m-b-10">
                                 <i class="prefix-icon anticon anticon-calendar"></i>
                                 <input type="text" class="form-control" id="tanggal" name="tanggal" placeholder="Pilih Tanggal" value="{{ date('d-m-Y', strtotime($pembelian->tanggal)) }}" required/>
-
-                                {{-- <input type="text" class="form-control datepicker-input" placeholder="Piih Tanggal" name="tanggal" required  value="{{ $pembelian->tanggal }}"> --}}
                             </div>
                         </div>
                         <div class="form-group col-md-4">
@@ -530,6 +528,8 @@
 
         const itemsFromDB = @json($detailPembelian);
         const bayarFromDB = @json($bayar);
+        var filteredMerek = @json($barang);
+
 
         function formatRupiah(value) {
             return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -544,21 +544,6 @@
         function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
-        // namaBarangSelect.addEventListener('change', function () {
-        //     const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-        //     const harga = selectedOption.getAttribute('data-harga');
-        //     const kodeBarang = selectedOption.getAttribute('data-kode');
-
-        //     const merek = selectedOption.getAttribute('data-merek');
-
-        //     function formatRibuan(value) {
-        //             return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        //     }
-
-        //     hargaInput.value = harga ? formatRibuan(harga) : '';
-        //     kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-        //     merekInput.value = merek ? merek : '';
-        // });
 
         addButton.addEventListener('click', function (e) {
             e.preventDefault();
@@ -648,11 +633,25 @@
 
         function resetForm() {
             namaBarangSelect.value = '';
+            $('#nama_barang').val(null).trigger('change');
             kodeBarangInput.value = '';
             merekInput.value = '';
             hargaInput.value = '';
             jumlahInput.value = '';
             subTotalInput.value = '';
+
+            namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+            filteredMerek.forEach(barang => {
+                const option = document.createElement('option');
+                option.value = barang.id;
+                option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                option.setAttribute('data-id', barang.id);
+                option.setAttribute('data-nama', barang.nama);
+                option.setAttribute('data-harga', barang.harga);
+                option.setAttribute('data-kode', barang.kode_barang);
+                option.setAttribute('data-merek', barang.merek);
+                namaBarangSelect.appendChild(option);
+            });
         }
 
         tableBody.addEventListener('click', function (e) {

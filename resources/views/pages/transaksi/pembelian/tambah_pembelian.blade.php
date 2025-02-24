@@ -168,8 +168,6 @@
                             if (data.success) {
                                 const barangList = data.barang;
 
-                                console.log(barangList);
-
                                 const option = document.createElement('option');
                                 option.value = barangList[0].id;
                                 option.text = `(${barangList[0].kode_barang}) ${barangList[0].nama}`;
@@ -302,6 +300,7 @@
             label.textContent = input.files[0] ? input.files[0].name : 'Choose file';
         }
     </script>
+
     <script>
         $('.select2').select2({
             width: '100%',
@@ -496,6 +495,8 @@
             const tableBody = document.querySelector('table tbody');
 
             let rowCount = 0;
+            var filteredMerek = @json($barang);
+
 
             addButton.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -580,13 +581,25 @@
 
             function resetForm() {
                 namaBarangSelect.value = '';
+                $('#nama_barang').val(null).trigger('change');
                 kodeBarangInput.value = '';
                 merekInput.value = '';
                 hargaInput.value = '';
                 jumlahInput.value = '';
                 bayarInput.value = '';
-                $('#nama_barang').select2().val(null).trigger('change');
-                $('#merek').select2().val(null).trigger('change');
+                namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+                filteredMerek.forEach(barang => {
+                    const option = document.createElement('option');
+                    option.value = barang.id;
+                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                    option.setAttribute('data-id', barang.id);
+                    option.setAttribute('data-nama', barang.nama);
+                    option.setAttribute('data-harga', barang.harga);
+                    option.setAttribute('data-kode', barang.kode_barang);
+                    option.setAttribute('data-merek', barang.merek);
+                    namaBarangSelect.appendChild(option);
+                });
+
             }
 
             function setRemoveRowEvent() {

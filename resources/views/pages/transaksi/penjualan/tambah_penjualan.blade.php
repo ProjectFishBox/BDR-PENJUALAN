@@ -535,25 +535,6 @@
                 }
             }
 
-            // namaBarangSelect.addEventListener('change', function () {
-            //     const selectedOption = namaBarangSelect.options[namaBarangSelect.selectedIndex];
-            //     const kodeBarang = selectedOption.getAttribute('data-kode');
-            //     const harga = selectedOption.getAttribute('data-harga');
-            //     const merek = selectedOption.getAttribute('data-merek');
-            //     const idBarang = selectedOption.getAttribute('data-id');
-
-            //     kodeBarangInput.value = kodeBarang ? kodeBarang : '';
-            //     hargaInput.value = harga ? formatNumber(harga) : '';
-            //     merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
-            //     semuaOption.forEach(option => {
-            //         if (option.getAttribute('data-kode') === kodeBarang) {
-            //             const merekOption = document.createElement('option');
-            //             merekOption.value = option.getAttribute('data-merek');
-            //             merekOption.textContent = option.getAttribute('data-merek');
-            //             merekSelect.appendChild(merekOption);
-            //         }
-            //     });
-            // });
 
             merekSelect.addEventListener('change', function () {
                 const selectedMerek = merekSelect.options[merekSelect.selectedIndex].value;
