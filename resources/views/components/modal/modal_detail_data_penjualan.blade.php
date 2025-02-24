@@ -7,7 +7,7 @@
         <div class="modal-body">
             <div class="d-flex mb-3">
                 <div class="mr-5">
-                    <h5 style="font-weight: lighter">Tanggal   : {{ $penjualan->tanggal}}</h5>
+                    <h5 style="font-weight: lighter">Tanggal : {{ \Carbon\Carbon::parse($penjualan->tanggal)->format('d-m-Y') }}</h5>
                     <h5 style="font-weight: lighter">No Nota   : {{ $penjualan->no_nota}}</h5>
                     <h5 style="font-weight: lighter">Lokasi    : {{ $lokasi->nama}}</h5>
 
