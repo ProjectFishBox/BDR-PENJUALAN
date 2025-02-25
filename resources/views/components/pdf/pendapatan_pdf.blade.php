@@ -126,16 +126,21 @@
                     <td class="right-text"><p style="margin: 0;">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p></td>
                 </tr>
                 <tr>
-                    <td class="right-text"><p class="bold-text" style="margin: 0;">Total Transfer</p></td>
-                    <td class="right-text"><p class="bold-text" style="margin: 0;">Rp {{ number_format($totalTransfer, 0, ',', '.') }}</p></td>
+                    <td class="right-text bold-text">
+                        <p style="margin: 0;">Total Transfer</p>
+                    </td>
+                    <td class="right-text bold-text" style="border-top: 2px solid black; padding-top: 5px;">
+                        <p style="margin: 0;">Rp {{ number_format($totalTransfer, 0, ',', '.') }}</p>
+                    </td>
                 </tr>
+
                 <tr>
                     <td class="left-text"><p style="margin: 0;">Modal Usaha</p></td>
                     <td class="right-text"><p style="margin: 0;">Rp {{ number_format($modalUsaha, 0, ',', '.') }}</p></td>
                 </tr>
                 <tr>
                     <td class="right-text"><p class="bold-text" style="margin: 0;">Laba Bersih</p></td>
-                    <td class="right-text"><p class="bold-text" style="margin: 0;">Rp {{ number_format($labaBersih, 0, ',', '.') }}</p></td>
+                    <td class="right-text"><p class="bold-text" style="margin: 0; border-top: 2px solid black; padding-top: 5px;">Rp {{ number_format($labaBersih, 0, ',', '.') }}</p></td>
                 </tr>
             </tbody>
         </table>

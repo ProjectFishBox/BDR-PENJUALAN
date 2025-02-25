@@ -112,17 +112,25 @@ class PendapatanExport implements WithEvents
                 $totalTerjual = $penjualan->sum('total_jual');
                 $totalDiskonProduk = $penjualan->sum('total_diskon_barang');
                 $totalPembelian = $penjualan->sum('harga_pembelian');
-                $totalPengeluaran = $penjualan->sum('total_pengeluaran');
+                // $totalPengeluaran = $penjualan->sum('total_pengeluaran');
                 $modalUsaha = $penjualan->sum('modal_usaha');
 
                 $uniqueDiskonNota = [];
+                $uniquePengeluaran = [];
+
 
                 foreach ($penjualan as $item) {
                     if (!isset($uniqueDiskonNota[$item['id_penjualan']])) {
                         $uniqueDiskonNota[$item['id_penjualan']] = $item['diskon_nota'];
                     }
+
+                    if (!isset($uniquePengeluaran[$item['tanggal']])) {
+                        $uniquePengeluaran[$item['tanggal']] = $item['total_pengeluaran'];
+                    }
+
                 }
                 $totalDiskonNota = array_sum($uniqueDiskonNota);
+                $totalPengeluaran = array_sum($uniquePengeluaran);
 
                 $totalTransfer = ($totalTerjual - ($totalPengeluaran + $totalDiskonNota + $totalDiskonProduk));
                 $labaBersih = $totalTransfer - $modalUsaha;
