@@ -59,44 +59,38 @@
 
             {{-- <p class="fw-bold text-center mt-3">Jumlah Penjualan: 3 Ball</p> --}}
 
-            <hr class="my-3">
+            <hr class="my-3" style="border: 1px solid">
             {{-- class="text-end" --}}
 
             <div class="total-summary">
                 <table>
                     <tr>
                         <td>Total Penjualan</td>
-                        <td id="total-penjualan" class="text-end"></td>
+                        <td id="total-penjualan" class="text-end" style="text-align: end;"></td>
                     </tr>
                     <tr>
                         <td>Total Diskon Produk</td>
-                        <td id="total-diskon-produk" class="text-end"></td>
+                        <td id="total-diskon-produk" style="text-align: end;"></td>
                     </tr>
                     <tr>
                         <td>Total Diskon Nota</td>
-                        <td id="total-diskon-nota" class="text-end"></td>
+                        <td id="total-diskon-nota" style="text-align: end;"></td>
                     </tr>
                     <tr>
                         <td>Total Pengeluaran</td>
-                        <td id="total-pengeluaran" class="text-end"></td>
+                        <td id="total-pengeluaran" style="text-align: end;"></td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="underline"></td>
-                    </tr>
-                    <tr class="bold">
-                        <td>Total Transfer</td>
-                        <td id="total-transfer"></td>
+                        <td class="right-text bold-text" style="text-align: center; font-weight:bold">Total Transfer</td>
+                        <td class="bold-text" id="total-transfer" style="border-top: 2px solid black; padding-top: 5px; text-align: end;"></td>
                     </tr>
                     <tr>
                         <td>Modal Usaha</td>
-                        <td id="modal-usaha" class="text-end"></td>
+                        <td id="modal-usaha" style="text-align: end;"></td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="underline"></td>
-                    </tr>
-                    <tr class="bold">
-                        <td>Laba Bersih</td>
-                        <td id="laba-bersih" class="text-end"></td>
+                        <td class="right-text bold-text" style="text-align: center; font-weight:bold">Laba Bersih</td>
+                        <td class="bold-text" id="laba-bersih" style="border-top: 2px solid black; padding-top: 5px; text-align: end;"></td>
                     </tr>
                 </table>
             </div>
