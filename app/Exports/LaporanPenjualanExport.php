@@ -60,7 +60,7 @@ class LaporanPenjualanExport implements WithEvents
 
                 $startRow = 8;
                 $currentRow = $startRow;
-                $totalAmount = $totalQty = $totalAll = $totalDiskon = $totalBayar = $totalSisa = 0;
+                $totalAmount = $totalQty = $totalAll = $totalDiskon = $totalBayar = $totalSisa = $totalDiskonProduk = 0;
                 $previousPenjualanId = null;
 
                 foreach ($data as $item) {
@@ -69,14 +69,15 @@ class LaporanPenjualanExport implements WithEvents
                     $lastJumlah = 0;
 
                     foreach ($item->detail as $detail) {
-                        $lastJumlah += ($detail->harga * $detail->jumlah);
+                        $lastJumlah += (($detail->harga * $detail->jumlah) - ($detail->diskon_barang * $detail->jumlah));
                     }
 
                     foreach ($item->detail as $detail) {
                         $pelangganNama = optional($item->pelanggan)->nama ?? 'N/A';
                         $barangKode = optional($detail->barang)->kode_barang ?? 'N/A';
 
-                        $sisa = abs(($detail->harga - $detail->diskon_barang) * $detail->jumlah - $item->bayar);
+                        // $sisa = abs(($detail->harga - $detail->diskon_barang) * $detail->jumlah - $item->bayar);
+                        $sisa = abs($lastJumlah - $item->diskon_nota - $item->bayar);
                         $jumlah = ($detail->harga * $detail->jumlah);
                         $total = ($detail->harga * $detail->jumlah) - $detail->diskon_barang;
 
@@ -107,6 +108,12 @@ class LaporanPenjualanExport implements WithEvents
                             $sheet->getStyle("M$currentRow")->getNumberFormat()->setFormatCode('#,##0');
 
                             $currentRow++;
+
+                            $totalAll += $lastJumlah;
+                            $totalAmount += $lastJumlah;
+                            $totalDiskon += $item->diskon_nota;
+                            $totalBayar += $item->bayar;
+                            $totalSisa += $sisa;
                         }
 
                         $sheet->setCellValue("D$currentRow", $barangKode);
@@ -124,19 +131,20 @@ class LaporanPenjualanExport implements WithEvents
                         $sheet->getStyle("I$currentRow")->getNumberFormat()->setFormatCode('#,##0');
 
                         $totalQty += $detail->jumlah;
-                        $totalAmount += $jumlah;
-                        $totalAll += $total;
-                        $totalDiskon += $item->diskon_nota;
-                        $totalBayar += $item->bayar;
-                        $totalSisa += $sisa;
+                        $totalDiskonProduk +=$detail->diskon_barang;
 
                         $currentRow++;
                     }
                 }
 
-                $sheet->setCellValue("G$currentRow", "TOTAL:");
-                $sheet->getStyle("G$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->setCellValue("F$currentRow", "TOTAL:");
+                $sheet->getStyle("F$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle("F$currentRow")->getFont()->setBold(true);
+
+                $sheet->setCellValue("G$currentRow", $totalDiskonProduk);
+                $sheet->getStyle("G$currentRow")->getNumberFormat()->setFormatCode('"Rp" #,##0');
                 $sheet->getStyle("G$currentRow")->getFont()->setBold(true);
+                $sheet->getStyle("G$currentRow")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
                 $sheet->setCellValue("H$currentRow", $totalQty);
                 $sheet->getStyle("H$currentRow")->getFont()->setBold(true);

@@ -27,19 +27,15 @@
         @endphp
         @foreach ($data as $item)
             @php
-            $sisa = 0;
-            foreach ($item['detail'] as $detail) {
-                $sisa += ($detail['harga'] * $detail['jumlah']) - $detail['diskon_barang'];
-            }
-            $sisa -= $item['diskon_nota'];
-            $sisa -= ($item['bayar']);
-            $sisa = abs($sisa);
-
 
             $total = 0;
             foreach ($item['detail'] as $detail) {
-                $total += ($detail['harga'] * $detail['jumlah']);
+                $total += (($detail['harga'] * $detail['jumlah']) - ($detail['diskon_barang'] * $detail['jumlah']));
             }
+
+            $sisa = $total - $item['bayar'] - $item['diskon_nota'];
+            $sisa = abs($sisa);
+            $totalSisa += $sisa;
 
 
             @endphp
@@ -63,14 +59,6 @@
                 <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($sisa, 0, ',', '.') }}</td>
             </tr>
             @foreach ($item['detail'] as $detail)
-                @php
-                    $sisa =
-                        $detail['harga'] * $detail['jumlah'] -
-                        $detail['diskon_barang'] -
-                        $item['diskon_nota'] -
-                        $item['bayar'];
-                    $totalSisa += $sisa;
-                @endphp
                 <tr>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
