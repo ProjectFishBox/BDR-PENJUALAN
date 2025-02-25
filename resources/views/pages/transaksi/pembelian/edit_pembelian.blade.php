@@ -641,16 +641,21 @@
             subTotalInput.value = '';
 
             namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
+            let uniqueKodeBarang = new Set();
             filteredMerek.forEach(barang => {
-                const option = document.createElement('option');
-                option.value = barang.id;
-                option.text = `(${barang.kode_barang}) ${barang.nama}`;
-                option.setAttribute('data-id', barang.id);
-                option.setAttribute('data-nama', barang.nama);
-                option.setAttribute('data-harga', barang.harga);
-                option.setAttribute('data-kode', barang.kode_barang);
-                option.setAttribute('data-merek', barang.merek);
-                namaBarangSelect.appendChild(option);
+                if (!uniqueKodeBarang.has(barang.kode_barang)) {
+                    uniqueKodeBarang.add(barang.kode_barang);
+
+                    const option = document.createElement('option');
+                    option.value = barang.id;
+                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                    option.setAttribute('data-id', barang.id);
+                    option.setAttribute('data-nama', barang.nama);
+                    option.setAttribute('data-harga', barang.harga);
+                    option.setAttribute('data-kode', barang.kode_barang);
+                    option.setAttribute('data-merek', barang.merek);
+                    namaBarangSelect.appendChild(option);
+                }
             });
         }
 

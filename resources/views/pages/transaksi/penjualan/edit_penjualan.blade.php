@@ -849,6 +849,8 @@
 
             function resetForm() {
                 namaBarangSelect.value = '';
+                $('#nama_barang').val(null).trigger('change');
+
                 kodeBarangInput.value = '';
                 merek.value = '';
                 hargaInput.value = '';
@@ -856,20 +858,26 @@
                 diskonInput.value = '';
                 subTotalInput.value = '';
 
-                merekSelect.innerHTML = '<option value="">Pilih Merek</option>'; // Menghapus pilihan merek
+                merekSelect.innerHTML = '<option value="">Pilih Merek</option>';
                 namaBarangSelect.innerHTML = '<option value="">Pilih Barang</option>';
-                filteredMerek.forEach(barang => {
-                    const option = document.createElement('option');
-                    option.value = barang.id;
-                    option.text = `(${barang.kode_barang}) ${barang.nama}`;
-                    option.setAttribute('data-id', barang.id);
-                    option.setAttribute('data-nama', barang.nama);
-                    option.setAttribute('data-harga', barang.harga);
-                    option.setAttribute('data-kode', barang.kode_barang);
-                    option.setAttribute('data-merek', barang.merek);
-                    namaBarangSelect.appendChild(option);
-                });
 
+                let uniqueKodeBarang = new Set();
+
+                filteredMerek.forEach(barang => {
+                    if (!uniqueKodeBarang.has(barang.kode_barang)) {
+                        uniqueKodeBarang.add(barang.kode_barang);
+
+                        const option = document.createElement('option');
+                        option.value = barang.id;
+                        option.text = `(${barang.kode_barang}) ${barang.nama}`;
+                        option.setAttribute('data-id', barang.id);
+                        option.setAttribute('data-nama', barang.nama);
+                        option.setAttribute('data-harga', barang.harga);
+                        option.setAttribute('data-kode', barang.kode_barang);
+                        option.setAttribute('data-merek', barang.merek);
+                        namaBarangSelect.appendChild(option);
+                    }
+                });
             }
 
             function setRemoveRowEvent() {

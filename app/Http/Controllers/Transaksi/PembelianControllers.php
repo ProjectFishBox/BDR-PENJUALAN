@@ -91,6 +91,9 @@ class PembelianControllers extends Controller
         $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
+            ->where('set_harga.delete', 0)
+            ->where('set_harga.merek', 0)
+            ->whereNotNull('set_harga.merek')
             ->get();
 
         return view('pages.transaksi.pembelian.tambah_pembelian', compact('title', 'barang'));
@@ -148,6 +151,9 @@ class PembelianControllers extends Controller
         $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek')
             ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
             ->where('set_harga.status', 'Aktif')
+            ->where('set_harga.delete', 0)
+            ->where('set_harga.merek', 0)
+            ->whereNotNull('set_harga.merek')
             ->get();
 
 
@@ -366,7 +372,16 @@ class PembelianControllers extends Controller
 
     public function searchBarang($kode)
     {
-        $barang = Barang::where('kode_barang', $kode)->get();
+        // $barang = Barang::where('kode_barang', $kode)->get();
+
+        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek', 'set_harga.harga_jual')
+            ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
+            ->where('set_harga.status', 'Aktif')
+            ->where('set_harga.delete', 0)
+            ->where('set_harga.merek', 0)
+            ->where('set_harga.kode_barang', $kode)
+            ->whereNotNull('set_harga.merek')
+            ->get();
 
         if ($barang) {
             return response()->json(['success' => true, 'barang' => $barang]);
