@@ -43,7 +43,7 @@ class StokExport implements WithEvents
                     $nama_lokasi = $data[0]['nama_lokasi'] ?? "SEMUA LOKASI";
                 }
 
-                $sheet->setCellValue("A5", "DAFTAR LABA/RUGI PADA LOKASI $nama_lokasi");
+                $sheet->setCellValue("A5", "LAPORAN STOK BARANG PADA  $nama_lokasi");
                 $sheet->getStyle("A5")->getFont()->setBold(true);
 
                 foreach ($data as $key => $item) {

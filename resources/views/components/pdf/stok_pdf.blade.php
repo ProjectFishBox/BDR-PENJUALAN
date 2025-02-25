@@ -29,7 +29,7 @@
         @if($namaLokasi)
             <p class="text-start mt-5">LAPORAN STOK BARANG PADA LOKASI {{ $namaLokasi }}</p>
         @else
-            <p class="text-start mt-5">LAPORAN STOK BARANG SEMUA LOKASI</p>
+            <p class="text-start mt-5">LAPORAN STOK BARANG PADA SEMUA LOKASI</p>
         @endif
 
         <table cellspacing="0" cellpadding="0" style="border: 0.75pt solid rgb(0, 0, 0); border-collapse: collapse; width: 100%;">
