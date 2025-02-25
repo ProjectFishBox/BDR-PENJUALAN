@@ -12,7 +12,7 @@
                         <select id="nama_barang" class="select2 form-control" name="nama_barang" required>
                             <option value="">Pilih Barang</option>
                             @foreach ($barang->unique('kode_barang') as $b)
-                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek={{ $b->merek}} {{ $b->id == $setharga->id_barang ? 'selected' : '' }}>({{$b->kode_barang}}) {{ $b->nama}}</option>
+                                <option value="{{ $b->id}}" data-harga="{{ $b->harga }}" data-kode="{{ $b->kode_barang }}" data-merek="{{ $b->merek }}"  {{ $b->kode_barang == $setharga->kode_barang ? 'selected' : '' }}>({{$b->kode_barang}}) {{ $b->nama}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -34,8 +34,8 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="merek">Merek <span style="color: red">*</span></label>
-                        <select id="merek" class="form-control" name="merek" required>
-                            <option value="">Pilih Barang</option>
+                        <select id="merek" class="select2 form-control" name="merek" data-selected="{{ $setharga->merek }}">
+                            <option value="">Pilih Merek</option>
                         </select>
                     </div>
                     <div class="form-group col-md-6">
@@ -67,44 +67,63 @@
 @push('js')
 
 <script>
-    $('.select2').select2({
-        width: '100%',
-        placeholder: 'Pilih Barang',
+
+    $(document).ready(function() {
+        if ($('#nama_barang').val()) {
+            $('#nama_barang').trigger('change');
+        }
     });
 
-    $('#nama_barang').on('change', function() {
-        var selectedOption = $(this).find('option:selected');
-        var kodeBarang = selectedOption.data('kode');
-        var namaBarang = selectedOption.data('nama');
+    $('.select2').select2({
+            width: '100%',
+            placeholder: 'Pilih Barang',
+        });
 
-        $('#harga').val('');
+        $('#nama_barang').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var kodeBarang = selectedOption.data('kode');
 
-        $('#kode_barang').val(kodeBarang);
-        var filteredMerek = @json($barang);
+            $('#harga').val('');
+            $('#kode_barang').val(kodeBarang);
 
-        $('#merek').empty().append('<option value="">Pilih Merek</option>');
+            var filteredMerek = @json($barang);
+            $('#merek').empty().append('<option value="">Pilih Merek</option>');
 
-        filteredMerek.forEach(function(item) {
-            if (item.kode_barang === kodeBarang) {
-                $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+            filteredMerek.forEach(function(item) {
+                if (item.kode_barang === kodeBarang) {
+                    $('#merek').append('<option value="' + item.merek + '" data-harga="' + item.harga + '">' + item.merek + '</option>');
+                }
+            });
+
+            $('#merek').select2({
+                width: '100%',
+                placeholder: 'Pilih Merek'
+            });
+
+            var selectedMerek = $('#merek').data('selected');
+            if (selectedMerek) {
+                $('#merek').val(selectedMerek).trigger('change');
+                console.log('Merek yang diseleksi:', selectedMerek);
             }
         });
 
-        $('#merek').select2({
-            width: '100%',
-            placeholder: 'Pilih Merek'
+        $(document).ready(function() {
+            if ($('#nama_barang').val()) {
+                $('#nama_barang').trigger('change');
+            }
         });
-    });
 
-    $('#merek').on('change', function() {
-        var selectedMerek = $(this).find('option:selected');
-        var harga = formatNumber(selectedMerek.data('harga'));
-        $('#harga').val(harga);
-    });
 
-    function formatNumber(value) {
+        $('#merek').on('change', function() {
+            var selectedMerek = $(this).find('option:selected');
+            var harga = formatNumber(selectedMerek.data('harga'));
+            $('#harga').val(harga);
+        });
+
+        function formatNumber(value) {
             return new Intl.NumberFormat('id-ID').format(value);
-    }
+        }
+
 </script>
 
 <script>

@@ -78,7 +78,6 @@ class SetHargaControllers extends Controller
         ->distinct()
         ->get();
 
-
         return view('pages.master.set_harga.tambah_set_harga', compact('title', 'barang'));
     }
 
@@ -96,7 +95,7 @@ class SetHargaControllers extends Controller
             'harga_jual' => 'required'
         ]);
 
-        $getNamaBarang = Barang::findOrFail($request->nama_barang);
+        $getNamaBarang = Barang::where('merek', $request->merek)->first();
 
         $harga = str_replace('.', '', $request->harga);
         $untung = str_replace('.', '', $request->untung);
@@ -115,7 +114,7 @@ class SetHargaControllers extends Controller
 
         SetHarga::create([
             'id_lokasi' => auth()->user()->id_lokasi,
-            'id_barang' => $request->nama_barang,
+            'id_barang' => $getNamaBarang->id,
             'nama_barang' => $getNamaBarang->nama,
             'kode_barang' => $request->kode_barang,
             'merek' => $request->merek,
@@ -173,7 +172,8 @@ class SetHargaControllers extends Controller
         $validatedData['last_user'] = auth()->id();
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
 
-        $getNamaBarang = Barang::findOrFail($request->nama_barang);
+
+        $getNamaBarang = Barang::where('merek', $request->merek)->first();
 
         $harga = str_replace('.', '', $request->harga);
         $untung = str_replace('.', '', $request->untung);
@@ -191,9 +191,22 @@ class SetHargaControllers extends Controller
 
         $setharga = SetHarga::findOrFail($id);
 
+        $existingActiveSetHarga = SetHarga::where('kode_barang', $setharga->kode_barang)
+            ->where('merek', $request->merek)
+            ->where('status', 'Aktif')
+            ->where('id', '!=', $id)
+            ->first();
+
+        if ($existingActiveSetHarga) {
+            $existingActiveSetHarga->update([
+                'status' => 'Tidak Aktif',
+                'last_user' => auth()->id()
+            ]);
+        }
+
         $setharga->update([
             'id_lokasi' => auth()->user()->id_lokasi,
-            'id_barang' => $request->nama_barang,
+            'id_barang' => $getNamaBarang->id,
             'nama_barang' => $getNamaBarang->nama,
             'kode_barang' => $request->kode_barang,
             'merek' => $request->merek,
