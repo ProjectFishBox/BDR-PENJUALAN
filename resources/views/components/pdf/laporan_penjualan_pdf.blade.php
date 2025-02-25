@@ -24,6 +24,7 @@
         @php
         $totalSisa = 0;
         $index = 1;
+        $totalAkhir = 0;
         @endphp
         @foreach ($data as $item)
             @php
@@ -59,6 +60,10 @@
                 <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">{{ number_format($sisa, 0, ',', '.') }}</td>
             </tr>
             @foreach ($item['detail'] as $detail)
+                @php
+                    $hasiljumlah = ($detail['harga'] * $detail['jumlah']) - ($detail['diskon_barang'] * $detail['jumlah']);
+                    $totalAkhir += $hasiljumlah
+                @endphp
                 <tr>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;"></td>
@@ -72,7 +77,7 @@
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
                         {{ number_format($detail['jumlah'], 0, ',', '.') }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
-                        {{ number_format($detail['harga'] * $detail['jumlah'], 0, ',', '.') }}</td>
+                        {{ number_format($hasiljumlah, 0, ',', '.') }}</td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
                     </td>
                     <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center;">
@@ -98,10 +103,10 @@
                 {{ number_format($totalHitung, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalPenjualan, 0, ',', '.') }}
+                {{ number_format($totalAkhir, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
-                {{ number_format($totalJumlah, 0, ',', '.') }}
+                {{ number_format($totalAkhir, 0, ',', '.') }}
             </td>
             <td style="border: 0.75pt solid rgb(0, 0, 0); text-align:center; font-weight:bold;">
                 {{ number_format($totalDiskon, 0, ',', '.') }}

@@ -78,7 +78,7 @@ class LaporanPenjualanExport implements WithEvents
 
                         // $sisa = abs(($detail->harga - $detail->diskon_barang) * $detail->jumlah - $item->bayar);
                         $sisa = abs($lastJumlah - $item->diskon_nota - $item->bayar);
-                        $jumlah = ($detail->harga * $detail->jumlah);
+                        $jumlah = (($detail->harga * $detail->jumlah) - ($detail->diskon_barang * $detail->jumlah));
                         $total = ($detail->harga * $detail->jumlah) - $detail->diskon_barang;
 
 
