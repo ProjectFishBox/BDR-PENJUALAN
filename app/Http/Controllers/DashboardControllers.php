@@ -21,8 +21,7 @@ class DashboardControllers extends Controller
     {
         $title = "Dashboard";
         $lokasi = Lokasi::where('delete', 0)->get();
-        $barang = Barang::all();
-
+        $barang = Barang::where('delete', 0)->get();
         if ($request->ajax()) {
             $lokasiId = $request->lokasi;
             $barangNama = $request->barang;
