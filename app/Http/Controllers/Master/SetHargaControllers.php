@@ -86,6 +86,8 @@ class SetHargaControllers extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $request->validate([
             'nama_barang' => 'required|max:50',
             'harga' => 'required',
@@ -95,7 +97,9 @@ class SetHargaControllers extends Controller
             'harga_jual' => 'required'
         ]);
 
-        $getNamaBarang = Barang::where('merek', $request->merek)->first();
+        $getNamaBarang = Barang::where('merek', $request->merek)
+        ->where('kode_barang', $request->kode_barang)
+        ->first();
 
         $harga = str_replace('.', '', $request->harga);
         $untung = str_replace('.', '', $request->untung);
@@ -173,7 +177,9 @@ class SetHargaControllers extends Controller
         $validatedData['id_lokasi'] = auth()->user()->id_lokasi;
 
 
-        $getNamaBarang = Barang::where('merek', $request->merek)->first();
+        $getNamaBarang = Barang::where('merek', $request->merek)
+        ->where('kode_barang', $request->kode_barang)
+        ->first();
 
         $harga = str_replace('.', '', $request->harga);
         $untung = str_replace('.', '', $request->untung);
