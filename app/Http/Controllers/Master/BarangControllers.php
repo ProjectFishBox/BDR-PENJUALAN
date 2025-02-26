@@ -10,6 +10,7 @@ use Yajra\DataTables\DataTables;
 
 use App\Models\Barang;
 use App\Imports\BarangImport;
+use App\Models\SetHarga;
 
 
 class BarangControllers extends Controller
@@ -138,6 +139,11 @@ class BarangControllers extends Controller
             $barang = Barang::findOrFail($id);
 
             $barang->update([
+                'delete' => 1,
+                'last_user' => auth()->id()
+            ]);
+
+            SetHarga::where('id_barang', $id)->update([
                 'delete' => 1,
                 'last_user' => auth()->id()
             ]);
