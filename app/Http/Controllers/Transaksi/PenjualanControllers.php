@@ -174,11 +174,18 @@ class PenjualanControllers extends Controller
             $harga = str_replace('.', '', $data['harga']);
             $diskon = $data['diskon'] ? preg_replace('/[Rp. ]/', '', $data['diskon']) : 0;
 
+            $dataBarang = Barang::where('merek', $data['merek'])
+                ->where('delete', 0)
+                ->where('kode_barang', $data['kode_barang'])
+                ->first();
+
+                // dd($dataBarang);
+
 
             DB::table('penjualan_detail')->insert([
                 'id_penjualan' => $penjualan->id,
-                'id_barang' => $idBarang,
-                'nama_barang' => $data['nama_barang'],
+                'id_barang' => $dataBarang->id,
+                'nama_barang' => $dataBarang->nama,
                 'merek' => $data['merek'],
                 'harga' => $harga,
                 'diskon_barang' => $diskon,
@@ -207,13 +214,23 @@ class PenjualanControllers extends Controller
 
         $penjualanDetail = PenjualanDetail::with('barang')->where('id_penjualan', $penjualan->id)->get();
 
-        $barang = SetHarga::select('barang.id', 'barang.nama', 'barang.kode_barang', 'barang.harga', 'set_harga.merek', 'set_harga.harga_jual')
-            ->join('barang', 'barang.id', '=', 'set_harga.id_barang')
-            ->where('set_harga.status', 'Aktif')
-            ->where('set_harga.delete', 0)
-            ->where('set_harga.merek', 0)
-            ->whereNotNull('set_harga.merek')
-            ->get();
+        $barang = Barang::select(
+            'barang.id',
+            'barang.kode_barang',
+            'barang.nama',
+            'barang.merek',
+            'barang.harga',
+            'set_harga.harga_jual'
+        )
+        ->join('set_harga', function ($join) {
+            $join->on('barang.id', '=', 'set_harga.id_barang')
+                 ->on('barang.merek', '=', 'set_harga.merek')
+                 ->on('barang.kode_barang', '=', 'set_harga.kode_barang');
+        })
+        ->where('barang.delete', 0)
+        ->where('set_harga.delete', 0)
+        ->where('set_harga.status', 'Aktif')
+        ->get();
 
         $cities = Indonesia::allCities();
 
@@ -284,10 +301,17 @@ class PenjualanControllers extends Controller
                 $harga = preg_replace('/[^\d]/', '', $item['harga']);
                 $diskon = str_replace('.', '', $item['diskon']);
 
+                $dataBarang = Barang::where('merek', $item['merek'])
+                    ->where('delete', 0)
+                    ->where('kode_barang', $item['kode_barang'])
+                    ->first();
+
+
+
                 PenjualanDetail::create([
                     'id_penjualan' => $id,
-                    'id_barang'    => $item['id_barang'],
-                    'nama_barang'  => $item['nama_barang'],
+                    'id_barang'    => $dataBarang->id,
+                    'nama_barang'  => $dataBarang->nama,
                     'merek'        => $item['merek'] ?? null,
                     'harga'        => $harga,
                     'jumlah'        => $item['jumlah'],

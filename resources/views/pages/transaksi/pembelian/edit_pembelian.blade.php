@@ -603,7 +603,9 @@
             const formattedHarga = formatRibuan(itemData.harga);
             const formattedSubtotal = formatToRupiah(itemData.subtotal);
 
-            const kodeBarang = itemData.barang ? itemData.barang.kode_barang : itemData.kode_barang;
+            // const kodeBarang = itemData.barang ? itemData.barang.kode_barang : itemData.kode_barang;
+            const kodeBarang = itemData.barang && itemData.barang.kode_barang ? itemData.barang.kode_barang : itemData.kode_barang;
+
 
             const newRow = `
                 <tr>
@@ -620,7 +622,7 @@
                         </button>
                     </td>
                     <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${itemData.id_barang}">
-                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${itemData.kode_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
                     <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${itemData.nama_barang}">
                     <input type="hidden" name="table_data[${rowCount}][merek]" value="${itemData.merek}">
                     <input type="hidden" name="table_data[${rowCount}][harga]" value="${itemData.harga}">

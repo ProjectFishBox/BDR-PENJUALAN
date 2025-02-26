@@ -594,7 +594,6 @@
                 return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
 
-
             function addRowToTable(itemData) {
                 const formattedHarga = formatRibuan(itemData.harga);
                 const hargaSetelahDiskon = itemData.harga - itemData.diskon_barang;
@@ -602,7 +601,7 @@
                 const formattedSubtotal = formatRibuan(subtotal);
                 const formattedDiskon = formatRibuan(itemData.diskon_barang);
 
-                const kodeBarang = itemData.barang ? itemData.barang.kode_barang : itemData.kode_barang;
+                const kodeBarang = itemData.barang && itemData.barang.kode_barang ? itemData.barang.kode_barang : itemData.kode_barang;
 
                 const newRow = document.createElement('tr');
                 newRow.innerHTML = `
@@ -620,7 +619,7 @@
                         </button>
                     </td>
                     <input type="hidden" name="table_data[${rowCount}][id_barang]" value="${itemData.id_barang}">
-                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${itemData.kode_barang}">
+                    <input type="hidden" name="table_data[${rowCount}][kode_barang]" value="${kodeBarang}">
                     <input type="hidden" name="table_data[${rowCount}][nama_barang]" value="${itemData.nama_barang}">
                     <input type="hidden" name="table_data[${rowCount}][merek]" value="${itemData.merek}">
                     <input type="hidden" name="table_data[${rowCount}][harga]" value="${itemData.harga}">
@@ -630,7 +629,6 @@
                 `;
 
                 const totalPenjualanRow = document.getElementById('total-penjualan').parentElement;
-
                 tableBody.insertBefore(newRow, totalPenjualanRow);
 
                 updateTotalPembelian();
@@ -688,10 +686,20 @@
 
 
     <script>
+        $(document).ready(function() {
+            if ($('#nama_barang').val()) {
+                $('#nama_barang').trigger('change');
+            }
+        });
         document.addEventListener('DOMContentLoaded', function() {
             const namaBarangSelect = document.getElementById('nama_barang');
+            console.log(namaBarangSelect);
+
             const merekSelect = document.getElementById('merek');
             const kodeBarangInput = document.getElementById('kode_barang');
+
+            console.log(kodeBarangInput);
+
             const hargaInput = document.getElementById('harga');
             const jumlahInput = document.getElementById('jumlah');
             const diskonInput = document.getElementById('diskon');
