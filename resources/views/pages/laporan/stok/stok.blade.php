@@ -136,6 +136,7 @@
                     tbody.empty();
                     var totalJumlah = 0;
                     var totalHarga = 0;
+                    var stokAkhir = 0;
                     var overallIndex = 1;
 
                     $.each(data, function(index, item) {
@@ -152,6 +153,8 @@
 
                         totalJumlah += parseInt(item.total_masuk);
                         totalHarga += parseInt(item.total_terjual);
+                        stokAkhir += parseInt(item.stok_akhir);
+
                         overallIndex++;
                     });
 
@@ -159,7 +162,7 @@
                         '<td colspan="4" style="text-align: right;"><strong>Total:</strong></td>' +
                         '<td>' + totalJumlah + '</td>' +
                         '<td>' + totalHarga + '</td>' +
-                        '<td>' + (totalJumlah - totalHarga) +'</td>' +
+                        '<td>' + stokAkhir +'</td>' +
                         '</tr>';
                     tbody.append(totalRow);
                 }

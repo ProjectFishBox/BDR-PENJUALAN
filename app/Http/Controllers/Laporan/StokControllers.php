@@ -65,6 +65,22 @@ class StokControllers extends Controller
         $lokasiId = $request->lokasi;
         $barangId = $request->barang;
 
+        $barangList = Barang::query()
+            ->select([
+                'barang.id as id_barang',
+                'barang.kode_barang',
+                'barang.nama as nama_barang',
+                'barang.merek'
+            ])
+            ->where('barang.delete', 0)
+            ->when($request->filled('barang') && $barangId !== 'all', function ($query) use ($barangId) {
+                return $query->where('barang.id', $barangId);
+            })
+            ->when($request->filled('merek'), function ($query) use ($request) {
+                return $query->where('barang.merek', $request->merek);
+            })
+            ->get();
+
         $barangMasuk = PembelianDetail::query()
             ->select([
                 'pembelian_detail.id_barang',
@@ -131,24 +147,20 @@ class StokControllers extends Controller
             ])
             ->get();
 
-        $data = $barangMasuk->map(function ($item) use ($barangKeluar) {
-            $terjual = $barangKeluar
-                ->where('id_barang', $item->id_barang)
-                ->where('nama_barang', $item->nama_barang)
-                ->where('merek', $item->merek)
-                ->where('id_lokasi', $item->id_lokasi)
-                ->first();
+        $data = $barangList->map(function ($barang) use ($barangMasuk, $barangKeluar) {
+            $masuk = $barangMasuk->where('id_barang', $barang->id_barang)->first();
+            $keluar = $barangKeluar->where('id_barang', $barang->id_barang)->first();
 
             return [
-                'id_barang' => $item->id_barang,
-                'kode_barang' => $item->kode_barang,
-                'nama_barang' => $item->nama_barang,
-                'merek' => $item->merek,
-                'id_lokasi' => $item->id_lokasi,
-                'nama_lokasi' => $item->nama,
-                'total_masuk' => $item->total_masuk,
-                'total_terjual' => $terjual->total_terjual ?? 0,
-                'stok_akhir' => $item->total_masuk - ($terjual->total_terjual ?? 0)
+                'id_barang' => $barang->id_barang,
+                'kode_barang' => $barang->kode_barang,
+                'nama_barang' => $barang->nama_barang,
+                'merek' => $barang->merek,
+                'id_lokasi' => $masuk->id_lokasi ?? $keluar->id_lokasi ?? null,
+                'nama_lokasi' => $masuk->nama ?? $keluar->nama ?? null,
+                'total_masuk' => $masuk->total_masuk ?? 0,
+                'total_terjual' => $keluar->total_terjual ?? 0,
+                'stok_akhir' => ($masuk->total_masuk ?? 0) - ($keluar->total_terjual ?? 0)
             ];
         })->toArray();
 
