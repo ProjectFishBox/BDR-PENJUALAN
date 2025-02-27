@@ -11,6 +11,7 @@ use PhpOffice\PhpSpreadsheet\Style\Color;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Lokasi;
 
 class LaporanPembelianExport implements WithEvents
 {
@@ -94,6 +95,19 @@ class LaporanPembelianExport implements WithEvents
 
                 $endRow = $totalRow;
                 $cellRange = "A$startRow:H$endRow";
+
+                $lokasi = 'SEMUA LOKASI';
+                if ($this->request->lokasi !== 'all') {
+                    $lokasiObj = Lokasi::find($this->request->lokasi);
+                    $lokasi = $lokasiObj ? $lokasiObj->nama : 'SEMUA LOKASI';
+                }
+
+                $tanggal = "SEMUA TANGGAL";
+                if ($this->request->filled('daterange') ) {
+                    $tanggal = $this->request->daterange;
+                }
+
+                $sheet->setCellValue("A4", ">DAFTAR PEMBELIAN BARANG PADA LOKASI " . $lokasi . " TANGGAL " . $tanggal);
 
                 $borderStyle = [
                     'borders' => [
