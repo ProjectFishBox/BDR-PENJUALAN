@@ -63,7 +63,7 @@ class StokControllers extends Controller
     public function getData(Request $request)
     {
         $lokasiId = $request->lokasi;
-        $barangId = $request->barang;
+        $kodeBarang = $request->kode;
 
         $barangList = Barang::query()
             ->select([
@@ -73,11 +73,11 @@ class StokControllers extends Controller
                 'barang.merek'
             ])
             ->where('barang.delete', 0)
-            ->when($request->filled('barang') && $barangId !== 'all', function ($query) use ($barangId) {
-                return $query->where('barang.id', $barangId);
-            })
             ->when($request->filled('merek'), function ($query) use ($request) {
                 return $query->where('barang.merek', $request->merek);
+            })
+            ->when($request->filled('kode'), function ($query) use ($kodeBarang) {
+                return $query->where('barang.kode_barang', $kodeBarang);
             })
             ->get();
 
@@ -97,11 +97,11 @@ class StokControllers extends Controller
             ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                 return $query->where('pembelian.id_lokasi', $lokasiId);
             })
-            ->when($request->filled('barang') && $barangId !== 'all', function ($query) use ($barangId) {
-                return $query->where('pembelian_detail.id_barang', $barangId);
-            })
             ->when($request->filled('merek'), function ($query) use ($request) {
                 return $query->where('pembelian_detail.merek', $request->merek);
+            })
+            ->when($request->filled('kode'), function ($query) use ($kodeBarang) {
+                return $query->where('barang.kode_barang', $kodeBarang);
             })
             ->selectRaw('SUM(pembelian_detail.jumlah) as total_masuk')
             ->groupBy([
@@ -130,11 +130,11 @@ class StokControllers extends Controller
             ->when($request->filled('lokasi') && $lokasiId !== 'all', function ($query) use ($lokasiId) {
                 return $query->where('penjualan.id_lokasi', $lokasiId);
             })
-            ->when($request->filled('barang') && $barangId !== 'all', function ($query) use ($barangId) {
-                return $query->where('penjualan_detail.id_barang', $barangId);
-            })
             ->when($request->filled('merek'), function ($query) use ($request) {
                 return $query->where('penjualan_detail.merek', $request->merek);
+            })
+            ->when($request->filled('kode'), function ($query) use ($kodeBarang) {
+                return $query->where('barang.kode_barang', $kodeBarang);
             })
             ->selectRaw('SUM(penjualan_detail.jumlah) as total_terjual')
             ->groupBy([

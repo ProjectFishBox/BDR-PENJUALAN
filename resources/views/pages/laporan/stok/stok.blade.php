@@ -122,6 +122,7 @@
             var lokasi = $('#lokasi').val();
             var merek = $('#merek').val();
             var barang = $('#barang').val();
+            var kode = $('#barang option:selected').data('kode');
 
             $.ajax({
                 url: '{{ route("stok") }}',
@@ -130,6 +131,7 @@
                     barang: barang,
                     lokasi: lokasi,
                     merek: merek,
+                    kode: kode,
                 },
                 success: function(data) {
                     var tbody = $('#data-table tbody');
