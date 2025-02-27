@@ -99,6 +99,7 @@ class SetHargaControllers extends Controller
 
         $getNamaBarang = Barang::where('merek', $request->merek)
         ->where('kode_barang', $request->kode_barang)
+        ->where('delete', 0)
         ->first();
 
         $harga = str_replace('.', '', $request->harga);
@@ -179,6 +180,7 @@ class SetHargaControllers extends Controller
 
         $getNamaBarang = Barang::where('merek', $request->merek)
         ->where('kode_barang', $request->kode_barang)
+        ->where('delete', 0)
         ->first();
 
         $harga = str_replace('.', '', $request->harga);
